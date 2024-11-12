@@ -4,7 +4,9 @@ package project.floe.global.error;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/** {주체}_{이유} message 는 동사 명사형으로 마무리 */
+/**
+ * {주체}_{이유} message 는 동사 명사형으로 마무리
+ */
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
@@ -16,7 +18,7 @@ public enum ErrorCode {
     ACCESS_INVALID_VALUE(400, "G003", "잘못된 접근"),
 
     // Record
-    RECORD_NOT_FOUND_ERROR(400,"R001","기록을 찾을 수 없음");
+    RECORD_NOT_FOUND_ERROR(400, "R001", "기록을 찾을 수 없음");
 
     private final int status;
     private final String code;

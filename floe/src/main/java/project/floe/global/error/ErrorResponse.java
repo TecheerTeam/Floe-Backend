@@ -52,7 +52,7 @@ public class ErrorResponse {
                             error ->
                                     new FieldError(
                                             error.getField(),
-                                            error.getRejectedValue() == null ? "" : error.getRejectedValue().toString(),
+                                            error.getRejectedValue()==null ? "":error.getRejectedValue().toString(),
                                             error.getDefaultMessage()))
                     .collect(Collectors.toList());
         }
