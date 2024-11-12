@@ -37,13 +37,18 @@ public class Record extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     */
+
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Column(name = "title", nullable = false)
     private String title;
+
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "record_type", nullable = false)
     private RecordType recordType;
 
     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
