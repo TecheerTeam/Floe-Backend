@@ -9,8 +9,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
     // 도메인별로 구분
-    // 예시
-    // Record 도메인
+
+    // Global
+    INTERNAL_SERVER_ERROR(500, "G001", "서버 오류"),
+    INPUT_INVALID_VALUE(409, "G002", "잘못된 입력"),
+    ACCESS_INVALID_VALUE(400, "G003", "잘못된 접근"),
+
+    // Record
     RECORD_NOT_FOUND_ERROR(400,"R001","기록을 찾을 수 없음");
 
     private final int status;
