@@ -12,7 +12,8 @@ public enum ResultCode {
 
     // Record
     RECORD_CREATE_SUCCESS("R001", "기록 생성 성공"),
-    RECORD_DELETE_SUCCESS("R002", "기록 제거 성공");
+    RECORD_DELETE_SUCCESS("R002", "기록 제거 성공"),
+    DETAIL_RECORD_GET_SUCCESS("R003","개별 기록 조회 성공" );
 
     private final String code;
     private final String message;
