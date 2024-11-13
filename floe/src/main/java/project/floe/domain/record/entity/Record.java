@@ -9,13 +9,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.floe.domain.media.entity.Media;
 import project.floe.entity.BaseEntity;
 
 @Entity
@@ -52,5 +52,5 @@ public class Record extends BaseEntity {
     private RecordType recordType;
 
     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Media> medias;
+    private List<Media> medias = new ArrayList<>();
 }
