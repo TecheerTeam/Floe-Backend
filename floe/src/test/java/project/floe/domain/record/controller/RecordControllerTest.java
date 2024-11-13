@@ -73,8 +73,6 @@ class RecordControllerTest{
                 "test image content 2".getBytes()
         );
 
-        List<MultipartFile> files = List.of(file1, file2);
-
         // dto를 JSON 형태로 직렬화하여 MockMultipartFile로 생성
         String dtoJson = "{\"userId\":1,\"title\":\"recordTitle\",\"content\":\"recordContent\",\"recordType\":\"FLOE\"}";
         MockMultipartFile dto = new MockMultipartFile(
@@ -87,7 +85,7 @@ class RecordControllerTest{
         CreateRecordResponse response = CreateRecordResponse.builder().recordId(1L).build();
 
         // when
-        when(recordService.save(record, files)).thenReturn(response.getRecordId());
+        when(recordService.save(record, List.of(file1, file2))).thenReturn(response.getRecordId());
 
         // then
         mockMvc.perform(
@@ -99,5 +97,15 @@ class RecordControllerTest{
                 )
                 .andExpect(status().isCreated())
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Record 삭제 테스트")
+    void deleteRecordTest() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/v1/records/{recordId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isNoContent());
     }
 }
