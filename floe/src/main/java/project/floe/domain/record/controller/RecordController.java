@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import project.floe.domain.record.service.MediaService;
 import project.floe.domain.record.dto.request.CreateRecordRequest;
 import project.floe.domain.record.dto.response.CreateRecordResponse;
 import project.floe.domain.record.entity.Record;
@@ -23,7 +22,6 @@ import project.floe.global.result.ResultResponse;
 public class RecordController {
 
     private final RecordService recordService;
-    private final MediaService mediaService;
 
     @PostMapping
     public ResponseEntity<ResultResponse> createRecord(@RequestPart(value = "dto") CreateRecordRequest dto,
