@@ -1,9 +1,13 @@
 package project.floe.domain.record.controller;
 
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -17,14 +21,14 @@ import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @RequestMapping("/api/v1/records")
 public class RecordController {
 
     private final RecordService recordService;
 
     @PostMapping
-    public ResponseEntity<ResultResponse> createRecord(@RequestPart(value = "dto") CreateRecordRequest dto,
+    public ResponseEntity<ResultResponse> createRecord(@Validated @RequestPart(value = "dto") CreateRecordRequest dto,
                                                        @RequestPart(value = "files") List<MultipartFile> files) {
         Record newRecord = Record.builder()
                 .userId(dto.getUserId())
@@ -37,4 +41,13 @@ public class RecordController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResultResponse.of(ResultCode.RECORD_CREATE_SUCCESS, response));
     }
+
+    @DeleteMapping("/{recordId}")
+    public ResponseEntity<ResultResponse> deleteRecord(@PathVariable("recordID") Long recordId){
+        recordService.deleteRecord(recordId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ResultResponse.of(ResultCode.RECORD_DELETE_SUCCESS));
+    }
+
+
 }
