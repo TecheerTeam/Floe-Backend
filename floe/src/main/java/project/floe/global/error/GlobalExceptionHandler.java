@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.floe.global.error.exception.BusinessException;
+import project.floe.global.error.exception.EmptyResultException;
 import project.floe.global.error.exception.S3Exception;
 
 @Slf4j
@@ -30,6 +31,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(S3Exception.class)
     protected ResponseEntity<ErrorResponse> handleS3Exception(S3Exception e) {
+        final ErrorCode errorCode = e.getErrorCode();
+        final ErrorResponse response = makeErrorResponse(errorCode);
+        log.error(e.getMessage());
+        return ResponseEntity.status(errorCode.getStatus()).body(response);
+    }
+
+    @ExceptionHandler(EmptyResultException.class)
+    protected ResponseEntity<ErrorResponse> handleS3Exception(EmptyResultException e) {
         final ErrorCode errorCode = e.getErrorCode();
         final ErrorResponse response = makeErrorResponse(errorCode);
         log.error(e.getMessage());
