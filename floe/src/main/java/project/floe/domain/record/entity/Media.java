@@ -1,4 +1,4 @@
-package project.floe.domain.media.entity;
+package project.floe.domain.record.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.floe.domain.record.entity.Record;
 
 @Entity
 @Getter
