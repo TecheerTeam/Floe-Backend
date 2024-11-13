@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordType;
 import project.floe.domain.record.repository.RecordJpaRepository;
+import project.floe.global.error.exception.EmptyResultException;
 
 @SpringBootTest
 class RecordServiceTest {
@@ -63,5 +64,15 @@ class RecordServiceTest {
         assertThat(savedRecord.getContent()).isEqualTo(newRecord.getContent());
         assertThat(savedRecord.getUserId()).isEqualTo(newRecord.getUserId());
         assertThat(savedRecord.getRecordType()).isEqualTo(newRecord.getRecordType());
+    }
+
+    @Test
+    @Transactional
+    void deleteTest(){
+        Long savedId = recordService.save(newRecord,List.of(file1,file2));
+        recordService.deleteRecord(savedId);
+
+        assertThatThrownBy(() -> recordService.findRecordById(savedId))
+                .isInstanceOf(EmptyResultException.class);
     }
 }
