@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 import project.floe.entity.BaseEntity;
 
 @Entity
@@ -23,6 +24,7 @@ import project.floe.entity.BaseEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE record SET is_deleted = true WHERE record_id = ?")
 public class Record extends BaseEntity {
 
     @Id
