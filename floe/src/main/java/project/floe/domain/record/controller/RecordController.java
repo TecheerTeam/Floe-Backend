@@ -34,20 +34,17 @@ public class RecordController {
     @PostMapping
     public ResponseEntity<ResultResponse> createRecord(@Validated @RequestPart(value = "dto") CreateRecordRequest dto,
                                                        @RequestPart(value = "files") List<MultipartFile> files) {
-        Record newRecord = Record.builder()
-                .userId(dto.getUserId())
-                .title(dto.getTitle())
-                .content(dto.getContent())
-                .recordType(dto.getRecordType())
-                .build();
-        CreateRecordResponse response = CreateRecordResponse.from(recordService.save(newRecord, files));
+        Record newRecord = dto.toEntity();
+        CreateRecordResponse response = CreateRecordResponse.from(recordService.createRecord(newRecord, dto.getTagNames(), files));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResultResponse.of(ResultCode.RECORD_CREATE_SUCCESS, response));
     }
 
+//    @GetMapping
+    
     @GetMapping("/{recordId}")
-    public ResponseEntity<ResultResponse> getDetailRecord(@PathVariable("recordId") Long recordId){
+    public ResponseEntity<ResultResponse> getDetailRecord(@PathVariable("recordId") Long recordId) {
         Record findRecord = recordService.findRecordById(recordId);
         GetDetailRecordResponse response = GetDetailRecordResponse.builder()
                 .userId(findRecord.getUserId())
@@ -67,7 +64,7 @@ public class RecordController {
     }
 
     @DeleteMapping("/{recordId}")
-    public ResponseEntity<ResultResponse> deleteRecord(@PathVariable("recordId") Long recordId){
+    public ResponseEntity<ResultResponse> deleteRecord(@PathVariable("recordId") Long recordId) {
         recordService.deleteRecord(recordId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .body(ResultResponse.of(ResultCode.RECORD_DELETE_SUCCESS));
