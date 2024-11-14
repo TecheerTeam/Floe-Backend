@@ -2,6 +2,7 @@ package project.floe.domain.record.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -57,4 +58,19 @@ public class Record extends BaseEntity {
 
     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Media> medias = new ArrayList<>();
+
+    @Embedded
+    private RecordTags recordTags;
+
+    public void addTag(Tags tags) {
+        recordTags.add(this, tags);
+    }
+
+    public List<String> getTagNames() {
+        return this.recordTags.getTagNames();
+    }
+
+    public List<Long> getTagIds() {
+        return this.recordTags.getTagIds();
+    }
 }
