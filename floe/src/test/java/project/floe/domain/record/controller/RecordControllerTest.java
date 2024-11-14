@@ -1,18 +1,13 @@
 package project.floe.domain.record.controller;
 
-import static com.amazonaws.util.json.Jackson.toJsonString;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static project.floe.global.result.ResultCode.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,17 +21,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.multipart.MultipartFile;
-import project.floe.domain.record.dto.request.CreateRecordRequest;
 import project.floe.domain.record.dto.response.CreateRecordResponse;
-import project.floe.domain.record.dto.response.GetDetailRecordResponse;
-import project.floe.domain.record.dto.response.MediaResponse;
 import project.floe.domain.record.entity.Media;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordType;
 import project.floe.domain.record.service.RecordService;
-import project.floe.global.result.ResultCode;
-import project.floe.global.result.ResultResponse;
 
 @WebMvcTest(RecordController.class)
 class RecordControllerTest{
@@ -92,7 +81,7 @@ class RecordControllerTest{
         CreateRecordResponse response = CreateRecordResponse.builder().recordId(1L).build();
 
         // when
-        when(recordService.save(record, List.of(file1, file2))).thenReturn(response.getRecordId());
+        when(recordService.createRecord(record, List.of("JAVA", "SPRING") , List.of(file1, file2))).thenReturn(response.getRecordId());
 
         // then
         mockMvc.perform(

@@ -11,6 +11,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.entity.Record;
+import project.floe.domain.record.entity.RecordTags;
 import project.floe.domain.record.entity.RecordType;
 import project.floe.domain.record.repository.RecordJpaRepository;
 import project.floe.global.error.exception.EmptyResultException;
@@ -35,6 +36,7 @@ class RecordServiceTest {
                 .title("테스트")
                 .content("테스트 입니다")
                 .recordType(RecordType.FLOE)
+                .recordTags(new RecordTags())
                 .build();
         // MockMultipartFile 생성
         file1 = new MockMultipartFile(
@@ -54,8 +56,8 @@ class RecordServiceTest {
 
     @Test
     @Transactional
-    void saveTest(){
-        Long savedId = recordService.save(newRecord,List.of(file1,file2));
+    void createRecordTest(){
+        Long savedId = recordService.createRecord(newRecord, List.of("JAVA", "SPRING"), List.of(file1,file2));
 
         // then
         Record savedRecord = repository.findById(savedId).orElseThrow(() -> new RuntimeException("Record not found"));
@@ -69,7 +71,7 @@ class RecordServiceTest {
     @Test
     @Transactional
     void deleteTest(){
-        Long savedId = recordService.save(newRecord,List.of(file1,file2));
+        Long savedId = recordService.createRecord(newRecord, List.of("JAVA", "SPRING"), List.of(file1,file2));
         recordService.deleteRecord(savedId);
 
         assertThatThrownBy(() -> recordService.findRecordById(savedId))
