@@ -2,9 +2,12 @@ package project.floe.domain.record.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import project.floe.domain.record.dto.response.GetRecordResponse;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordTag;
 import project.floe.domain.record.entity.Tags;
@@ -39,5 +42,10 @@ public class RecordService {
     public Record findRecordById(Long recordId) {
         return recordRepository.findById(recordId)
                 .orElseThrow(() -> new EmptyResultException(ErrorCode.RECORD_NOT_FOUND_ERROR));
+    }
+
+    public List<GetRecordResponse> findRecords(Pageable pageable) {
+        Page<Record> records = recordRepository.findAll(pageable);
+        return GetRecordResponse.listOf(records).getContent();
     }
 }
