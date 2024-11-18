@@ -64,4 +64,13 @@ class MediaServiceTest {
         // then
         log.info("uploaded_url = {}", uploadedUrl);
     }
+
+    @Test
+    void deleteFileTest(){
+        // given
+        String uploadedUrl = mediaService.uploadToS3(file1);
+
+        //when
+        mediaService.deleteFile(uploadedUrl);
+    }
 }
