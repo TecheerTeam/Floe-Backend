@@ -43,12 +43,12 @@ public class UserEntity {
     }
 
     public void update(UpdateUserRequestDto dto){
-        this.password = dto.getPassword();
-        this.name = dto.getName();
-        this.email = dto.getEmail();
-        this.experience = dto.getExperience();
-        this.age = dto.getAge();
-        this.profileImage = dto.getProfileImage();
-        this.field = dto.getField();
+        if(dto.getPassword() != null) this.password = dto.getPassword();
+        if(dto.getName() != null)this.name = dto.getName();
+        if(dto.getEmail() != null)this.email = dto.getEmail();
+        if(dto.getExperience() != null)this.experience = dto.getExperience();
+        if(dto.getAge() != null)this.age = dto.getAge();
+        if(dto.getProfileImage() != null)this.profileImage = dto.getProfileImage();
+        if(dto.getField() != null)this.field = dto.getField();
     }
 }

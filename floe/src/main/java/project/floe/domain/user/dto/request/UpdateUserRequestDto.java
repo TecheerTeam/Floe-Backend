@@ -11,8 +11,8 @@ public class UpdateUserRequestDto {
     private String password;
     private String name;
     private String email;
-    private int experience;
-    private int age;
+    private Integer experience;
+    private Integer age;
     private String profileImage;
     private String field;
 }

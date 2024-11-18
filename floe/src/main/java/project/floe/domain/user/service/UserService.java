@@ -66,7 +66,16 @@ public class UserService {
             throw new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR);
         }
 
+        if(dto.getEmail() != null){
+            findUser = userRepository.findByEmail(dto.getEmail());
+
+            if (findUser != null && !userId.equals(findUser.getUserId())) {
+                throw new UserServiceException(ErrorCode.USER_EMAIL_DUPLICATION_ERROR);
+            }
+        }
+
         // 로그인 구현 후 요청한 유저가 수정하려는 유저와 동일한지 확인 로직
+
 
         findUser.update(dto);
         userRepository.save(findUser);
