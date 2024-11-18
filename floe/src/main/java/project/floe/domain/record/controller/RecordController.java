@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.dto.request.CreateRecordRequest;
 import project.floe.domain.record.dto.response.CreateRecordResponse;
 import project.floe.domain.record.dto.response.GetDetailRecordResponse;
+import project.floe.domain.record.dto.response.GetRecordResponse;
 import project.floe.domain.record.dto.response.MediaResponse;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
@@ -41,24 +47,16 @@ public class RecordController {
                 .body(ResultResponse.of(ResultCode.RECORD_CREATE_SUCCESS, response));
     }
 
-//    @GetMapping
-    
+    @GetMapping
+    public ResponseEntity<ResultResponse> getRecords(@PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable){
+        List<GetRecordResponse> response = recordService.findRecords(pageable);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.Record_PAGING_GET_SUCCESS, response));
+    }
+
     @GetMapping("/{recordId}")
     public ResponseEntity<ResultResponse> getDetailRecord(@PathVariable("recordId") Long recordId) {
         Record findRecord = recordService.findRecordById(recordId);
-        GetDetailRecordResponse response = GetDetailRecordResponse.builder()
-                .userId(findRecord.getUserId())
-                .title(findRecord.getTitle())
-                .content(findRecord.getContent())
-                .recordType(findRecord.getRecordType())
-                .medias(findRecord.getMedias().stream()
-                        .map(media -> MediaResponse.builder()
-                                .mediaId(media.getId())
-                                .mediaUrl(media.getMediaUrl())
-                                .build()
-                        ).collect(Collectors.toList())
-                )
-                .build();
+        GetDetailRecordResponse response = GetDetailRecordResponse.from(findRecord);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ResultResponse.of(ResultCode.DETAIL_RECORD_GET_SUCCESS, response));
     }
