@@ -15,6 +15,8 @@ import project.floe.domain.record.entity.RecordType;
 @NoArgsConstructor
 public class GetDetailRecordResponse {
 
+    private Long recordId;
+
     private Long userId;
 
     private String title;
@@ -31,6 +33,7 @@ public class GetDetailRecordResponse {
 
     public static GetDetailRecordResponse from(Record record){
         return GetDetailRecordResponse.builder()
+                .recordId(record.getId())
                 .userId(record.getUserId())
                 .title(record.getTitle())
                 .content(record.getContent())
