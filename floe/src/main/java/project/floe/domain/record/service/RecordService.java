@@ -36,6 +36,7 @@ public class RecordService {
 
     @Transactional
     public void deleteRecord(Long recordId) {
+        mediaService.deleteFiles(findRecordById(recordId).getMedias());
         recordRepository.deleteById(recordId);
     }
 
