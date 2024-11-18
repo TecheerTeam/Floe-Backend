@@ -1,4 +1,4 @@
-package project.floe.domain.media.service;
+package project.floe.domain.record.service;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordType;
 import project.floe.domain.record.repository.RecordJpaRepository;
-import project.floe.domain.record.service.MediaService;
 
 @SpringBootTest
 @Slf4j
