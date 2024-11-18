@@ -26,7 +26,7 @@ import project.floe.entity.BaseEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@SQLRestriction("is_deleted is NULL")
+@SQLRestriction("is_deleted = false")
 @SQLDelete(sql = "UPDATE record SET is_deleted = true WHERE record_id = ?")
 public class Record extends BaseEntity {
 
