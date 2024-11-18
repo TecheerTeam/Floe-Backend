@@ -2,6 +2,7 @@ package project.floe.domain.record.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
@@ -44,6 +45,13 @@ public class MediaService {
         }
     }
 
+    @Transactional
+    public void deleteFiles(List<Media> medias){
+        for (Media media : medias){
+            deleteFile(media.getMediaUrl());
+        }
+    }
+
     public String uploadToS3(MultipartFile media) {
         String originalFilename = getOrigianlFilename(media);
         String s3FileName = UUID.randomUUID() + "_" + originalFilename;
@@ -63,6 +71,16 @@ public class MediaService {
             throw new S3Exception(ErrorCode.S3_UPLOAD_FAIL_ERROR);
         }
         return amazonS3.getUrl(bucketName, s3FileName).toString();
+    }
+
+    public void deleteFile(String mediaUrl){
+        String key = extractKey(mediaUrl);
+        amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
+    }
+
+    private String extractKey(String mediaUrl) {
+        String splitStr = ".com/";
+        return mediaUrl.substring(mediaUrl.lastIndexOf(splitStr) + splitStr.length());
     }
 
     private static byte[] converToByte(MultipartFile media) {
