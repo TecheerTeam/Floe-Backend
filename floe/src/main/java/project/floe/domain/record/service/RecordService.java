@@ -2,6 +2,7 @@ package project.floe.domain.record.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,11 @@ public class RecordService {
     @Transactional
     public void deleteRecord(Long recordId) {
         mediaService.deleteFiles(findRecordById(recordId).getMedias());
-        recordRepository.deleteById(recordId);
+        try {
+            recordRepository.deleteById(recordId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultException(ErrorCode.RECORD_DELETED_OR_NOT_EXIST);
+        }
     }
 
     public Record findRecordById(Long recordId) {
