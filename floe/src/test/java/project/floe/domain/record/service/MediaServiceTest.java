@@ -20,7 +20,7 @@ class MediaServiceTest {
     private Record newRecord;
     private MultipartFile file1;
     private MultipartFile file2;
-    
+
     @Autowired
     private MediaService mediaService;
     @Autowired
