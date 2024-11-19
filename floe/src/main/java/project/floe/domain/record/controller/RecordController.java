@@ -27,6 +27,8 @@ import project.floe.domain.record.dto.response.GetRecordResponse;
 import project.floe.domain.record.dto.response.UpdateRecordResponse;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
+import project.floe.global.error.ErrorCode;
+import project.floe.global.error.exception.EmptyResultException;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
@@ -50,6 +52,7 @@ public class RecordController {
     @GetMapping
     public ResponseEntity<ResultResponse> getRecords(@PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
         List<GetRecordResponse> response = recordService.findRecords(pageable);
+        if (response.isEmpty()) throw new EmptyResultException(ErrorCode.RECORD_NOT_FOUND_ERROR);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.Record_PAGING_GET_SUCCESS, response));
     }
 
