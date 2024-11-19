@@ -62,15 +62,25 @@ public class Record extends BaseEntity {
     @Embedded
     private RecordTags recordTags;
 
+    public void updateRecord(String title, String content, RecordType recordType, Tags tags, List<Media> medias){
+        this.title = title;
+        this.content = content;
+        this.recordType = recordType;
+        recordTags.clear();
+        addTag(tags);
+        addMedia(medias);
+    }
+
     public void addTag(Tags tags) {
         recordTags.add(this, tags);
     }
 
-    public List<String> getTagNames() {
-        return this.recordTags.getTagNames();
+    public void addMedia(List<Media> updatedMedias){
+        medias.clear();
+        medias.addAll(updatedMedias);
     }
 
-    public List<Long> getTagIds() {
-        return this.recordTags.getTagIds();
+    public List<String> getTagNames() {
+        return this.recordTags.getTagNames();
     }
 }
