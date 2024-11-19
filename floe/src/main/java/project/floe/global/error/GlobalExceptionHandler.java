@@ -10,6 +10,7 @@ import project.floe.global.error.exception.BusinessException;
 import project.floe.global.error.exception.EmptyResultException;
 import project.floe.global.error.exception.S3Exception;
 
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -60,3 +61,4 @@ public class GlobalExceptionHandler {
                 .build();
     }
 }
+
