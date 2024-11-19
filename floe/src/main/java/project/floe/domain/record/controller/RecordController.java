@@ -66,7 +66,7 @@ public class RecordController {
 
     @PutMapping("/{recordId}")
     public ResponseEntity<ResultResponse> updateRecord(@PathVariable("recordId") Long recordId,
-                                                       @RequestPart("updateDto") UpdateRecordRequest updateDto,
+                                                       @Validated @RequestPart("updateDto") UpdateRecordRequest updateDto,
                                                        @RequestPart("updateFiles") List<MultipartFile> updateFiles) {
         Record modifiedRecord = recordService.modifyRecord(recordId, updateDto, updateFiles);
         UpdateRecordResponse response = UpdateRecordResponse.from(modifiedRecord);
