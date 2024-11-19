@@ -63,7 +63,7 @@ public class MediaService {
         List<Media> updatedMedias = new ArrayList<>();
         Iterator<MultipartFile> newFilesIterator = getIterator(newFiles);
         for (UpdateMediaRequest media : existingFiles) {
-            if (media == null) {
+            if (media==null) {
                 addNewMedia(record, newFilesIterator, updatedMedias);
                 continue;
             }
@@ -74,7 +74,7 @@ public class MediaService {
         return updatedMedias;
     }
 
-    public void removeNotUseFiles(List<Media> existedFiles, List<Media> updatedFiles){
+    public void removeNotUseFiles(List<Media> existedFiles, List<Media> updatedFiles) {
         // updatedFiles의 Media ID 목록
         List<Long> updatedFilesIds = updatedFiles.stream()
                 .map(Media::getId)
@@ -89,7 +89,7 @@ public class MediaService {
 
     @Transactional
     private void deleteUnusedFiles(List<Media> filesToRemove) {
-        for (Media media: filesToRemove){
+        for (Media media : filesToRemove) {
             deleteFile(media.getMediaUrl());
             repository.deleteById(media.getId());
         }
