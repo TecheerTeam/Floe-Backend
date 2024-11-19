@@ -34,10 +34,4 @@ public class RecordTags {
         tags.getTags()
                 .forEach(tag -> value.add(new RecordTag(record, tag)));
     }
-
-    public List<Long> getTagIds(){
-        return value.stream()
-                .map(recordTag -> recordTag.getTag().getId())
-                .toList();
-    }
 }

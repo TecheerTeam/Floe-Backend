@@ -33,15 +33,4 @@ public class TagService {
         }
         return new Tags(newTags);
     }
-
-    public Tags findTagListByTagName(List<String> tagNames){
-        List<Tag> foundTags = tagNames.stream()
-                .map(this::findTagByTagName)
-                .toList();
-        return new Tags(foundTags);
-    }
-
-    public Tag findTagByTagName(String tagName){
-        return tagRepository.findTagByTagName(tagName);
-    }
 }

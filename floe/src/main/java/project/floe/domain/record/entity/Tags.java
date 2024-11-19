@@ -7,12 +7,6 @@ import lombok.Getter;
 public class Tags {
     private List<Tag> tags;
 
-    public List<Long> getTagIds() {
-        return tags.stream()
-                .map(Tag::getId)
-                .toList();
-    }
-
     public List<String> getTagNames(){
         return tags.stream()
                 .map(Tag::getTagName)

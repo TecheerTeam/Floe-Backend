@@ -6,6 +6,5 @@ import project.floe.domain.record.entity.Tag;
 
 public interface TagJpaRepository extends JpaRepository<Tag, Long> {
 
-    public Tag findTagByTagName(String tagName);
     public Optional<Tag> findByTagName(String tagName);
 }
