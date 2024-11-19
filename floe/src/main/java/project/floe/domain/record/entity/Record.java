@@ -62,7 +62,7 @@ public class Record extends BaseEntity {
     @Embedded
     private RecordTags recordTags;
 
-    public void updateRecord(String title, String content, RecordType recordType, Tags tags, List<Media> medias){
+    public void updateRecord(String title, String content, RecordType recordType, Tags tags, List<Media> medias) {
         this.title = title;
         this.content = content;
         this.recordType = recordType;
@@ -75,7 +75,13 @@ public class Record extends BaseEntity {
         recordTags.add(this, tags);
     }
 
-    public void addMedia(List<Media> updatedMedias){
+    public List<Long> getMediaIds(){
+        return medias.stream()
+                .map(Media::getId)
+                .toList();
+    }
+
+    public void addMedia(List<Media> updatedMedias) {
         medias.clear();
         medias.addAll(updatedMedias);
     }
