@@ -13,7 +13,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class RecordTags {
 
-    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecordTag> value;
 
     public RecordTags(){
