@@ -7,9 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import project.floe.domain.record.dto.request.UpdateRecordRequest;
 import project.floe.domain.record.dto.response.GetRecordResponse;
+import project.floe.domain.record.entity.Media;
 import project.floe.domain.record.entity.Record;
-import project.floe.domain.record.entity.RecordTag;
 import project.floe.domain.record.entity.Tags;
 import project.floe.domain.record.repository.RecordJpaRepository;
 import project.floe.global.error.ErrorCode;
@@ -49,4 +50,14 @@ public class RecordService {
         Page<Record> records = recordRepository.findAll(pageable);
         return GetRecordResponse.listOf(records).getContent();
     }
+
+    @Transactional
+    public Record modifyRecord(Long recordId, UpdateRecordRequest dto, List<MultipartFile> files){
+        Record findRecord = findRecordById(recordId);
+        List<Media> updatedMedias = mediaService.updateMedias(findRecord, dto.getMedias() ,files);
+        Tags updatedTags = tagService.createTags(dto.getTags());
+        findRecord.updateRecord(dto.getTitle(), dto.getContent(), dto.getRecordType(), updatedTags, updatedMedias);
+        return findRecord;
+    }
+
 }
