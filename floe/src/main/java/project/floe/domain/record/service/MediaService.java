@@ -9,7 +9,11 @@ import com.amazonaws.util.IOUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +21,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import project.floe.domain.record.dto.request.UpdateMediaRequest;
 import project.floe.domain.record.entity.Media;
 import project.floe.domain.record.repository.MediaJpaRepository;
 import project.floe.domain.record.entity.Record;
 import project.floe.global.error.ErrorCode;
+import project.floe.global.error.exception.BusinessException;
+import project.floe.global.error.exception.EmptyResultException;
 import project.floe.global.error.exception.S3Exception;
 
 @Service
@@ -28,6 +35,7 @@ import project.floe.global.error.exception.S3Exception;
 @RequiredArgsConstructor
 public class MediaService {
 
+    public static final String KEY_SPLIT_PREFIX = ".com/";
     private final AmazonS3 amazonS3;
     private final MediaJpaRepository repository;
 
@@ -45,11 +53,84 @@ public class MediaService {
         }
     }
 
+    public Media findMediaById(Long mediaId) {
+        return repository.findById(mediaId)
+                .orElseThrow(() -> new EmptyResultException(ErrorCode.MEDIA_NOT_FOUND_ERROR));
+    }
+
     @Transactional
-    public void deleteFiles(List<Media> medias){
-        for (Media media : medias){
+    public List<Media> updateMedias(Record record, List<UpdateMediaRequest> existingFiles, List<MultipartFile> newFiles) {
+        List<Media> updatedMedias = new ArrayList<>();
+        Iterator<MultipartFile> newFilesIterator = getIterator(newFiles);
+        for (UpdateMediaRequest media : existingFiles) {
+            if (media == null) {
+                addNewMedia(record, newFilesIterator, updatedMedias);
+                continue;
+            }
+            updatedMedias.add(findMediaById(media.getMediaId()));
+        }
+        uploadRemainFiles(record, newFilesIterator, updatedMedias);
+        removeNotUseFiles(record.getMedias(), updatedMedias);
+        return updatedMedias;
+    }
+
+    public void removeNotUseFiles(List<Media> existedFiles, List<Media> updatedFiles){
+        // updatedFiles의 Media ID 목록
+        List<Long> updatedFilesIds = updatedFiles.stream()
+                .map(Media::getId)
+                .toList();
+
+        // existedFiles에 있는데 updatedFiles에 없는 Media 객체를 찾기
+        List<Media> filesToRemove = existedFiles.stream()
+                .filter(media -> !updatedFilesIds.contains(media.getId()))
+                .toList();
+        deleteUnusedFiles(filesToRemove);
+    }
+
+    @Transactional
+    private void deleteUnusedFiles(List<Media> filesToRemove) {
+        for (Media media: filesToRemove){
+            deleteFile(media.getMediaUrl());
+            repository.deleteById(media.getId());
+        }
+    }
+
+    private void uploadRemainFiles(Record record, Iterator<MultipartFile> newFilesIterator, List<Media> updatedMedias) {
+        while (newFilesIterator.hasNext()) {
+            String newMediaUrl = uploadToS3(newFilesIterator.next());
+            updatedMedias.add(Media.builder().record(record).mediaUrl(newMediaUrl).build());
+        }
+    }
+
+    private void addNewMedia(Record record, Iterator<MultipartFile> newFilesIterator, List<Media> updatedMedias) {
+        if (!newFilesIterator.hasNext()) {
+            throw new BusinessException(ErrorCode.UPDATE_FILE_SEQUENCE_MISMATCH);
+        }
+        String newMediaUrl = uploadToS3(newFilesIterator.next());
+        updatedMedias.add(Media.builder().record(record).mediaUrl(newMediaUrl).build());
+    }
+
+    private static Iterator<MultipartFile> getIterator(List<MultipartFile> newFiles) {
+        Iterator<MultipartFile> newFilesIterator = Optional.ofNullable(newFiles)
+                .map(List::iterator)
+                .orElse(Collections.emptyIterator());
+        return newFilesIterator;
+    }
+
+    public void deleteFiles(List<Media> medias) {
+        for (Media media : medias) {
             deleteFile(media.getMediaUrl());
         }
+    }
+
+    public void deleteFile(String mediaUrl) {
+        String key = extractKey(mediaUrl);
+        amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
+    }
+
+    private String extractKey(String mediaUrl) {
+        String splitStr = KEY_SPLIT_PREFIX;
+        return mediaUrl.substring(mediaUrl.lastIndexOf(splitStr) + splitStr.length());
     }
 
     public String uploadToS3(MultipartFile media) {
@@ -71,16 +152,6 @@ public class MediaService {
             throw new S3Exception(ErrorCode.S3_UPLOAD_FAIL_ERROR);
         }
         return amazonS3.getUrl(bucketName, s3FileName).toString();
-    }
-
-    public void deleteFile(String mediaUrl){
-        String key = extractKey(mediaUrl);
-        amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
-    }
-
-    private String extractKey(String mediaUrl) {
-        String splitStr = ".com/";
-        return mediaUrl.substring(mediaUrl.lastIndexOf(splitStr) + splitStr.length());
     }
 
     private static byte[] converToByte(MultipartFile media) {
