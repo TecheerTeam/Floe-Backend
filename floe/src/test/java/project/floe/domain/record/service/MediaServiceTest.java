@@ -20,6 +20,7 @@ class MediaServiceTest {
     private Record newRecord;
     private MultipartFile file1;
     private MultipartFile file2;
+    
     @Autowired
     private MediaService mediaService;
     @Autowired
@@ -34,6 +35,7 @@ class MediaServiceTest {
                 .recordType(RecordType.FLOE)
                 .build();
         recordJpaRepository.save(newRecord);
+
         // MockMultipartFile 생성
         file1 = new MockMultipartFile(
                 "files",                     // 필드 이름
@@ -54,11 +56,11 @@ class MediaServiceTest {
     @Transactional
     void uploadFilesTest() {
         // when
-        mediaService.uploadFiles(newRecord, List.of(file1,file2));
+        mediaService.uploadFiles(newRecord, List.of(file1, file2));
     }
 
     @Test
-    void uploadToS3Test(){
+    void uploadToS3Test() {
         // when
         String uploadedUrl = mediaService.uploadToS3(file1);
         // then
@@ -66,7 +68,7 @@ class MediaServiceTest {
     }
 
     @Test
-    void deleteFileTest(){
+    void deleteFileTest() {
         // given
         String uploadedUrl = mediaService.uploadToS3(file1);
 
