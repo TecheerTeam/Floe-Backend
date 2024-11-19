@@ -2,6 +2,7 @@ package project.floe.domain.record.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,7 @@ public class CreateRecordRequest {
     @NotBlank(message = "Record content cannot be blank")
     private String content;
 
-    @NotEmpty(message = "RecordType cannot be empty")
+    @NotNull(message = "RecordType cannot be empty")
     private RecordType recordType;
 
     private List<String> tagNames;
