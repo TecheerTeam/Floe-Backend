@@ -1,5 +1,7 @@
 package project.floe.domain.record.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,10 +15,13 @@ import project.floe.domain.record.entity.RecordType;
 @AllArgsConstructor
 public class UpdateRecordRequest {
 
+        @NotBlank(message = "Record title cannot be blank")
         private String title;
 
+        @NotBlank(message = "Record content cannot be blank")
         private String content;
 
+        @NotEmpty(message = "RecordType cannot be empty")
         private RecordType recordType;
 
         private List<String> tags;

@@ -1,5 +1,7 @@
 package project.floe.domain.record.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,10 +18,18 @@ import project.floe.domain.record.entity.Tags;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CreateRecordRequest {
+
     private Long userId;
+
+    @NotBlank(message = "Record title cannot be blank")
     private String title;
+
+    @NotBlank(message = "Record content cannot be blank")
     private String content;
+
+    @NotEmpty(message = "RecordType cannot be empty")
     private RecordType recordType;
+
     private List<String> tagNames;
 
     public Record toEntity(){
