@@ -4,12 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.floe.domain.user.dto.request.SignUpRequestDto;
 import project.floe.domain.user.dto.request.UpdateUserRequestDto;
+import project.floe.entity.BaseEntity;
 
 
 @Getter
@@ -17,11 +19,12 @@ import project.floe.domain.user.dto.request.UpdateUserRequestDto;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
+    private String role;
     private String userId;
     private String password;
     private String name;
@@ -31,7 +34,7 @@ public class UserEntity {
     private String profileImage;
     private String field;
 
-    public UserEntity(SignUpRequestDto dto){
+    public User(SignUpRequestDto dto){
         this.userId = dto.getUserId();
         this.password = dto.getPassword();
         this.name = dto.getName();

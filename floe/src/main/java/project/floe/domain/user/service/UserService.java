@@ -6,7 +6,7 @@ import project.floe.domain.user.dto.request.SignUpRequestDto;
 import project.floe.domain.user.dto.request.UpdateUserRequestDto;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.dto.response.UpdateUserResponseDto;
-import project.floe.domain.user.entity.UserEntity;
+import project.floe.domain.user.entity.User;
 import project.floe.domain.user.repository.UserRepository;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.UserServiceException;
@@ -19,7 +19,7 @@ public class UserService {
 
     public GetUserResponseDto getUser(String userId) {
 
-        UserEntity findUser = userRepository.findByUserId(userId);
+        User findUser = userRepository.findByUserId(userId);
 
         if (findUser == null) {
             throw new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR);
@@ -29,7 +29,7 @@ public class UserService {
 
     public void signUp(SignUpRequestDto dto) {
 
-        UserEntity findUser = null;
+        User findUser = null;
 
         findUser = userRepository.findByUserId(dto.getUserId());
         if (findUser != null) {
@@ -41,13 +41,13 @@ public class UserService {
             throw new UserServiceException(ErrorCode.USER_EMAIL_DUPLICATION_ERROR);
         }
 
-        UserEntity userEntity = new UserEntity(dto);
-        userRepository.save(userEntity);
+        User user = new User(dto);
+        userRepository.save(user);
     }
 
     public void deleteUser(String userId) {
 
-        UserEntity findUser = userRepository.findByUserId(userId);
+        User findUser = userRepository.findByUserId(userId);
 
         if (findUser == null) {
             throw new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR);
@@ -60,7 +60,7 @@ public class UserService {
 
     public UpdateUserResponseDto updateUser(String userId, UpdateUserRequestDto dto) {
 
-        UserEntity findUser = userRepository.findByUserId(userId);
+        User findUser = userRepository.findByUserId(userId);
 
         if (findUser == null) {
             throw new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR);

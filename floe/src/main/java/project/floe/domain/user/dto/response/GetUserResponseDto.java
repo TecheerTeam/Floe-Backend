@@ -3,7 +3,7 @@ package project.floe.domain.user.dto.response;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import project.floe.domain.user.entity.UserEntity;
+import project.floe.domain.user.entity.User;
 
 @Getter
 @Setter
@@ -17,13 +17,13 @@ public class GetUserResponseDto {
     private String profileImage;
     private String field;
 
-    public GetUserResponseDto(UserEntity userEntity) {
-        this.userId = userEntity.getUserId();
-        this.name = userEntity.getName();
-        this.experience = userEntity.getExperience();
-        this.age = userEntity.getAge();
-        this.profileImage = userEntity.getProfileImage();
-        this.field = userEntity.getField();
+    public GetUserResponseDto(User user) {
+        this.userId = user.getUserId();
+        this.name = user.getName();
+        this.experience = user.getExperience();
+        this.age = user.getAge();
+        this.profileImage = user.getProfileImage();
+        this.field = user.getField();
     }
 
 }
