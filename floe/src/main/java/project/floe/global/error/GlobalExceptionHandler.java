@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.floe.global.error.exception.BusinessException;
+import project.floe.global.error.exception.UserServiceException;
 
 @Slf4j
 @RestControllerAdvice
@@ -28,6 +29,14 @@ public class GlobalExceptionHandler {
                         .businessCode(errorCode.getCode())
                         .build();
         log.warn(e.getMessage());
+        return ResponseEntity.status(errorCode.getStatus()).body(response);
+    }
+
+    @ExceptionHandler(UserServiceException.class)
+    public ResponseEntity<ErrorResponse> handleUserServiceException(UserServiceException e){
+        ErrorCode errorCode = e.getErrorCode();
+        ErrorResponse response = ErrorResponse.of(errorCode);
+        log.warn(errorCode.getMessage());
         return ResponseEntity.status(errorCode.getStatus()).body(response);
     }
 

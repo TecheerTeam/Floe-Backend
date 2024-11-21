@@ -16,7 +16,13 @@ public enum ErrorCode {
     ACCESS_INVALID_VALUE(400, "G003", "잘못된 접근"),
 
     // Record
-    RECORD_NOT_FOUND_ERROR(400,"R001","기록을 찾을 수 없음");
+    RECORD_NOT_FOUND_ERROR(400,"R001","기록을 찾을 수 없음"),
+
+    //User
+    USER_NOT_FOUND_ERROR(404,"U001","유저를 찾을 수 없음"),
+    USER_ID_DUPLICATION_ERROR(400,"U002","중복된 아이디"),
+    USER_EMAIL_DUPLICATION_ERROR(400,"U003","중복된 이메일")
+    ;
 
     private final int status;
     private final String code;
