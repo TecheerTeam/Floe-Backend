@@ -2,6 +2,9 @@ package project.floe.domain.user.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import jakarta.persistence.EntityManager;
+import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,6 +19,8 @@ public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     public void 유저조회성공_ByUserId(){
@@ -23,9 +28,10 @@ public class UserRepositoryTest {
         userRepository.save(user);
 
         String userId = user.getUserId();
-        User findUser = userRepository.findByUserId(userId);
+        Optional<User> findUser = userRepository.findByUserId(userId);
 
-        assertThat(findUser.getUserId()).isEqualTo(user.getUserId());
+        assertThat(findUser).isPresent();
+        assertThat(findUser.get().getUserId()).isEqualTo(user.getUserId());
     }
 
     @Test
@@ -34,9 +40,9 @@ public class UserRepositoryTest {
         userRepository.save(user);
 
         String userId = "noExistId";
-        User findUser = userRepository.findByUserId(userId);
+        Optional<User> findUser = userRepository.findByUserId(userId);
 
-        assertThat(findUser).isNull();
+        assertThat(findUser).isEmpty();
     }
 
     @Test
@@ -45,10 +51,10 @@ public class UserRepositoryTest {
         userRepository.save(user);
 
         User signUpUser = user();
-        User findUser = userRepository.findByUserId(signUpUser.getUserId());
+        Optional<User> findUser = userRepository.findByUserId(signUpUser.getUserId());
 
         assertThat(findUser).isNotNull();
-        assertThat(findUser.getUserId()).isEqualTo(signUpUser.getUserId());
+        assertThat(findUser.get().getUserId()).isEqualTo(signUpUser.getUserId());
     }
 
     @Test
@@ -57,10 +63,10 @@ public class UserRepositoryTest {
         userRepository.save(user);
 
         User signUpUser = user();
-        User findUser = userRepository.findByEmail(signUpUser.getEmail());
+        Optional<User> findUser = userRepository.findByEmail(signUpUser.getEmail());
 
         assertThat(findUser).isNotNull();
-        assertThat(findUser.getEmail()).isEqualTo(signUpUser.getEmail());
+        assertThat(findUser.get().getEmail()).isEqualTo(signUpUser.getEmail());
     }
 
     @Test
@@ -81,11 +87,11 @@ public class UserRepositoryTest {
 
        userRepository.delete(user);
 
-       User findUser = userRepository.findByUserId(user.getUserId());
-       assertThat(findUser).isNull();
+       Optional<User> findUser = userRepository.findByUserId(user.getUserId());
+       assertThat(findUser).isEmpty();
    }
 
     private User user(){
-        return new User(0L,"role","userId","password","name","email",1,20,"image","field");
+        return new User(null,"role","userId","password","name","email",1,20,"image","field");
     }
 }

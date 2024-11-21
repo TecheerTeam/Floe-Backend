@@ -9,6 +9,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,7 +34,7 @@ public class UserServiceTest {
     @Test
     public void 유저조회실패_존재하지않는유저(){
         String noExistUserId = "userId";
-        doReturn(null).when(userRepository).findByUserId(noExistUserId);
+        doReturn(Optional.empty()).when(userRepository).findByUserId(noExistUserId);
 
         UserServiceException response = assertThrows(UserServiceException.class,
                 () -> userService.getUser(noExistUserId));
@@ -44,7 +45,7 @@ public class UserServiceTest {
     @Test
     public void 유저조회성공_getUser(){
         User user = user();
-        doReturn(user).when(userRepository).findByUserId(user.getUserId());
+        doReturn(Optional.of(user)).when(userRepository).findByUserId(user.getUserId());
 
         GetUserResponseDto responseDto = userService.getUser(user.getUserId());
 
@@ -53,10 +54,10 @@ public class UserServiceTest {
 
     @Test
     public void 유저생성실패_아이디중복(){
-        String duplicateUserId = "userId";
+        User user = user();
         SignUpRequestDto dto = new SignUpRequestDto();
-        dto.setUserId(duplicateUserId);
-        doReturn(user()).when(userRepository).findByUserId(duplicateUserId);
+        dto.setUserId(user.getUserId());
+        doReturn(Optional.of(user)).when(userRepository).findByUserId(user.getUserId());
 
         UserServiceException response = assertThrows(UserServiceException.class,
                 () -> userService.signUp(dto));
@@ -66,11 +67,11 @@ public class UserServiceTest {
 
     @Test
     public void 유저생성실패_이메일중복(){
-        String duplicateEmail = "email";
+        User user = user();
         SignUpRequestDto dto = new SignUpRequestDto();
-        dto.setEmail(duplicateEmail);
-        doReturn(null).when(userRepository).findByUserId(dto.getUserId());
-        doReturn(user()).when(userRepository).findByEmail(duplicateEmail);
+        dto.setEmail(user.getEmail());
+        doReturn(Optional.empty()).when(userRepository).findByUserId(dto.getUserId());
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(user.getEmail());
 
         UserServiceException response = assertThrows(UserServiceException.class,
                 () -> userService.signUp(dto));
@@ -84,8 +85,8 @@ public class UserServiceTest {
         SignUpRequestDto dto = new SignUpRequestDto();
         dto.setUserId(user.getUserId());
         dto.setEmail(user.getEmail());
-        doReturn(null).when(userRepository).findByUserId(user.getUserId());
-        doReturn(null).when(userRepository).findByEmail(user.getEmail());
+        doReturn(Optional.empty()).when(userRepository).findByUserId(user.getUserId());
+        doReturn(Optional.empty()).when(userRepository).findByEmail(user.getEmail());
         doReturn(user).when(userRepository).save(any(User.class));
 
         userService.signUp(dto);
@@ -96,7 +97,7 @@ public class UserServiceTest {
     @Test
     public void 유저삭제성공(){
         User user = user();
-        doReturn(user).when(userRepository).findByUserId(user.getUserId());
+        doReturn(Optional.of(user)).when(userRepository).findByUserId(user.getUserId());
         doNothing().when(userRepository).delete(any(User.class));
 
         // 로그인 구현 후 요청한 유저가 삭제하려는 유저와 동일한지 확인 로직
@@ -109,7 +110,7 @@ public class UserServiceTest {
     public void 유저정보수정성공(){
         User user = user();
         UpdateUserRequestDto dto = new UpdateUserRequestDto();
-        doReturn(user).when(userRepository).findByUserId(user.getUserId());
+        doReturn(Optional.of(user)).when(userRepository).findByUserId(user.getUserId());
         doReturn(user).when(userRepository).save(user);
 
         // 로그인 구현 후 요청한 유저가 수정하려는 유저와 동일한지 확인 로직
@@ -119,6 +120,6 @@ public class UserServiceTest {
     }
 
     private User user(){
-        return new User(0L,"role","userId","password","name","email",1,20,"image","field");
+        return new User(null,"role","userId","password","name","email",1,20,"image","field");
     }
 }
