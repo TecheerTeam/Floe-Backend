@@ -39,10 +39,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmptyResultException.class)
-    protected ResponseEntity<ErrorResponse> handleS3Exception(EmptyResultException e) {
+    protected ResponseEntity<ErrorResponse> handleEmptyResultException(EmptyResultException e) {
         final ErrorCode errorCode = e.getErrorCode();
         final ErrorResponse response = makeErrorResponse(errorCode);
         log.error(e.getMessage());
+        return ResponseEntity.status(errorCode.getStatus()).body(response);
+    }
 
     @ExceptionHandler(UserServiceException.class)
     public ResponseEntity<ErrorResponse> handleUserServiceException(UserServiceException e){
