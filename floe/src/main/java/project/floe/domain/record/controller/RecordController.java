@@ -3,6 +3,7 @@ package project.floe.domain.record.controller;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.dto.request.CreateRecordRequest;
-import project.floe.domain.record.dto.request.UpdateMediaRequest;
 import project.floe.domain.record.dto.request.UpdateRecordRequest;
 import project.floe.domain.record.dto.response.CreateRecordResponse;
 import project.floe.domain.record.dto.response.GetDetailRecordResponse;
@@ -51,7 +51,7 @@ public class RecordController {
 
     @GetMapping
     public ResponseEntity<ResultResponse> getRecords(@PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
-        List<GetRecordResponse> response = recordService.findRecords(pageable);
+        Page<GetRecordResponse> response = recordService.findRecords(pageable);
         if (response.isEmpty()) throw new EmptyResultException(ErrorCode.RECORD_NOT_FOUND_ERROR);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.Record_PAGING_GET_SUCCESS, response));
     }

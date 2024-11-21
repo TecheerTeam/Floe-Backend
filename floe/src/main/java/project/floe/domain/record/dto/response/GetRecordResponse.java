@@ -48,4 +48,5 @@ public class GetRecordResponse {
     public static Page<GetRecordResponse> listOf(Page<Record> records) {
         return records.map(GetRecordResponse::from);
     }
+
 }

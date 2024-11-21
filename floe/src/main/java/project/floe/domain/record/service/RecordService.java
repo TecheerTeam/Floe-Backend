@@ -51,9 +51,9 @@ public class RecordService {
                 .orElseThrow(() -> new EmptyResultException(ErrorCode.RECORD_NOT_FOUND_ERROR));
     }
 
-    public List<GetRecordResponse> findRecords(Pageable pageable) {
+    public Page<GetRecordResponse> findRecords(Pageable pageable) {
         Page<Record> records = recordRepository.findAll(pageable);
-        return GetRecordResponse.listOf(records).getContent();
+        return GetRecordResponse.listOf(records);
     }
 
     @Transactional

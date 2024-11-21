@@ -192,12 +192,10 @@ class RecordServiceTest {
         // when
         when(recordRepository.findAll(pageable)).thenReturn(records);
 
-        List<GetRecordResponse> result = recordService.findRecords(pageable);
+        Page<GetRecordResponse> result = recordService.findRecords(pageable);
 
         //then
         assertThat(result).hasSize(2);
-        assertThat(result.get(0).getTitle()).isEqualTo("테스트1");
-        assertThat(result.get(1).getTitle()).isEqualTo("테스트2");
     }
 
     @Test

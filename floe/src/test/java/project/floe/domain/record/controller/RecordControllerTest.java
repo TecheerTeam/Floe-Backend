@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -246,14 +248,17 @@ class RecordControllerTest {
         Long createdRecordId2 = recordService.createRecord(record2, List.of("Java", "Spring"), List.of(file1, file2));
         assertNotNull(createdRecordId2, "Record ID should not be null after creation");
 
-        List<GetRecordResponse> result = List.of(
+        List<GetRecordResponse> responseList = List.of(
                 GetRecordResponse.from(record1),
                 GetRecordResponse.from(record2)
         );
 
+        Pageable pageable = Pageable.unpaged();
+        Page<GetRecordResponse> result = new PageImpl<>(responseList, pageable, responseList.size());
+
         when(recordService.findRecords(any(Pageable.class))).thenReturn(result);
 
-        List<GetRecordResponse> actualRecords = recordService.findRecords(Pageable.unpaged());
+        Page<GetRecordResponse> actualRecords = recordService.findRecords(Pageable.unpaged());
         assertThat(actualRecords).hasSize(2);
 
         mockMvc.perform(
