@@ -15,7 +15,14 @@ public enum ResultCode {
     RECORD_DELETE_SUCCESS("R002", "기록 제거 성공"),
     DETAIL_RECORD_GET_SUCCESS("R003","개별 기록 조회 성공" ),
     Record_PAGING_GET_SUCCESS("R004","페이징된 전체 기록 조회 성공" ),
-    RECORD_MODIFY_SUCCESS("R005", "기록 수정 성공");
+    RECORD_MODIFY_SUCCESS("R005", "기록 수정 성공"),
+
+    // User
+    USER_CREATE_SUCCESS("U001","유저 생성 성공"),
+    USER_GET_SUCCESS("U002","유저 조회 성공"),
+    USER_DELETE_SUCCESS("U003","유저 삭제 성공"),
+    USER_UPDATE_SUCCESS("U004","유저정보 수정 성공"),
+    ;
 
     private final String code;
     private final String message;

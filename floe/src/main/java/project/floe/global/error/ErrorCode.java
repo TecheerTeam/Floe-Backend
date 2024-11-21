@@ -25,7 +25,13 @@ public enum ErrorCode {
     UPDATE_FILE_SEQUENCE_MISMATCH(400, "M005", "업데이트된 파일 순서와, 넘겨준 파일의 위치가 맞지 않음"),
     // Record
     RECORD_NOT_FOUND_ERROR(404, "R001", "기록을 찾을 수 없음"),
-    RECORD_DELETED_OR_NOT_EXIST(404,"R002" ,"이미 삭제되거나 존재하지 않는 기록" );
+    RECORD_DELETED_OR_NOT_EXIST(404,"R002" ,"이미 삭제되거나 존재하지 않는 기록" ),
+
+    //User
+    USER_NOT_FOUND_ERROR(404,"U001","유저를 찾을 수 없음"),
+    USER_ID_DUPLICATION_ERROR(400,"U002","중복된 아이디"),
+    USER_EMAIL_DUPLICATION_ERROR(400,"U003","중복된 이메일")
+    ;
 
     private final int status;
     private final String code;
