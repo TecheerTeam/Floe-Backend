@@ -19,7 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import project.floe.domain.user.dto.request.SignUpRequestDto;
+import project.floe.domain.user.dto.request.UserSignUpRequest;
 import project.floe.domain.user.dto.request.UpdateUserRequestDto;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.dto.response.UpdateUserResponseDto;
@@ -90,12 +90,12 @@ public class UserControllerTest {
         String url = "/api/v1/users";
         ErrorResponse expectedResponse = ErrorResponse.of(ErrorCode.USER_EMAIL_DUPLICATION_ERROR);
         doThrow(new UserServiceException(ErrorCode.USER_EMAIL_DUPLICATION_ERROR)).when(userService)
-                .signUp(any(SignUpRequestDto.class));
+                .signUp(any(UserSignUpRequest.class));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post(url)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(new SignUpRequestDto()))
+                                .content(objectMapper.writeValueAsString(new UserSignUpRequest()))
                                 .characterEncoding("UTF-8")
                 )
 
@@ -111,12 +111,12 @@ public class UserControllerTest {
         String url = "/api/v1/users";
         ErrorResponse expectedResponse = ErrorResponse.of(ErrorCode.USER_ID_DUPLICATION_ERROR);
         doThrow(new UserServiceException(ErrorCode.USER_ID_DUPLICATION_ERROR)).when(userService)
-                .signUp(any(SignUpRequestDto.class));
+                .signUp(any(UserSignUpRequest.class));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post(url)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(new SignUpRequestDto()))
+                                .content(objectMapper.writeValueAsString(new UserSignUpRequest()))
                                 .characterEncoding("UTF-8")
                 )
 
@@ -129,12 +129,12 @@ public class UserControllerTest {
     public void 유저생성성공() throws Exception {
         String url = "/api/v1/users";
         ResultResponse expectedResultResponse = ResultResponse.of(ResultCode.USER_CREATE_SUCCESS);
-        doNothing().when(userService).signUp(any(SignUpRequestDto.class));
+        doNothing().when(userService).signUp(any(UserSignUpRequest.class));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post(url)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(new SignUpRequestDto()))
+                                .content(objectMapper.writeValueAsString(new UserSignUpRequest()))
                                 .characterEncoding("UTF-8")
                 )
 

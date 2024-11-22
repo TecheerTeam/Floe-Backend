@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import project.floe.domain.user.dto.request.SignUpRequestDto;
+import project.floe.domain.user.dto.request.UserSignUpRequest;
 import project.floe.domain.user.dto.request.UpdateUserRequestDto;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.dto.response.UpdateUserResponseDto;
@@ -38,7 +38,7 @@ public class UserController {
 
     @PostMapping
     ResponseEntity<ResultResponse> signUp(
-            @RequestBody SignUpRequestDto dto
+            @RequestBody UserSignUpRequest dto
     ) {
         userService.signUp(dto);
         ResultResponse response = ResultResponse.of(ResultCode.USER_CREATE_SUCCESS);

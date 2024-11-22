@@ -15,7 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import project.floe.domain.user.dto.request.SignUpRequestDto;
+import project.floe.domain.user.dto.request.UserSignUpRequest;
 import project.floe.domain.user.dto.request.UpdateUserRequestDto;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.entity.User;
@@ -55,7 +55,7 @@ public class UserServiceTest {
     @Test
     public void 유저생성실패_아이디중복(){
         User user = user();
-        SignUpRequestDto dto = new SignUpRequestDto();
+        UserSignUpRequest dto = new UserSignUpRequest();
         dto.setUserId(user.getUserId());
         doReturn(Optional.of(user)).when(userRepository).findByUserId(user.getUserId());
 
@@ -68,7 +68,7 @@ public class UserServiceTest {
     @Test
     public void 유저생성실패_이메일중복(){
         User user = user();
-        SignUpRequestDto dto = new SignUpRequestDto();
+        UserSignUpRequest dto = new UserSignUpRequest();
         dto.setEmail(user.getEmail());
         doReturn(Optional.empty()).when(userRepository).findByUserId(dto.getUserId());
         doReturn(Optional.of(user)).when(userRepository).findByEmail(user.getEmail());
@@ -82,7 +82,7 @@ public class UserServiceTest {
     @Test
     public void 유저생성성공(){
         User user = user();
-        SignUpRequestDto dto = new SignUpRequestDto();
+        UserSignUpRequest dto = new UserSignUpRequest();
         dto.setUserId(user.getUserId());
         dto.setEmail(user.getEmail());
         doReturn(Optional.empty()).when(userRepository).findByUserId(user.getUserId());

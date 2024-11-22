@@ -5,7 +5,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.floe.domain.user.dto.request.SignUpRequestDto;
+import project.floe.domain.user.dto.request.UserSignUpRequest;
 import project.floe.domain.user.dto.request.UpdateUserRequestDto;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.dto.response.UpdateUserResponseDto;
@@ -28,7 +28,7 @@ public class UserService {
         return new GetUserResponseDto(findUser);
     }
 
-    public void signUp(SignUpRequestDto dto) {
+    public void signUp(UserSignUpRequest dto) {
 
         if (userRepository.findByUserId(dto.getUserId()).isPresent()) {
             throw new UserServiceException(ErrorCode.USER_ID_DUPLICATION_ERROR);

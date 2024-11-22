@@ -6,12 +6,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import project.floe.domain.user.dto.request.SignUpRequestDto;
+import project.floe.domain.user.dto.request.UserSignUpRequest;
 import project.floe.domain.user.dto.request.UpdateUserRequestDto;
 import project.floe.entity.BaseEntity;
 
@@ -38,7 +37,7 @@ public class User extends BaseEntity {
     private String profileImage;
     private String field;
 
-    public User(SignUpRequestDto dto){
+    public User(UserSignUpRequest dto){
         this.userId = dto.getUserId();
         this.password = dto.getPassword();
         this.name = dto.getName();
