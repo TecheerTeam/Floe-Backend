@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import project.floe.domain.user.entity.User;
+import project.floe.domain.user.entity.UserRole;
 
 
 @DataJpaTest
@@ -92,6 +93,6 @@ public class UserRepositoryTest {
    }
 
     private User user(){
-        return new User(null,"role","userId","password","name","email",1,20,"image","field");
+        return new User(null, UserRole.USER,"userId","password","name","email",1,20,"image","field");
     }
 }

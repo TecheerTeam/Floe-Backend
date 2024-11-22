@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
-import project.floe.domain.user.dto.request.UpdateUserRequestDto;
+import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.entity.BaseEntity;
 
 
@@ -48,7 +48,7 @@ public class User extends BaseEntity {
         this.field = dto.getField();
     }
 
-    public void update(UpdateUserRequestDto dto){
+    public void update(UserUpdateRequest dto){
         if(dto.getPassword() != null) this.password = dto.getPassword();
         if(dto.getName() != null)this.name = dto.getName();
         if(dto.getEmail() != null)this.email = dto.getEmail();

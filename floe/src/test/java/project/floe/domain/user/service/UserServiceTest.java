@@ -16,9 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
-import project.floe.domain.user.dto.request.UpdateUserRequestDto;
+import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.entity.User;
+import project.floe.domain.user.entity.UserRole;
 import project.floe.domain.user.repository.UserRepository;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.UserServiceException;
@@ -109,7 +110,7 @@ public class UserServiceTest {
     @Test
     public void 유저정보수정성공(){
         User user = user();
-        UpdateUserRequestDto dto = new UpdateUserRequestDto();
+        UserUpdateRequest dto = new UserUpdateRequest();
         doReturn(Optional.of(user)).when(userRepository).findByUserId(user.getUserId());
         doReturn(user).when(userRepository).save(user);
 
@@ -120,6 +121,6 @@ public class UserServiceTest {
     }
 
     private User user(){
-        return new User(null,"role","userId","password","name","email",1,20,"image","field");
+        return new User(null, UserRole.USER,"userId","password","name","email",1,20,"image","field");
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
-import project.floe.domain.user.dto.request.UpdateUserRequestDto;
+import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.dto.response.UpdateUserResponseDto;
 import project.floe.domain.user.service.UserService;
@@ -57,7 +57,7 @@ public class UserController {
     @PatchMapping("/{userId}")
     ResponseEntity<ResultResponse> updateUser(
             @PathVariable("userId") String userId,
-            @RequestBody UpdateUserRequestDto dto
+            @RequestBody UserUpdateRequest dto
             ){
         UpdateUserResponseDto responseDto = userService.updateUser(userId, dto);
         ResultResponse response = ResultResponse.of(ResultCode.USER_UPDATE_SUCCESS,responseDto);

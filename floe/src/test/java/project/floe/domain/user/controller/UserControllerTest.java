@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
-import project.floe.domain.user.dto.request.UpdateUserRequestDto;
+import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.dto.response.UpdateUserResponseDto;
 import project.floe.domain.user.service.UserService;
@@ -164,15 +164,15 @@ public class UserControllerTest {
     public void 유저정보수정성공() throws Exception {
         String url = "/api/v1/users/{userId}";
         String pathVariable = "userId";
-        UpdateUserRequestDto updateUserRequestDto = new UpdateUserRequestDto();
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
         UpdateUserResponseDto updateUserResponseDto = new UpdateUserResponseDto();
         ResultResponse expectedResultResponse = ResultResponse.of(ResultCode.USER_UPDATE_SUCCESS);
-        doReturn(updateUserResponseDto).when(userService).updateUser(eq(pathVariable), any(UpdateUserRequestDto.class));
+        doReturn(updateUserResponseDto).when(userService).updateUser(eq(pathVariable), any(UserUpdateRequest.class));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.patch(url, pathVariable)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(updateUserRequestDto))
+                                .content(objectMapper.writeValueAsString(userUpdateRequest))
                                 .characterEncoding("UTF-8"))
 
                 .andExpect(status().isOk())
