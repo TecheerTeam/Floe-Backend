@@ -57,7 +57,7 @@ public class Record extends BaseEntity {
     private RecordType recordType;
 
     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Media> medias = new ArrayList<>();
+    private List<Media> medias;
 
     @Embedded
     private RecordTags recordTags;

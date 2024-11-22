@@ -29,5 +29,5 @@ public class Tag {
     private String tagName;
 
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
-    private Set<RecordTag> recordTags = new HashSet<>();
+    private Set<RecordTag> recordTags;
 }
