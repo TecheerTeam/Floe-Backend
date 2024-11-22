@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
-import project.floe.domain.user.dto.request.UpdateUserRequestDto;
+import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.dto.response.UpdateUserResponseDto;
 import project.floe.domain.user.entity.User;
@@ -53,7 +53,7 @@ public class UserService {
     }
 
     @Transactional
-    public UpdateUserResponseDto updateUser(String userId, UpdateUserRequestDto dto) {
+    public UpdateUserResponseDto updateUser(String userId, UserUpdateRequest dto) {
 
         User findUserById = userRepository.findByUserId(userId)
                 .orElseThrow(()-> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
