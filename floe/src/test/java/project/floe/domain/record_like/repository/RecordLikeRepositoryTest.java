@@ -1,13 +1,16 @@
 package project.floe.domain.record_like.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordTags;
 import project.floe.domain.record.entity.RecordType;
@@ -72,6 +75,14 @@ public class RecordLikeRepositoryTest {
         long count = recordLikeRepository.countByRecordId(record.getId());
 
         assertThat(count).isEqualTo(0);
+    }
+
+    @Test
+    public void 좋아요추가실패_중복시예외확인(){
+        recordLikeRepository.addLike(user.getId(), record.getId());
+
+        assertThrows(DataIntegrityViolationException.class,
+                ()->recordLikeRepository.addLike(user.getId(), record.getId()));
     }
 
 

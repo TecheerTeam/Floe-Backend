@@ -1,5 +1,6 @@
 package project.floe.domain.record_like.controller;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,22 +33,21 @@ public class RecordLikeControllerTest {
     private RecordLikeService recordLikeService;
 
     private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     public void init(){
         mockMvc = MockMvcBuilders.standaloneSetup(recordLikeController)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
-        objectMapper = new ObjectMapper();
     }
 
     @Test
     public void 좋아요수조회실패_존재하지않는기록()throws Exception{
         String url = "/api/v1/records/{recordId}/likes";
-        Long pathVariable = 0L;
+        Long pathVariable = 1L;
         ErrorResponse expectedResponse = ErrorResponse.of(ErrorCode.RECORD_NOT_FOUND_ERROR);
-        doThrow(new EmptyResultException(ErrorCode.RECORD_NOT_FOUND_ERROR)).when(recordLikeService).getRecordLikeCount(pathVariable);
+        doThrow(new EmptyResultException(ErrorCode.RECORD_NOT_FOUND_ERROR))
+                .when(recordLikeService).getRecordLikeCount(pathVariable);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(url,pathVariable)
@@ -60,10 +60,10 @@ public class RecordLikeControllerTest {
     @Test
     public void 좋아요수조회성공()throws Exception{
         String url = "/api/v1/records/{recordId}/likes";
-        Long pathVariable = 0L;
+        Long pathVariable = 1L;
         ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_LIKE_COUNT_GET_SUCCESS);
         GetRecordLikeCountResponseDto expectedDto = new GetRecordLikeCountResponseDto(1L);
-        doReturn(new GetRecordLikeCountResponseDto(1L)).when(recordLikeService).getRecordLikeCount(pathVariable);
+        doReturn(expectedDto).when(recordLikeService).getRecordLikeCount(pathVariable);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(url,pathVariable)
@@ -72,5 +72,38 @@ public class RecordLikeControllerTest {
                 .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
                 .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()))
                 .andExpect(jsonPath("$.data.count").value(expectedDto.getCount()));
+    }
+
+    @Test
+    public void 좋아요추가실패_중복()throws Exception{
+        String url = "/api/v1/records/{recordId}/likes";
+        Long pathVariable = 1L;
+        Long userId = 1L;
+        ErrorResponse expectedResponse = ErrorResponse.of(ErrorCode.RECORD_ALREADY_LIKED_ERROR);
+        doThrow(new EmptyResultException(ErrorCode.RECORD_ALREADY_LIKED_ERROR))
+                .when(recordLikeService).addRecordLike(userId,pathVariable);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post(url,pathVariable)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.businessCode").value(expectedResponse.getBusinessCode()))
+                .andExpect(jsonPath("$.errorMessage").value(expectedResponse.getErrorMessage()));
+    }
+
+    @Test
+    public void 좋아요추가성공()throws Exception{
+        String url = "/api/v1/records/{recordId}/likes";
+        Long pathVariable = 1L;
+        Long userId = 1L;
+        ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_LIKE_POST_SUCCESS);
+        doNothing().when(recordLikeService).addRecordLike(userId,pathVariable);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post(url,pathVariable)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
+                .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()));
     }
 }

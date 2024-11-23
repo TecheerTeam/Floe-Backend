@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.floe.domain.record_like.dto.response.GetRecordLikeCountResponseDto;
@@ -25,6 +26,17 @@ public class RecordLikeController {
     ) {
         GetRecordLikeCountResponseDto dto = recordLikeService.getRecordLikeCount(recordId);
         ResultResponse response = ResultResponse.of(ResultCode.RECORD_LIKE_COUNT_GET_SUCCESS, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{recordId}/likes")
+    public ResponseEntity<ResultResponse> addRecordLike(
+        @PathVariable("recordId") Long recordId
+    ){
+        // 로그인 구현 후 유저 정보 받기
+        Long userId = 1L;
+        recordLikeService.addRecordLike(userId,recordId);
+        ResultResponse response = ResultResponse.of(ResultCode.RECORD_LIKE_POST_SUCCESS);
         return ResponseEntity.ok(response);
     }
 }
