@@ -1,5 +1,6 @@
 package project.floe.domain.user.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class UserController {
 
     @PostMapping
     ResponseEntity<ResultResponse> signUp(
-            @RequestBody SignUpRequestDto dto
+            @RequestBody @Valid SignUpRequestDto dto
     ) {
         userService.signUp(dto);
         ResultResponse response = ResultResponse.of(ResultCode.USER_CREATE_SUCCESS);
