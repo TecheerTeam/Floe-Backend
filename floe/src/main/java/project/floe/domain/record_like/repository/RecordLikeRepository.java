@@ -9,7 +9,6 @@ import project.floe.domain.record_like.entity.RecordLike;
 
 @Repository
 public interface RecordLikeRepository extends JpaRepository<RecordLike, Long> {
-    boolean existsByRecordId(Long recordId);
 
     long countByRecordId(Long recordId);
 
