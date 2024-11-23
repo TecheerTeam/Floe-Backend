@@ -42,10 +42,10 @@ public class User extends BaseEntity {
     private String email;
 
     @Column(nullable = false)
-    private int experience;
+    private Integer experience;
 
     @Column(nullable = false)
-    private int age;
+    private Integer age;
 
     private String profileImage;
 
