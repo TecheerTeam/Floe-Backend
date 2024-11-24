@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.floe.domain.record_like.dto.response.GetRecordLikeCountResponseDto;
+import project.floe.domain.record_like.dto.response.GetRecordLikeListResponseDto;
 import project.floe.domain.record_like.service.RecordLikeService;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
@@ -49,6 +50,15 @@ public class RecordLikeController {
         Long userId = 1L;
         recordLikeService.deleteRecordLike(userId,recordId);
         ResultResponse response = ResultResponse.of(ResultCode.RECORD_LIKE_DELETE_SUCCESS);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{recordId}/like-list")
+    public ResponseEntity<ResultResponse> getRecordLikeList(
+            @PathVariable("recordId") Long recordId
+    ){
+        GetRecordLikeListResponseDto dto = recordLikeService.getRecordLikeList(recordId);
+        ResultResponse response = ResultResponse.of(ResultCode.RECORD_LIKE_LIST_GET_SUCCESS, dto);
         return ResponseEntity.ok(response);
     }
 }

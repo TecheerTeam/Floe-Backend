@@ -40,4 +40,9 @@ public class RecordLike {
     @JoinColumn(name = "record_id")
     private Record record;
 
+    public RecordLike(User user,Record record){
+        this.user = user;
+        this.record = record;
+    }
+
 }

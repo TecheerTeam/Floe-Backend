@@ -6,6 +6,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import project.floe.domain.record_like.dto.response.GetRecordLikeCountResponseDto;
+import project.floe.domain.record_like.dto.response.GetRecordLikeListResponseDto;
 import project.floe.domain.record_like.service.RecordLikeService;
+import project.floe.domain.user.entity.User;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.ErrorResponse;
 import project.floe.global.error.GlobalExceptionHandler;
@@ -122,5 +126,23 @@ public class RecordLikeControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.businessCode").value(expectedResponse.getBusinessCode()))
                 .andExpect(jsonPath("$.errorMessage").value(expectedResponse.getErrorMessage()));
+    }
+
+    @Test
+    public void 좋아요한유저목록조회()throws Exception{
+        String url = "/api/v1/records/{recordId}/like-list";
+        Long pathVariable = 1L;
+        List<User> userList = new ArrayList<>();
+        ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_LIKE_LIST_GET_SUCCESS);
+        GetRecordLikeListResponseDto expectedDto = new GetRecordLikeListResponseDto(userList);
+        doReturn(expectedDto).when(recordLikeService).getRecordLikeList(pathVariable);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get(url,pathVariable)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
+                .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()))
+                .andExpect(jsonPath("$.data.likeList").value(expectedDto.getLikeList()));
     }
 }

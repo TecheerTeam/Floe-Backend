@@ -3,6 +3,7 @@ package project.floe.domain.record_like.repository;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,8 @@ public class RecordLikeRepositoryTest {
     }
 
     @Test
-    public void 좋아요수조회_성공() {
-        RecordLike recordLike = new RecordLike(null, user, record);
+    public void 좋아요수조회() {
+        RecordLike recordLike = new RecordLike(user, record);
         recordLikeRepository.save(recordLike);
 
         long count = recordLikeRepository.countByRecordId(record.getId());
@@ -58,36 +59,35 @@ public class RecordLikeRepositoryTest {
     }
 
     @Test
-    public void 좋아요추가성공() {
-        recordLikeRepository.addLike(user.getId(), record.getId());
+    public void 좋아요추가() {
+        recordLikeRepository.save(new RecordLike(user, record));
 
-        long count = recordLikeRepository.countByRecordId(record.getId());
+        Optional<RecordLike> optionalRecordLike = recordLikeRepository.findByUserIdAndRecordId(user.getId(),
+                record.getId());
 
-        assertThat(count).isEqualTo(1);
+        assertThat(optionalRecordLike).isPresent();
     }
 
     @Test
-    public void 좋아요삭제성공() {
-        recordLikeRepository.addLike(user.getId(), record.getId());
+    public void 좋아요삭제() {
+        RecordLike recordLike = new RecordLike(user, record);
+        recordLikeRepository.save(recordLike);
 
-        int deleteCount = recordLikeRepository.deleteLike(user.getId(), record.getId());
+        recordLikeRepository.delete(recordLike);
+        Optional<RecordLike> optionalRecordLike = recordLikeRepository.findByUserIdAndRecordId(user.getId(),
+                record.getId());
 
-        assertThat(deleteCount).isEqualTo(1);
+        assertThat(optionalRecordLike).isEmpty();
     }
 
     @Test
-    public void 좋아요추가실패_중복시예외확인() {
-        recordLikeRepository.addLike(user.getId(), record.getId());
+    public void 좋아요중복() {
+        RecordLike recordLike = new RecordLike(user, record);
+        recordLikeRepository.save(recordLike);
 
-        assertThrows(DataIntegrityViolationException.class,
-                () -> recordLikeRepository.addLike(user.getId(), record.getId()));
-    }
+        assertThrows(DataIntegrityViolationException.class, () ->
+                recordLikeRepository.save(new RecordLike(user, record)));
 
-    @Test
-    public void 좋아요삭제실패_존재하지않음() {
-        int deleteCount = recordLikeRepository.deleteLike(user.getId(), record.getId());
-
-        assertThat(deleteCount).isEqualTo(0);
     }
 
 

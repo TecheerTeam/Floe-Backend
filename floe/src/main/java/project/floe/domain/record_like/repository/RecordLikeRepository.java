@@ -1,5 +1,7 @@
 package project.floe.domain.record_like.repository;
 
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,14 +14,7 @@ public interface RecordLikeRepository extends JpaRepository<RecordLike, Long> {
 
     long countByRecordId(Long recordId);
 
-    @Modifying
-    @Query(value = "INSERT INTO record_like(user_id, record_id) VALUES(:userId, :recordId)", nativeQuery = true)
-    void addLike(@Param("userId") Long userId, @Param("recordId") Long recordId);
+    List<RecordLike> findByRecordId(Long recordId);
 
-    @Modifying
-    @Query(value = "DELETE FROM record_like WHERE user_id = :userId AND record_id = :recordId", nativeQuery = true)
-    int deleteLike(@Param("userId") Long userId, @Param("recordId") Long recordId);
-
-    boolean existsByUserIdAndRecordId(Long userId, Long recordId);
-
+    Optional<RecordLike> findByUserIdAndRecordId(Long userId, Long recordId);
 }
