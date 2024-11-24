@@ -33,7 +33,8 @@ public enum ErrorCode {
     USER_EMAIL_DUPLICATION_ERROR(400,"U003","중복된 이메일"),
 
     // Record Like
-    RECORD_ALREADY_LIKED_ERROR(400,"RL01","이미 좋아요 했음")
+    RECORD_ALREADY_LIKED_ERROR(400,"RL01","이미 좋아요 한 기록"),
+    RECORD_LIKE_NOT_FOUNT_ERROR(404,"RL02","해당 기록에 좋아요를 하지 않음"),
     ;
 
     private final int status;
