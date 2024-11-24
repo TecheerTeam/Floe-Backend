@@ -27,7 +27,7 @@ public enum ResultCode {
     RECORD_LIKE_COUNT_GET_SUCCESS("RL01","기록 좋아요 개수 조회 성공"),
     RECORD_LIKE_POST_SUCCESS("RL02","기록 좋아요 추가 성공"),
     RECORD_LIKE_DELETE_SUCCESS("RL03","기록 좋아요 삭제 성공"),
-    RECORD_LIKE_LIST_GET_SUCCESS("RL03","기록 좋아요 유저 목록 조회 성공")
+    RECORD_LIKE_LIST_GET_SUCCESS("RL04","기록 좋아요 유저 목록 조회 성공")
     ;
 
     private final String code;
