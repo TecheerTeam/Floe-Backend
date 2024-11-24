@@ -8,7 +8,7 @@ import project.floe.domain.record.service.RecordService;
 import project.floe.domain.record_like.dto.response.GetRecordLikeCountResponseDto;
 import project.floe.domain.record_like.repository.RecordLikeRepository;
 import project.floe.global.error.ErrorCode;
-import project.floe.global.error.exception.EmptyResultException;
+import project.floe.global.error.exception.BusinessException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,11 +23,18 @@ public class RecordLikeService {
         return new GetRecordLikeCountResponseDto(count);
     }
 
-    public void addRecordLike(Long userId, Long recordId){
-        try{
+    public void addRecordLike(Long userId, Long recordId) {
+        try {
             recordLikeRepository.addLike(userId, recordId);
-        }catch (DataIntegrityViolationException e){
-            throw new EmptyResultException(ErrorCode.RECORD_ALREADY_LIKED_ERROR);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException(ErrorCode.RECORD_ALREADY_LIKED_ERROR);
+        }
+    }
+
+    public void deleteRecordLike(Long userId, Long recordId){
+        int count = recordLikeRepository.deleteLike(userId, recordId);
+        if(count == 0){
+            throw new BusinessException(ErrorCode.RECORD_LIKE_NOT_FOUNT_ERROR);
         }
     }
 }

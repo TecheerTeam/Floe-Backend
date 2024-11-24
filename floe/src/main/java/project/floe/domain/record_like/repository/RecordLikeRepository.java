@@ -18,7 +18,7 @@ public interface RecordLikeRepository extends JpaRepository<RecordLike, Long> {
 
     @Modifying
     @Query(value = "DELETE FROM record_like WHERE user_id = :userId AND record_id = :recordId", nativeQuery = true)
-    void deleteLike(@Param("userId") Long userId, @Param("recordId") Long recordId);
+    int deleteLike(@Param("userId") Long userId, @Param("recordId") Long recordId);
 
     boolean existsByUserIdAndRecordId(Long userId, Long recordId);
 

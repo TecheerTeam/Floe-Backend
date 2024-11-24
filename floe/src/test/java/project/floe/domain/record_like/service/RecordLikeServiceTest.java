@@ -18,6 +18,7 @@ import project.floe.domain.record.service.RecordService;
 import project.floe.domain.record_like.dto.response.GetRecordLikeCountResponseDto;
 import project.floe.domain.record_like.repository.RecordLikeRepository;
 import project.floe.global.error.ErrorCode;
+import project.floe.global.error.exception.BusinessException;
 import project.floe.global.error.exception.EmptyResultException;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,11 +62,12 @@ public class RecordLikeServiceTest {
         doThrow(new DataIntegrityViolationException(""))
                 .when(recordLikeRepository).addLike(userId,recordId);
 
-        EmptyResultException response = assertThrows(EmptyResultException.class,
+        BusinessException response = assertThrows(BusinessException.class,
                 () -> recordLikeService.addRecordLike(userId, recordId));
 
         assertThat(response.getErrorCode()).isEqualTo(ErrorCode.RECORD_ALREADY_LIKED_ERROR);
     }
+
 
     @Test
     public void 좋아요추가성공(){
@@ -76,5 +78,28 @@ public class RecordLikeServiceTest {
         recordLikeService.addRecordLike(userId,recordId);
 
         verify(recordLikeRepository,times(1)).addLike(userId,recordId);
+    }
+
+    @Test
+    public void 좋아요삭제성공(){
+        Long userId = 1L;
+        Long recordId = 1L;
+        doReturn(1).when(recordLikeRepository).deleteLike(userId,recordId);
+
+        recordLikeService.deleteRecordLike(userId,recordId);
+
+        verify(recordLikeRepository,times(1)).deleteLike(userId,recordId);
+    }
+
+    @Test
+    public void 좋아요삭제실패_좋아요하지않았음(){
+        Long userId = 1L;
+        Long recordId = 1L;
+        doReturn(0).when(recordLikeRepository).deleteLike(userId,recordId);
+
+        BusinessException response = assertThrows(BusinessException.class,
+                () -> recordLikeService.deleteRecordLike(userId, recordId));
+
+        assertThat(response.getErrorCode()).isEqualTo(ErrorCode.RECORD_LIKE_NOT_FOUNT_ERROR);
     }
 }
