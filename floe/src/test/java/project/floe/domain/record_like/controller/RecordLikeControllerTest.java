@@ -106,7 +106,7 @@ public class RecordLikeControllerTest {
         mockMvc.perform(
                         MockMvcRequestBuilders.post(url, pathVariable)
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
                 .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()));
     }
