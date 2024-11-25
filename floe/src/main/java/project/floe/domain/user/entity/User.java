@@ -6,19 +6,21 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
 import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.entity.BaseEntity;
 
 
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class User extends BaseEntity {
 
@@ -26,21 +28,43 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String userId; // 사용자 아이디
+    private String password; // 비밀번호
+    private String nickName; // 별명
+    private String email; // 사용자 이메일
+    private String profileImage;
+    private int experience; // 연차
+    private int age;
+    private String field;
+
+    private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
+
+    private String refreshToken; // 리프레시 토큰
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
-    private String userId;
-    private String password;
-    private String name;
-    private String email;
-    private int experience;
-    private int age;
-    private String profileImage;
-    private String field;
+
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType; // KAKAO, NAVER, GOOGLE, GITHUB
+
+    // 유저 권한 설정 메소드
+    public void authorizeUser() {
+        this.role = UserRole.USER;
+    }
+
+    // 비밀번호 암호화 메소드
+    public void passwordEncode(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
+    }
+
+    public void updateRefreshToken(String updateRefreshToken) {
+        this.refreshToken = updateRefreshToken;
+    }
 
     public User(UserSignUpRequest dto){
         this.userId = dto.getUserId();
         this.password = dto.getPassword();
-        this.name = dto.getName();
+        this.nickName = dto.getName();
         this.email = dto.getEmail();
         this.experience = dto.getExperience();
         this.age = dto.getAge();
@@ -50,7 +74,7 @@ public class User extends BaseEntity {
 
     public void update(UserUpdateRequest dto){
         if(dto.getPassword() != null) this.password = dto.getPassword();
-        if(dto.getName() != null)this.name = dto.getName();
+        if(dto.getName() != null)this.nickName = dto.getName();
         if(dto.getEmail() != null)this.email = dto.getEmail();
         if(dto.getExperience() != null)this.experience = dto.getExperience();
         if(dto.getAge() != null)this.age = dto.getAge();
