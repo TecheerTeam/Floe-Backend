@@ -62,15 +62,17 @@ public class User extends BaseEntity {
         this.refreshToken = updateRefreshToken;
     }
 
-    public User(UserSignUpRequest dto){
-        this.userId = dto.getUserId();
-        this.password = dto.getPassword();
-        this.nickName = dto.getNickName();
-        this.email = dto.getEmail();
-        this.experience = dto.getExperience();
-        this.age = dto.getAge();
-        this.profileImage = dto.getProfileImage();
-        this.field = dto.getField();
+    public static User from(UserSignUpRequest dto){
+        return User.builder()
+                .userId(dto.getUserId())
+                .password(dto.getPassword())
+                .nickName(dto.getNickName())
+                .email(dto.getEmail())
+                .experience(dto.getExperience())
+                .age(dto.getAge())
+                .field(dto.getField())
+                .role(UserRole.USER)
+                .build();
     }
 
     public void update(UserUpdateRequest dto){

@@ -3,6 +3,7 @@ package project.floe.domain.user.service;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
@@ -19,6 +20,7 @@ import project.floe.global.error.exception.UserServiceException;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public GetUserResponseDto getUser(String userId) {
 
@@ -37,7 +39,12 @@ public class UserService {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new UserServiceException(ErrorCode.USER_EMAIL_DUPLICATION_ERROR);
         }
-        User user = new User(dto);
+
+        if (userRepository.findByNickName(dto.getNickName()).isPresent()){
+            throw new UserServiceException(ErrorCode.USER_NICKNAME_DUPLICATION_ERROR);
+        }
+        User user = User.from(dto);
+        user.passwordEncode(passwordEncoder);
         userRepository.save(user);
     }
 
