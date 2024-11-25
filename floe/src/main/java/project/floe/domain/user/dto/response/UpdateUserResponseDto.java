@@ -17,7 +17,7 @@ public class UpdateUserResponseDto {
     private String field;
 
     public UpdateUserResponseDto(User user){
-        this.name = user.getName();
+        this.name = user.getNickName();
         this.email = user.getEmail();
         this.experience = user.getExperience();
         this.age = user.getAge();

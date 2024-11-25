@@ -19,7 +19,7 @@ public class GetUserResponseDto {
 
     public GetUserResponseDto(User user) {
         this.userId = user.getUserId();
-        this.name = user.getName();
+        this.name = user.getNickName();
         this.experience = user.getExperience();
         this.age = user.getAge();
         this.profileImage = user.getProfileImage();
