@@ -57,6 +57,7 @@ public class User extends BaseEntity {
         this.password = passwordEncoder.encode(this.password);
     }
 
+    // 리프레시 토큰 재발급 메소드
     public void updateRefreshToken(String updateRefreshToken) {
         this.refreshToken = updateRefreshToken;
     }
@@ -64,7 +65,7 @@ public class User extends BaseEntity {
     public User(UserSignUpRequest dto){
         this.userId = dto.getUserId();
         this.password = dto.getPassword();
-        this.nickName = dto.getName();
+        this.nickName = dto.getNickName();
         this.email = dto.getEmail();
         this.experience = dto.getExperience();
         this.age = dto.getAge();
@@ -74,7 +75,7 @@ public class User extends BaseEntity {
 
     public void update(UserUpdateRequest dto){
         if(dto.getPassword() != null) this.password = dto.getPassword();
-        if(dto.getName() != null)this.nickName = dto.getName();
+        if(dto.getNickName() != null)this.nickName = dto.getNickName();
         if(dto.getEmail() != null)this.email = dto.getEmail();
         if(dto.getExperience() != null)this.experience = dto.getExperience();
         if(dto.getAge() != null)this.age = dto.getAge();
