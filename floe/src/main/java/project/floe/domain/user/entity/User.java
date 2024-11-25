@@ -1,5 +1,6 @@
 package project.floe.domain.user.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,14 +25,31 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String role;
+
+    @Column(nullable = false)
     private String userId;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String email;
-    private int experience;
-    private int age;
+
+    @Column(nullable = false)
+    private Integer experience;
+
+    @Column(nullable = false)
+    private Integer age;
+
     private String profileImage;
+
+    @Column(nullable = false)
     private String field;
 
     public User(SignUpRequestDto dto){

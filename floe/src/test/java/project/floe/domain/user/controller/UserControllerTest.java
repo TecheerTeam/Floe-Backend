@@ -95,7 +95,7 @@ public class UserControllerTest {
         mockMvc.perform(
                         MockMvcRequestBuilders.post(url)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(new SignUpRequestDto()))
+                                .content(objectMapper.writeValueAsString(signUpRequestDto()))
                                 .characterEncoding("UTF-8")
                 )
 
@@ -116,7 +116,7 @@ public class UserControllerTest {
         mockMvc.perform(
                         MockMvcRequestBuilders.post(url)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(new SignUpRequestDto()))
+                                .content(objectMapper.writeValueAsString(signUpRequestDto()))
                                 .characterEncoding("UTF-8")
                 )
 
@@ -134,7 +134,7 @@ public class UserControllerTest {
         mockMvc.perform(
                         MockMvcRequestBuilders.post(url)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(new SignUpRequestDto()))
+                                .content(objectMapper.writeValueAsString(signUpRequestDto()))
                                 .characterEncoding("UTF-8")
                 )
 
@@ -182,5 +182,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.data.email").value(updateUserResponseDto.getEmail()));
     }
 
-
+    public SignUpRequestDto signUpRequestDto(){
+        return new SignUpRequestDto("userId","password","name","email@email.com",1,20,"","field");
+    }
 }
