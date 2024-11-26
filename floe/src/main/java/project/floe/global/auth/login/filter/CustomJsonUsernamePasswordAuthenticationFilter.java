@@ -1,4 +1,4 @@
-package project.floe.global.auth.jwt.filter;
+package project.floe.global.auth.login.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
