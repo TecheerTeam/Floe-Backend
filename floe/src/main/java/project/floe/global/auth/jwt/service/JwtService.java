@@ -1,4 +1,4 @@
-package project.floe.global.auth.jwt;
+package project.floe.global.auth.jwt.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -11,7 +11,6 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -43,13 +42,10 @@ public class JwtService {
     @Value("${jwt.refresh.header}")
     private String refreshHeader;
 
-    /**
-     * JWT의 Subject와 Claim으로 email 사용 -> 클레임의 name을 "email"으로 설정
-     * JWT의 헤더에 들어오는 값 : 'Authorization(Key) = Bearer {토큰} (Value)' 형식
-     */
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String EMAIL_CLAIM = "email";
+    private static final String AUTH_CLAIM = "auth";
     private static final String BEARER = "Bearer ";
 
     private final UserRepository userRepository;
@@ -60,9 +56,6 @@ public class JwtService {
         this.hashedSecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
-    /**
-     *   액세스, 리프레시 토큰 생성 로직 구현
-     */
     public String createAccessToken(String email){
         User accessUser = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR)
@@ -70,8 +63,8 @@ public class JwtService {
         UserRole userRole = accessUser.getRole();
         // 클레임에 sub, email, auth(role) 삽입
         Claims claims = Jwts.claims().setSubject(ACCESS_TOKEN_SUBJECT);
-        claims.put("email", String.valueOf(email));
-        claims.put("auth", userRole.name());
+        claims.put(EMAIL_CLAIM, String.valueOf(email));
+        claims.put(AUTH_CLAIM, userRole.name());
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -112,22 +105,12 @@ public class JwtService {
         log.info("Access Token, Refresh Token 헤더 설정 완료");
     }
 
-    /**
-     * 헤더에서 RefreshToken 추출
-     * 토큰 형식 : Bearer XXX에서 Bearer를 제외하고 순수 토큰만 가져오기 위해서
-     * 헤더를 가져온 후 "Bearer"를 삭제(""로 replace)
-     */
     public Optional<String> extractRefreshToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(refreshHeader))
                 .filter(refreshToken -> refreshToken.startsWith(BEARER))
                 .map(refreshToken -> refreshToken.replace(BEARER, ""));
     }
 
-    /**
-     * 헤더에서 AccessToken 추출
-     * 토큰 형식 : Bearer XXX에서 Bearer를 제외하고 순수 토큰만 가져오기 위해서
-     * 헤더를 가져온 후 "Bearer"를 삭제(""로 replace)
-     */
     public Optional<String> extractAccessToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(accessHeader))
                 .filter(refreshToken -> refreshToken.startsWith(BEARER))
@@ -149,7 +132,7 @@ public class JwtService {
                     .getBody();
 
             // "email" 클레임 가져오기
-            String email = claims.get("email", String.class);
+            String email = claims.get(EMAIL_CLAIM, String.class);
 
             return Optional.ofNullable(email);
         } catch (Exception e) {
@@ -158,23 +141,14 @@ public class JwtService {
         }
     }
 
-    /**
-     * AccessToken 헤더 설정
-     */
     public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
         response.setHeader(accessHeader, accessToken);
     }
 
-    /**
-     * RefreshToken 헤더 설정
-     */
     public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
         response.setHeader(refreshHeader, refreshToken);
     }
 
-    /**
-     * RefreshToken DB 저장(업데이트)
-     */
     public void updateRefreshToken(String email, String refreshToken) {
         userRepository.findByEmail(email)
                 .ifPresentOrElse(
