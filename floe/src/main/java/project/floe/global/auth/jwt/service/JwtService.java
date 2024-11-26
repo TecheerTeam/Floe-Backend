@@ -51,7 +51,7 @@ public class JwtService {
     private final UserRepository userRepository;
     private final Key hashedSecretKey;
 
-    public JwtService(UserRepository userRepository, Key hashedSecretKey) {
+    public JwtService(UserRepository userRepository, @Value("${jwt.secretKey}") String secretKey) {
         this.userRepository = userRepository;
         this.hashedSecretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
