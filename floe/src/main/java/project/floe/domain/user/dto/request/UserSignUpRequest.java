@@ -6,12 +6,10 @@ import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
-
 // 자체 로그인에 사용되는 dto
 public class UserSignUpRequest {
-    private String userId;
     private String password;
-    private String nickName;
+    private String nickname;
     private String email;
     private int experience;
     private int age;

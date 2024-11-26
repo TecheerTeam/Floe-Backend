@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserUpdateRequest {
     private String password;
-    private String nickName;
+    private String nickname;
     private String email;
     private Integer experience;
     private Integer age;

@@ -10,7 +10,6 @@ import project.floe.domain.user.entity.User;
 @NoArgsConstructor
 public class GetUserResponseDto {
 
-    private String userId;
     private String name;
     private int experience;
     private int age;
@@ -18,8 +17,7 @@ public class GetUserResponseDto {
     private String field;
 
     public GetUserResponseDto(User user) {
-        this.userId = user.getUserId();
-        this.name = user.getNickName();
+        this.name = user.getNickname();
         this.experience = user.getExperience();
         this.age = user.getAge();
         this.profileImage = user.getProfileImage();

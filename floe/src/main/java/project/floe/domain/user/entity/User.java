@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import project.floe.domain.user.dto.request.UserOAuthSignUpRequest;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
 import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.entity.BaseEntity;
@@ -37,7 +38,7 @@ public class User extends BaseEntity {
     private String password; // 비밀번호
 
     @Column(name = "nickname", nullable = true)
-    private String nickName; // 별명
+    private String nickname; // 별명
 
     @Column(name = "profile_image", nullable = true)
     private String profileImage;
@@ -78,10 +79,10 @@ public class User extends BaseEntity {
         this.refreshToken = updateRefreshToken;
     }
 
-    public static User from(UserSignUpRequest dto){
+    public static User from(UserSignUpRequest dto) {
         return User.builder()
                 .password(dto.getPassword())
-                .nickName(dto.getNickName())
+                .nickname(dto.getNickname())
                 .email(dto.getEmail())
                 .experience(dto.getExperience())
                 .age(dto.getAge())
@@ -90,13 +91,21 @@ public class User extends BaseEntity {
                 .build();
     }
 
-    public void update(UserUpdateRequest dto){
-        if(dto.getPassword() != null) this.password = dto.getPassword();
-        if(dto.getNickName() != null)this.nickName = dto.getNickName();
-        if(dto.getEmail() != null)this.email = dto.getEmail();
-        if(dto.getExperience() != null)this.experience = dto.getExperience();
-        if(dto.getAge() != null)this.age = dto.getAge();
-        if(dto.getProfileImage() != null)this.profileImage = dto.getProfileImage();
-        if(dto.getField() != null)this.field = dto.getField();
+    public void update(UserUpdateRequest dto) {
+        if (dto.getPassword()!=null) this.password = dto.getPassword();
+        if (dto.getNickname()!=null) this.nickname = dto.getNickname();
+        if (dto.getEmail()!=null) this.email = dto.getEmail();
+        if (dto.getExperience()!=null) this.experience = dto.getExperience();
+        if (dto.getAge()!=null) this.age = dto.getAge();
+        if (dto.getProfileImage()!=null) this.profileImage = dto.getProfileImage();
+        if (dto.getField()!=null) this.field = dto.getField();
+    }
+
+    public void oAuthSignUp(UserOAuthSignUpRequest dto) {
+        this.nickname = dto.getNickname();
+        this.experience = dto.getExperience();
+        this.age = dto.getAge();
+        this.field = dto.getField();
+        authorizeUser();
     }
 }
