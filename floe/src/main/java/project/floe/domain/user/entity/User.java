@@ -1,5 +1,6 @@
 package project.floe.domain.user.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,19 +27,34 @@ public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
-    private String userId; // 사용자 아이디
-    private String password; // 비밀번호
-    private String nickName; // 별명
+    @Column(name = "email", unique = true, nullable = false)
     private String email; // 사용자 이메일
+
+    @Column(name = "password", nullable = true)
+    private String password; // 비밀번호
+
+    @Column(name = "nickname", nullable = true)
+    private String nickName; // 별명
+
+    @Column(name = "profile_image", nullable = true)
     private String profileImage;
+
+    @Column(name = "experience", nullable = true)
     private int experience; // 연차
+
+    @Column(name = "age", nullable = true)
     private int age;
+
+    @Column(name = "field", nullable = true)
     private String field;
 
+    @Column(name = "social_id", nullable = true)
     private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
 
+    @Column(name = "refresh_token", nullable = true)
     private String refreshToken; // 리프레시 토큰
 
     @Enumerated(EnumType.STRING)
@@ -64,7 +80,6 @@ public class User extends BaseEntity {
 
     public static User from(UserSignUpRequest dto){
         return User.builder()
-                .userId(dto.getUserId())
                 .password(dto.getPassword())
                 .nickName(dto.getNickName())
                 .email(dto.getEmail())
