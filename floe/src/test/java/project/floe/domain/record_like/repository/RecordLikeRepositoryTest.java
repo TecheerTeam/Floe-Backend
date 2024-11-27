@@ -35,9 +35,10 @@ public class RecordLikeRepositoryTest {
 
     @BeforeEach
     public void init() {
+        user = User.builder().email("test@example.com").password("1234").nickname("test").build();
         record = Record.builder()
                 .id(null)
-                .user(User.builder().email("test@example.com").password("1234").nickname("test").build())
+                .user(user)
                 .title("테스트")
                 .content("테스트 입니다")
                 .recordType(RecordType.FLOE)
