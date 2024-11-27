@@ -6,7 +6,7 @@ import project.floe.domain.user.entity.SocialType;
 import project.floe.domain.user.entity.User;
 
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
