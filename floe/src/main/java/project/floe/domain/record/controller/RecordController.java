@@ -1,5 +1,6 @@
 package project.floe.domain.record.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +41,12 @@ public class RecordController {
     private final RecordService recordService;
 
     @PostMapping
-    public ResponseEntity<ResultResponse> createRecord(@Validated @RequestPart(value = "dto") CreateRecordRequest dto,
-                                                       @RequestPart(value = "files") List<MultipartFile> files) {
-        Record newRecord = dto.toEntity();
-        CreateRecordResponse response = CreateRecordResponse.from(recordService.createRecord(newRecord, dto.getTagNames(), files));
+    public ResponseEntity<ResultResponse> createRecord(
+            HttpServletRequest request,
+            @Validated @RequestPart(value = "dto") CreateRecordRequest dto,
+            @RequestPart(value = "files") List<MultipartFile> files) {
+
+        CreateRecordResponse response = CreateRecordResponse.from(recordService.createRecord(request, dto, files));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResultResponse.of(ResultCode.RECORD_CREATE_SUCCESS, response));
@@ -52,8 +55,7 @@ public class RecordController {
     @GetMapping
     public ResponseEntity<ResultResponse> getRecords(@PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
         Page<GetRecordResponse> response = recordService.findRecords(pageable);
-        if (response.isEmpty()) throw new EmptyResultException(ErrorCode.RECORD_NOT_FOUND_ERROR);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.Record_PAGING_GET_SUCCESS, response));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.RECORD_PAGING_GET_SUCCESS, response));
     }
 
     @GetMapping("/{recordId}")
@@ -77,7 +79,7 @@ public class RecordController {
     @DeleteMapping("/{recordId}")
     public ResponseEntity<ResultResponse> deleteRecord(@PathVariable("recordId") Long recordId) {
         recordService.deleteRecord(recordId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(ResultResponse.of(ResultCode.RECORD_DELETE_SUCCESS));
     }
 

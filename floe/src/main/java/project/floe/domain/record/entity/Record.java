@@ -6,9 +6,12 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import project.floe.domain.user.entity.User;
 import project.floe.entity.BaseEntity;
 
 @Entity
@@ -35,16 +39,9 @@ public class Record extends BaseEntity {
     @Column(name = "record_id")
     private Long id;
 
-    /*
-    게시글 작성자의 정보를 담는 필드
-    추후 User개발 완료시 해당 코드로 변경
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    */
-
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
 
     @Column(name = "title", nullable = false)
     private String title;
