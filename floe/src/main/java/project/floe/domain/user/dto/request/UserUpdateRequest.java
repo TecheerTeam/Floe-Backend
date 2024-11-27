@@ -12,9 +12,7 @@ import lombok.NoArgsConstructor;
 public class UserUpdateRequest {
     private String password;
     private String nickname;
-    private String email;
     private Integer experience;
     private Integer age;
-    private String profileImage;
     private String field;
 }
