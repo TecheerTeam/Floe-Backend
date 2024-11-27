@@ -28,11 +28,11 @@ public class UserRepositoryTest {
         User user = user();
         userRepository.save(user);
 
-        String userId = user.getUserId();
-        Optional<User> findUser = userRepository.findByUserId(userId);
+        String email = user.getEmail();
+        Optional<User> findUser = userRepository.findByEmail(email);
 
         assertThat(findUser).isPresent();
-        assertThat(findUser.get().getUserId()).isEqualTo(user.getUserId());
+        assertThat(findUser.get().getEmail()).isEqualTo(user.getEmail());
     }
 
     @Test
@@ -40,8 +40,8 @@ public class UserRepositoryTest {
         User user = user();
         userRepository.save(user);
 
-        String userId = "noExistId";
-        Optional<User> findUser = userRepository.findByUserId(userId);
+        String email = "noExistEmail@naver.com";
+        Optional<User> findUser = userRepository.findByEmail(email);
 
         assertThat(findUser).isEmpty();
     }
@@ -52,10 +52,10 @@ public class UserRepositoryTest {
         userRepository.save(user);
 
         User signUpUser = user();
-        Optional<User> findUser = userRepository.findByUserId(signUpUser.getUserId());
+        Optional<User> findUser = userRepository.findByEmail(signUpUser.getEmail());
 
         assertThat(findUser).isNotNull();
-        assertThat(findUser.get().getUserId()).isEqualTo(signUpUser.getUserId());
+        assertThat(findUser.get().getEmail()).isEqualTo(signUpUser.getEmail());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class UserRepositoryTest {
 
         assertThat(savedUser).isNotNull();
         assertThat(savedUser.getId()).isNotNull();
-        assertThat(savedUser.getUserId()).isEqualTo(user.getUserId());
+        assertThat(savedUser.getEmail()).isEqualTo(user.getEmail());
     }
 
    @Test
@@ -88,11 +88,19 @@ public class UserRepositoryTest {
 
        userRepository.delete(user);
 
-       Optional<User> findUser = userRepository.findByUserId(user.getUserId());
+       Optional<User> findUser = userRepository.findByEmail(user.getEmail());
        assertThat(findUser).isEmpty();
    }
 
     private User user(){
-        return new User(null, UserRole.USER,"userId","password","name","email",1,20,"image","field");
+        return User.builder()
+                .nickname("tester")
+                .role(UserRole.USER)
+                .email("test2@naver.com")
+                .password("password")
+                .age(23)
+                .experience(1)
+                .field("backend")
+                .build();
     }
 }
