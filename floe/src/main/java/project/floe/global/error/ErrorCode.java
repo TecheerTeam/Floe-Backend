@@ -1,6 +1,7 @@
 package project.floe.global.error;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -32,7 +33,10 @@ public enum ErrorCode {
     USER_ID_DUPLICATION_ERROR(400,"U002","중복된 아이디"),
     USER_EMAIL_DUPLICATION_ERROR(400,"U003","중복된 이메일"),
     USER_NICKNAME_DUPLICATION_ERROR(400, "U004", "중복된 닉네임" ),
-    EMAIL_NOT_FOUND_ERROR(400, "U005", "해당 이메일이 존재하지 않음");
+    EMAIL_NOT_FOUND_ERROR(400, "U005", "해당 이메일이 존재하지 않음"),
+
+    //Auth
+    TOKEN_ACCESS_NOT_EXIST(401, "A001","토큰을 찾을 수 없음" ),;
 
     private final int status;
     private final String code;
