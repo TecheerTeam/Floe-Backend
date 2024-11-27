@@ -1,7 +1,6 @@
 package project.floe.global.error;
 
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -36,7 +35,12 @@ public enum ErrorCode {
     EMAIL_NOT_FOUND_ERROR(400, "U005", "해당 이메일이 존재하지 않음"),
 
     //Auth
-    TOKEN_ACCESS_NOT_EXIST(401, "A001","토큰을 찾을 수 없음" ),;
+    TOKEN_ACCESS_NOT_EXIST(401, "A001","토큰을 찾을 수 없음" ),
+
+    // Record Like
+    RECORD_ALREADY_LIKED_ERROR(400,"RL01","이미 좋아요 한 기록"),
+    RECORD_LIKE_NOT_FOUNT_ERROR(404,"RL02","해당 기록에 좋아요를 하지 않음"),
+    ;
 
     private final int status;
     private final String code;

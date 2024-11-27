@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import project.floe.domain.user.dto.request.UserOAuthSignUpRequest;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
 import project.floe.domain.user.dto.request.UserUpdateRequest;

@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
-/**
- * {행위}_{목적어}_{성공여부} message 는 동사 명사형으로 마무리
- */
+/** {행위}_{목적어}_{성공여부} message 는 동사 명사형으로 마무리 */
 
 @Getter
 @AllArgsConstructor
@@ -26,7 +24,13 @@ public enum ResultCode {
     USER_UPDATE_SUCCESS("U004", "유저정보 수정 성공"),
     USER_OAUTH_SIGNUP_SUCCESS("U005", "소셜 로그인 유저 회원가입 성공"),
     USER_LOGIN_FAIL("U006", "로그인 실패"),
-    USER_PROFILE_IMAGE_UPDATE_SUCCESS("U007", "프로필 사진 업데이트 성공");
+    USER_PROFILE_IMAGE_UPDATE_SUCCESS("U007", "프로필 사진 업데이트 성공"),
+
+    // Record Like
+    RECORD_LIKE_COUNT_GET_SUCCESS("RL01","기록 좋아요 개수 조회 성공"),
+    RECORD_LIKE_POST_SUCCESS("RL02","기록 좋아요 추가 성공"),
+    RECORD_LIKE_DELETE_SUCCESS("RL03","기록 좋아요 삭제 성공"),
+    RECORD_LIKE_LIST_GET_SUCCESS("RL04","기록 좋아요 유저 목록 조회 성공");
 
     private final String code;
     private final String message;
