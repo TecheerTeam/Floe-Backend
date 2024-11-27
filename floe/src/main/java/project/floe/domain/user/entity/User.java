@@ -12,6 +12,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import project.floe.domain.user.dto.request.UserOAuthSignUpRequest;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
@@ -24,6 +27,8 @@ import project.floe.entity.BaseEntity;
 @Entity
 @Builder
 @AllArgsConstructor
+@SQLRestriction("is_deleted = false")
+@SQLDelete(sql = "UPDATE user SET is_deleted = true WHERE user_id = ?")
 public class User extends BaseEntity {
 
     @Id
@@ -34,7 +39,7 @@ public class User extends BaseEntity {
     @Column(name = "email", unique = true, nullable = false)
     private String email; // 사용자 이메일
 
-    @Column(name = "password", nullable = true)
+    @Column(name = "password", nullable = false)
     private String password; // 비밀번호
 
     @Column(name = "nickname", nullable = true)
@@ -70,8 +75,8 @@ public class User extends BaseEntity {
     }
 
     // 비밀번호 암호화 메소드
-    public void passwordEncode(PasswordEncoder passwordEncoder) {
-        this.password = passwordEncoder.encode(this.password);
+    public void passwordEncode(BCryptPasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
     }
 
     // 리프레시 토큰 재발급 메소드
@@ -91,13 +96,15 @@ public class User extends BaseEntity {
                 .build();
     }
 
+    public void updateProfileImage(String updatedUrl) {
+        this.profileImage = updatedUrl;
+    }
+
     public void update(UserUpdateRequest dto) {
         if (dto.getPassword()!=null) this.password = dto.getPassword();
         if (dto.getNickname()!=null) this.nickname = dto.getNickname();
-        if (dto.getEmail()!=null) this.email = dto.getEmail();
         if (dto.getExperience()!=null) this.experience = dto.getExperience();
         if (dto.getAge()!=null) this.age = dto.getAge();
-        if (dto.getProfileImage()!=null) this.profileImage = dto.getProfileImage();
         if (dto.getField()!=null) this.field = dto.getField();
     }
 
