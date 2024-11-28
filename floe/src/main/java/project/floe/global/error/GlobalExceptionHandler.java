@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.floe.global.error.exception.BusinessException;
+import project.floe.global.error.exception.CommentException;
 import project.floe.global.error.exception.EmptyResultException;
 import project.floe.global.error.exception.S3Exception;
 import project.floe.global.error.exception.UserServiceException;
@@ -14,7 +15,7 @@ import project.floe.global.error.exception.UserServiceException;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
+    
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error(e.getMessage(), e);
@@ -62,6 +63,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ErrorCode.INPUT_INVALID_VALUE.getStatus()).body(response);
     }
 
+    @ExceptionHandler(CommentException.class)
+    public ResponseEntity<ErrorResponse> handleCommentException(CommentException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        ErrorResponse response = ErrorResponse.of(errorCode);
+
+        log.warn(errorCode.getMessage());
+
+        return ResponseEntity.status(errorCode.getStatus()).body(response);
+    }
+}
+
     private ErrorResponse makeErrorResponse(ErrorCode errorCode) {
         return ErrorResponse.builder()
                 .errorMessage(errorCode.getMessage())
@@ -69,4 +81,5 @@ public class GlobalExceptionHandler {
                 .build();
     }
 }
+
 
