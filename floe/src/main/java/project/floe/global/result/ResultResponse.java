@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class ResultResponse {
-    
+
     private String code;
     private String message;
     private Object data;
