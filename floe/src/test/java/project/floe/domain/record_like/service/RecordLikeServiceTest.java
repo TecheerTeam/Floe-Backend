@@ -150,13 +150,14 @@ public class RecordLikeServiceTest {
     }
 
     public User user() {
-        return new User(null, "role", "userId", "password", "name", "email@email.com", 1, 20, "", "field");
+        return User.builder().email("test@example.com").password("1234").nickname("test").build();
+
     }
 
     public Record record() {
         return Record.builder()
                 .id(null)
-                .userId(0L)
+                .user(user())
                 .title("테스트")
                 .content("테스트 입니다")
                 .recordType(RecordType.FLOE)

@@ -1,5 +1,6 @@
 package project.floe.domain.record.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -8,14 +9,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import project.floe.domain.record.dto.request.CreateRecordRequest;
 import project.floe.domain.record.dto.request.UpdateRecordRequest;
 import project.floe.domain.record.dto.response.GetRecordResponse;
 import project.floe.domain.record.entity.Media;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.Tags;
 import project.floe.domain.record.repository.RecordJpaRepository;
+import project.floe.domain.user.entity.User;
+import project.floe.domain.user.repository.UserRepository;
+import project.floe.global.auth.jwt.service.JwtService;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.EmptyResultException;
+import project.floe.global.error.exception.UserServiceException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,12 +29,21 @@ public class RecordService {
 
     private final MediaService mediaService;
     private final RecordJpaRepository recordRepository;
+    private final UserRepository userRepository;
     private final TagService tagService;
+    private final JwtService jwtService;
 
     @Transactional
-    public Long createRecord(Record record, List<String> tagNames, List<MultipartFile> files) {
-        if (tagNames != null){
-            Tags findTags = tagService.createTags(tagNames);
+    public Long createRecord(HttpServletRequest request, CreateRecordRequest dto, List<MultipartFile> files) {
+        String userEmail = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST)
+        );
+        User findUser = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
+        Record record = dto.toEntity(findUser);
+
+        if (dto.getTagNames() != null){
+            Tags findTags = tagService.createTags(dto.getTagNames());
             record.addTag(findTags);
         }
         Record savedRecord = recordRepository.save(record);

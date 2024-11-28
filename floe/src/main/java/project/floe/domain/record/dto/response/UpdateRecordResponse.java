@@ -17,7 +17,7 @@ public class UpdateRecordResponse {
 
     private Long recordId;
 
-    private Long userId;
+    private GetRecordUserResponse user;
 
     private String title;
 
@@ -34,7 +34,7 @@ public class UpdateRecordResponse {
     public static UpdateRecordResponse from(Record record){
         return UpdateRecordResponse.builder()
                 .recordId(record.getId())
-                .userId(record.getUserId())
+                .user(GetRecordUserResponse.from(record.getUser()))
                 .title(record.getTitle())
                 .content(record.getContent())
                 .recordType(record.getRecordType())

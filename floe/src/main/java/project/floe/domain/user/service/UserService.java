@@ -1,75 +1,116 @@
 package project.floe.domain.user.service;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.floe.domain.user.dto.request.SignUpRequestDto;
-import project.floe.domain.user.dto.request.UpdateUserRequestDto;
+import org.springframework.web.multipart.MultipartFile;
+import project.floe.domain.record.service.MediaService;
+import project.floe.domain.user.dto.request.UserOAuthSignUpRequest;
+import project.floe.domain.user.dto.request.UserSignUpRequest;
+import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.dto.response.UpdateUserResponseDto;
 import project.floe.domain.user.entity.User;
 import project.floe.domain.user.repository.UserRepository;
+import project.floe.global.auth.jwt.service.JwtService;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.UserServiceException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final MediaService mediaService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public GetUserResponseDto getUser(String userId) {
+    @Transactional
+    public void updateProfileImage(HttpServletRequest request, MultipartFile profileImage) {
+        String userEmail = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST)
+        );
+        User user = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new UserServiceException(ErrorCode.EMAIL_NOT_FOUND_ERROR)
+        );
 
-        User findUser = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
-
-        return new GetUserResponseDto(findUser);
+        if (profileImage == null){ // 프로필 이미지 비우길 원한다면 비워줌
+            user.updateProfileImage(null);
+        }
+        else {
+            String updatedUrl = mediaService.uploadToS3(profileImage);
+            user.updateProfileImage(updatedUrl);
+        }
     }
 
-    public void signUp(SignUpRequestDto dto) {
+    public GetUserResponseDto getUser(HttpServletRequest request) {
+        String userEmail = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST)
+        );
+        User findUser = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
+        return GetUserResponseDto.from(findUser);
+    }
 
-        if (userRepository.findByUserId(dto.getUserId()).isPresent()) {
-            throw new UserServiceException(ErrorCode.USER_ID_DUPLICATION_ERROR);
-        }
+    @Transactional
+    public void oAuthSignUp(HttpServletRequest request, UserOAuthSignUpRequest dto) {
+        String userEmail = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST)
+        );
+        User user = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new UserServiceException(ErrorCode.EMAIL_NOT_FOUND_ERROR)
+        );
+
+        user.oAuthSignUp(dto);
+    }
+
+    @Transactional
+    public void signUp(UserSignUpRequest dto) {
 
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new UserServiceException(ErrorCode.USER_EMAIL_DUPLICATION_ERROR);
         }
-        User user = new User(dto);
+
+        if (userRepository.findByNickname(dto.getNickname()).isPresent()) {
+            throw new UserServiceException(ErrorCode.USER_NICKNAME_DUPLICATION_ERROR);
+        }
+        User user = User.from(dto);
+        user.passwordEncode(passwordEncoder);
         userRepository.save(user);
     }
 
     @Transactional
-    public void deleteUser(String userId) {
+    public void deleteUser(HttpServletRequest request) {
 
-        User findUser = userRepository.findByUserId(userId)
-                .orElseThrow(()->new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
+        String userEmail = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST)
+        );
 
-        // 로그인 구현 후 요청한 유저가 삭제하려는 유저와 동일한지 확인 로직
+        User findUser = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
+        log.info("delete User: {}", userEmail);
         userRepository.delete(findUser);
     }
 
     @Transactional
-    public UpdateUserResponseDto updateUser(String userId, UpdateUserRequestDto dto) {
+    public UpdateUserResponseDto updateUser(HttpServletRequest request, UserUpdateRequest dto) {
+        String userEmail = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST)
+        );
 
-        User findUserById = userRepository.findByUserId(userId)
-                .orElseThrow(()-> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
+        User findUser = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        if (dto.getEmail() != null) {
-            Optional<User> findUserByEmail = userRepository.findByEmail(dto.getEmail());
-
-            if (findUserByEmail.isPresent() && !userId.equals(findUserByEmail.get().getUserId())) {
-                throw new UserServiceException(ErrorCode.USER_EMAIL_DUPLICATION_ERROR);
-            }
-        }
-
-        // 로그인 구현 후 요청한 유저가 수정하려는 유저와 동일한지 확인 로직
-
-        findUserById.update(dto);
-        userRepository.save(findUserById);
-        return new UpdateUserResponseDto(findUserById);
+        findUser.update(dto);
+        userRepository.save(findUser);
+        return UpdateUserResponseDto.from(findUser);
     }
 }

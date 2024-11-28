@@ -2,74 +2,116 @@ package project.floe.domain.user.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import project.floe.domain.user.dto.request.SignUpRequestDto;
-import project.floe.domain.user.dto.request.UpdateUserRequestDto;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import project.floe.domain.user.dto.request.UserOAuthSignUpRequest;
+import project.floe.domain.user.dto.request.UserSignUpRequest;
+import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.entity.BaseEntity;
 
 
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@SQLRestriction("is_deleted = false")
+@SQLDelete(sql = "UPDATE user SET is_deleted = true WHERE user_id = ?")
 public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false)
-    private String role;
+    @Column(name = "email", unique = true, nullable = false)
+    private String email; // 사용자 이메일
 
-    @Column(nullable = false)
-    private String userId;
+    @Column(name = "password", nullable = false)
+    private String password; // 비밀번호
 
-    @Column(nullable = false)
-    private String password;
+    @Column(name = "nickname", nullable = true)
+    private String nickname; // 별명
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private Integer experience;
-
-    @Column(nullable = false)
-    private Integer age;
-
+    @Column(name = "profile_image", nullable = true)
     private String profileImage;
 
-    @Column(nullable = false)
+    @Column(name = "experience", nullable = true)
+    private int experience; // 연차
+
+    @Column(name = "age", nullable = true)
+    private int age;
+
+    @Column(name = "field", nullable = true)
     private String field;
 
-    public User(SignUpRequestDto dto){
-        this.userId = dto.getUserId();
-        this.password = dto.getPassword();
-        this.name = dto.getName();
-        this.email = dto.getEmail();
-        this.experience = dto.getExperience();
-        this.age = dto.getAge();
-        this.profileImage = dto.getProfileImage();
-        this.field = dto.getField();
+    @Column(name = "social_id", nullable = true)
+    private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
+
+    @Column(name = "refresh_token", nullable = true)
+    private String refreshToken; // 리프레시 토큰
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType; // KAKAO, NAVER, GOOGLE, GITHUB
+
+    // 유저 권한 설정 메소드
+    public void authorizeUser() {
+        this.role = UserRole.USER;
     }
 
-    public void update(UpdateUserRequestDto dto){
-        if(dto.getPassword() != null) this.password = dto.getPassword();
-        if(dto.getName() != null)this.name = dto.getName();
-        if(dto.getEmail() != null)this.email = dto.getEmail();
-        if(dto.getExperience() != null)this.experience = dto.getExperience();
-        if(dto.getAge() != null)this.age = dto.getAge();
-        if(dto.getProfileImage() != null)this.profileImage = dto.getProfileImage();
-        if(dto.getField() != null)this.field = dto.getField();
+    // 비밀번호 암호화 메소드
+    public void passwordEncode(BCryptPasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
+    }
+
+    // 리프레시 토큰 재발급 메소드
+    public void updateRefreshToken(String updateRefreshToken) {
+        this.refreshToken = updateRefreshToken;
+    }
+
+    public static User from(UserSignUpRequest dto) {
+        return User.builder()
+                .password(dto.getPassword())
+                .nickname(dto.getNickname())
+                .email(dto.getEmail())
+                .experience(dto.getExperience())
+                .age(dto.getAge())
+                .field(dto.getField())
+                .role(UserRole.USER)
+                .build();
+    }
+
+    public void updateProfileImage(String updatedUrl) {
+        this.profileImage = updatedUrl;
+    }
+
+    public void update(UserUpdateRequest dto) {
+        if (dto.getPassword()!=null) this.password = dto.getPassword();
+        if (dto.getNickname()!=null) this.nickname = dto.getNickname();
+        if (dto.getExperience()!=null) this.experience = dto.getExperience();
+        if (dto.getAge()!=null) this.age = dto.getAge();
+        if (dto.getField()!=null) this.field = dto.getField();
+    }
+
+    public void oAuthSignUp(UserOAuthSignUpRequest dto) {
+        this.nickname = dto.getNickname();
+        this.experience = dto.getExperience();
+        this.age = dto.getAge();
+        this.field = dto.getField();
+        authorizeUser();
     }
 }

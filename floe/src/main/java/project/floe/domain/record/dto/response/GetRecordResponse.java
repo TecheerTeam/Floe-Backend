@@ -18,7 +18,7 @@ public class GetRecordResponse {
 
     private Long recordId;
 
-    private Long userId;
+    private GetRecordUserResponse user;
 
     private String title;
 
@@ -35,7 +35,7 @@ public class GetRecordResponse {
     public static GetRecordResponse from(Record record){
         return GetRecordResponse.builder()
                 .recordId(record.getId())
-                .userId(record.getUserId())
+                .user(GetRecordUserResponse.from(record.getUser()))
                 .title(record.getTitle())
                 .content(record.getContent())
                 .recordType(record.getRecordType())

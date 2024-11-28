@@ -1,188 +1,128 @@
 package project.floe.domain.user.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import project.floe.domain.user.dto.request.SignUpRequestDto;
-import project.floe.domain.user.dto.request.UpdateUserRequestDto;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
+import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.dto.response.UpdateUserResponseDto;
 import project.floe.domain.user.service.UserService;
-import project.floe.global.error.ErrorCode;
-import project.floe.global.error.ErrorResponse;
-import project.floe.global.error.GlobalExceptionHandler;
-import project.floe.global.error.exception.UserServiceException;
 import project.floe.global.result.ResultCode;
-import project.floe.global.result.ResultResponse;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(UserController.class)
 public class UserControllerTest {
 
-    @InjectMocks
-    private UserController userController;
-    @Mock
+    public static final String BASE_PATH = "/api/v1/users";
+
+    @MockBean
     private UserService userService;
 
+    @Autowired
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper;
-
     @BeforeEach
-    public void init() {
-        mockMvc = MockMvcBuilders.standaloneSetup(userController)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
-        objectMapper = new ObjectMapper();
-    }
-
-    @Test
-    public void 유저조회실패_존재하지않는유저() throws Exception {
-        String url = "/api/v1/users/{noExistId}";
-        String pathVariable = "noExistId";
-        ErrorResponse expectedResponse = ErrorResponse.of(ErrorCode.USER_NOT_FOUND_ERROR);
-        doThrow(new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR)).when(userService).getUser(pathVariable);
-
-        mockMvc.perform(
-                        MockMvcRequestBuilders.get(url, pathVariable)
-                )
-
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.businessCode").value(expectedResponse.getBusinessCode()))
-                .andExpect(jsonPath("$.errorMessage").value(expectedResponse.getErrorMessage()));
+    void setUp(WebApplicationContext applicationContext) {
+        mockMvc =
+                MockMvcBuilders.webAppContextSetup(applicationContext)
+                        .addFilter(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true))
+                        .build();
     }
 
     @Test
     public void 유저조회성공() throws Exception {
-        String url = "/api/v1/users/{userId}";
-        String pathVariable = "userId";
-        GetUserResponseDto expectedResponseDto = new GetUserResponseDto();
-        ResultResponse expectedResultResponse = ResultResponse.of(ResultCode.USER_GET_SUCCESS);
-        doReturn(expectedResponseDto).when(userService).getUser(pathVariable);
+        // given
+        GetUserResponseDto mockResponse = GetUserResponseDto.builder()
+                .nickname("TestUser")
+                .email("test@example.com")
+                .build();
+        when(userService.getUser(any(HttpServletRequest.class))).thenReturn(mockResponse);
 
-        mockMvc.perform(
-                        MockMvcRequestBuilders.get(url, pathVariable)
-                )
-
+        // when & then
+        mockMvc.perform(get(BASE_PATH))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(expectedResultResponse.getCode()))
-                .andExpect(jsonPath("$.message").value(expectedResultResponse.getMessage()))
-                .andExpect(jsonPath("$.data.userId").value(expectedResponseDto.getUserId()));
+                .andExpect(jsonPath("$.code").value(ResultCode.USER_GET_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ResultCode.USER_GET_SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.data.nickname").value("TestUser"))
+                .andExpect(jsonPath("$.data.email").value("test@example.com"));
+
+        verify(userService).getUser(any(HttpServletRequest.class));
     }
 
     @Test
-    public void 유저생성실패_이메일중복() throws Exception {
-        String url = "/api/v1/users";
-        ErrorResponse expectedResponse = ErrorResponse.of(ErrorCode.USER_EMAIL_DUPLICATION_ERROR);
-        doThrow(new UserServiceException(ErrorCode.USER_EMAIL_DUPLICATION_ERROR)).when(userService)
-                .signUp(any(SignUpRequestDto.class));
+    void 유저삭제성공() throws Exception {
+        // given
+        doNothing().when(userService).deleteUser(any(HttpServletRequest.class));
 
-        mockMvc.perform(
-                        MockMvcRequestBuilders.post(url)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(signUpRequestDto()))
-                                .characterEncoding("UTF-8")
-                )
-
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.businessCode").value(expectedResponse.getBusinessCode()))
-                .andExpect(jsonPath("$.errorMessage").value(expectedResponse.getErrorMessage()));
-
-
-    }
-
-    @Test
-    public void 유저생성실패_아이디중복() throws Exception {
-        String url = "/api/v1/users";
-        ErrorResponse expectedResponse = ErrorResponse.of(ErrorCode.USER_ID_DUPLICATION_ERROR);
-        doThrow(new UserServiceException(ErrorCode.USER_ID_DUPLICATION_ERROR)).when(userService)
-                .signUp(any(SignUpRequestDto.class));
-
-        mockMvc.perform(
-                        MockMvcRequestBuilders.post(url)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(signUpRequestDto()))
-                                .characterEncoding("UTF-8")
-                )
-
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.businessCode").value(expectedResponse.getBusinessCode()))
-                .andExpect(jsonPath("$.errorMessage").value(expectedResponse.getErrorMessage()));
-    }
-
-    @Test
-    public void 유저생성성공() throws Exception {
-        String url = "/api/v1/users";
-        ResultResponse expectedResultResponse = ResultResponse.of(ResultCode.USER_CREATE_SUCCESS);
-        doNothing().when(userService).signUp(any(SignUpRequestDto.class));
-
-        mockMvc.perform(
-                        MockMvcRequestBuilders.post(url)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(signUpRequestDto()))
-                                .characterEncoding("UTF-8")
-                )
-
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.code").value(expectedResultResponse.getCode()))
-                .andExpect(jsonPath("$.message").value(expectedResultResponse.getMessage()))
-                .andReturn();
-    }
-
-    @Test
-    public void 유저삭제성공() throws Exception {
-        String url = "/api/v1/users/{userId}";
-        String pathVariable = "userId";
-        ResultResponse responseResultResponse = ResultResponse.of(ResultCode.USER_DELETE_SUCCESS);
-        doNothing().when(userService).deleteUser("userId");
-
-        mockMvc.perform(
-                        MockMvcRequestBuilders.delete(url, pathVariable)
-                )
-
+        // when & then
+        mockMvc.perform(delete(BASE_PATH))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(responseResultResponse.getCode()))
-                .andExpect(jsonPath("$.message").value(responseResultResponse.getMessage()));
+                .andExpect(jsonPath("$.code").value(ResultCode.USER_DELETE_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ResultCode.USER_DELETE_SUCCESS.getMessage()));
+
+        verify(userService).deleteUser(any(HttpServletRequest.class));
     }
 
     @Test
-    public void 유저정보수정성공() throws Exception {
-        String url = "/api/v1/users/{userId}";
-        String pathVariable = "userId";
-        UpdateUserRequestDto updateUserRequestDto = new UpdateUserRequestDto();
-        UpdateUserResponseDto updateUserResponseDto = new UpdateUserResponseDto();
-        ResultResponse expectedResultResponse = ResultResponse.of(ResultCode.USER_UPDATE_SUCCESS);
-        doReturn(updateUserResponseDto).when(userService).updateUser(eq(pathVariable), any(UpdateUserRequestDto.class));
+    void 유저정보수정성공() throws Exception {
+        // given
+        UserUpdateRequest dto = UserUpdateRequest.builder()
+                .nickname("newNickname")
+                .build();
+        UpdateUserResponseDto mockResponse = UpdateUserResponseDto.builder()
+                .nickname("newNickname")
+                .build();
+        when(userService.updateUser(any(HttpServletRequest.class), any(UserUpdateRequest.class))).thenReturn(mockResponse);
 
-        mockMvc.perform(
-                        MockMvcRequestBuilders.patch(url, pathVariable)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(updateUserRequestDto))
-                                .characterEncoding("UTF-8"))
-
+        // when & then
+        mockMvc.perform(patch(BASE_PATH + "/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(dto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(expectedResultResponse.getCode()))
-                .andExpect(jsonPath("$.message").value(expectedResultResponse.getMessage()))
-                .andExpect(jsonPath("$.data.name").value(updateUserResponseDto.getName()))
-                .andExpect(jsonPath("$.data.email").value(updateUserResponseDto.getEmail()));
+                .andExpect(jsonPath("$.code").value(ResultCode.USER_UPDATE_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ResultCode.USER_UPDATE_SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.data.nickname").value("newNickname"));
+
+        verify(userService).updateUser(any(HttpServletRequest.class), any(UserUpdateRequest.class));
     }
 
-    public SignUpRequestDto signUpRequestDto(){
-        return new SignUpRequestDto("userId","password","name","email@email.com",1,20,"","field");
+    @Test
+    void 유저프로필사진성공() throws Exception {
+        // given
+        MockMultipartFile profileImage = new MockMultipartFile("profileImage", "test.jpg", "image/jpeg", "testImage".getBytes());
+        doNothing().when(userService).updateProfileImage(any(HttpServletRequest.class), any());
+
+        // when & then
+        mockMvc.perform(MockMvcRequestBuilders.multipart(BASE_PATH + "/profile")
+                        .file(profileImage)
+                        .with(request -> {
+                            request.setMethod("PUT"); // multipart에서는 기본이 POST이므로 PUT으로 변경
+                            return request;
+                        })
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResultCode.USER_PROFILE_IMAGE_UPDATE_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ResultCode.USER_PROFILE_IMAGE_UPDATE_SUCCESS.getMessage()));
+
+        verify(userService).updateProfileImage(any(HttpServletRequest.class), any());
     }
 }

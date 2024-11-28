@@ -15,7 +15,7 @@ public class RecordLikeItem {
 
     public RecordLikeItem(User user) {
         this.userId = user.getId();
-        this.userName = user.getName();
+        this.userName = user.getNickname();
         this.profileImage = user.getProfileImage();
     }
 

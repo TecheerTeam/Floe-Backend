@@ -11,7 +11,7 @@ import project.floe.domain.record.entity.Tags;
 import project.floe.domain.record.repository.TagJpaRepository;
 
 @Service
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 public class TagService {
 
     private final TagJpaRepository tagRepository;
