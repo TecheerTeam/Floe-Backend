@@ -7,11 +7,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.floe.global.error.exception.BusinessException;
+import project.floe.global.error.exception.CommentException;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
+    
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error(e.getMessage(), e);
@@ -37,5 +38,15 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INPUT_INVALID_VALUE, e.getBindingResult());
         log.warn(e.getMessage());
         return ResponseEntity.status(ErrorCode.INPUT_INVALID_VALUE.getStatus()).body(response);
+    }
+
+    @ExceptionHandler(CommentException.class)
+    public ResponseEntity<ErrorResponse> handleCommentException(CommentException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        ErrorResponse response = ErrorResponse.of(errorCode);
+
+        log.warn(errorCode.getMessage());
+
+        return ResponseEntity.status(errorCode.getStatus()).body(response);
     }
 }
