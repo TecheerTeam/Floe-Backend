@@ -15,8 +15,7 @@ import project.floe.domain.comment.entity.Comment;
 public class GetCommentResponse {
 
     private Long commentId;
-    private Long recordId;
-    private Long userId;
+    private GetCommentUserResponse user;
     private String content;
     private Long parentId;
     private LocalDateTime createdAt;
@@ -24,10 +23,9 @@ public class GetCommentResponse {
     public static GetCommentResponse from(Comment comment) {
         return GetCommentResponse.builder()
                 .commentId(comment.getId())
-                .recordId(comment.getRecordId())
-                .userId(comment.getUserId())
+                .user(GetCommentUserResponse.from(comment.getUser()))
                 .content(comment.getContent())
-                .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
+                .parentId(comment.getParent() == null ? null : comment.getParent().getId())
                 .createdAt(comment.getCreatedAt())
                 .build();
     }
