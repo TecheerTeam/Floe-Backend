@@ -11,6 +11,6 @@ import project.floe.domain.comment.entity.Comment;
 public interface CommentJpaRepository extends JpaRepository<Comment, Long> {
     Page<Comment> findByRecordId(Long recordId, Pageable pageable);
 
-    @Query("SELECT c FROM Comment c WHERE c.id = :parentId")
+    @Query("SELECT c FROM Comment c WHERE c.id = :parentId AND (c.isDeleted = false OR c.isDeleted = true)")
     Optional<Comment> findByIdIncludingDeleted(@Param("parentId") Long parentId);
 }
