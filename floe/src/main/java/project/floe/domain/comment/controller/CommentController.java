@@ -1,5 +1,6 @@
 package project.floe.domain.comment.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,11 +31,12 @@ import project.floe.global.result.ResultResponse;
 public class CommentController {
 
     private final CommentService commentService;
-    
+
     @PostMapping
-    public ResponseEntity<ResultResponse> createComment(@Valid @RequestBody CreateCommentRequest request) {
-        commentService.createComment(request); // 생성만 수행, 반환값 없음
-        return ResponseEntity.status(HttpStatus.CREATED) // 201 Created 상태 반환
+    public ResponseEntity<ResultResponse> createComment(@Valid @RequestBody CreateCommentRequest request,
+                                                        HttpServletRequest httpServletRequest) {
+        commentService.createComment(request, httpServletRequest);
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResultResponse.of(ResultCode.COMMENT_CREATE_SUCCESS));
     }
 
