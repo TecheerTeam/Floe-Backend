@@ -66,9 +66,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CommentException.class)
     public ResponseEntity<ErrorResponse> handleCommentException(CommentException e) {
         ErrorCode errorCode = e.getErrorCode();
-        ErrorResponse response = ErrorResponse.of(errorCode);
+        ErrorResponse response = makeErrorResponse(errorCode);
 
-        log.warn(errorCode.getMessage());
+        log.warn(e.getMessage());
 
         return ResponseEntity.status(errorCode.getStatus()).body(response);
     }
