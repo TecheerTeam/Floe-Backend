@@ -8,12 +8,10 @@ import project.floe.global.error.ErrorCode;
 public class CommentException extends BusinessException {
 
     private final ErrorCode errorCode;
-    private final Long commentId;
 
     public CommentException(ErrorCode errorCode) {
         super(errorCode);
         this.errorCode = errorCode;
-        this.commentId = null;
     }
 
 }

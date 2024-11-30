@@ -15,7 +15,7 @@ import project.floe.global.error.exception.UserServiceException;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
+
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error(e.getMessage(), e);
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserServiceException.class)
-    public ResponseEntity<ErrorResponse> handleUserServiceException(UserServiceException e){
+    public ResponseEntity<ErrorResponse> handleUserServiceException(UserServiceException e) {
         ErrorCode errorCode = e.getErrorCode();
         ErrorResponse response = ErrorResponse.of(errorCode);
         log.warn(errorCode.getMessage());
@@ -66,13 +66,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CommentException.class)
     public ResponseEntity<ErrorResponse> handleCommentException(CommentException e) {
         ErrorCode errorCode = e.getErrorCode();
-        ErrorResponse response = ErrorResponse.of(errorCode);
+        ErrorResponse response = makeErrorResponse(errorCode);
 
-        log.warn(errorCode.getMessage());
+        log.warn(e.getMessage());
 
         return ResponseEntity.status(errorCode.getStatus()).body(response);
     }
-}
 
     private ErrorResponse makeErrorResponse(ErrorCode errorCode) {
         return ErrorResponse.builder()
@@ -81,5 +80,8 @@ public class GlobalExceptionHandler {
                 .build();
     }
 }
+
+
+
 
 

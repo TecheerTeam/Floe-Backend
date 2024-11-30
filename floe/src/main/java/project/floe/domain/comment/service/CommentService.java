@@ -1,5 +1,6 @@
 package project.floe.domain.comment.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,28 +11,37 @@ import project.floe.domain.comment.dto.request.UpdateCommentRequest;
 import project.floe.domain.comment.dto.response.GetCommentResponse;
 import project.floe.domain.comment.entity.Comment;
 import project.floe.domain.comment.repository.CommentJpaRepository;
+import project.floe.domain.record.entity.Record;
+import project.floe.domain.record.repository.RecordJpaRepository;
+import project.floe.domain.user.entity.User;
+import project.floe.domain.user.repository.UserRepository;
+import project.floe.global.auth.jwt.service.JwtService;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.CommentException;
+import project.floe.global.error.exception.EmptyResultException;
+import project.floe.global.error.exception.UserServiceException;
 
 @Service
 @RequiredArgsConstructor
 public class CommentService {
 
     private final CommentJpaRepository commentRepository;
-    /*
-    private final RecordRepository recordRepository;
+    private final JwtService jwtService;
+    private final RecordJpaRepository recordRepository;
     private final UserRepository userRepository;
-    */
 
     @Transactional
-    public void createComment(CreateCommentRequest request) {
-    /*
-    Record record = recordRepository.findById(request.getRecordId())
-            .orElseThrow(() -> new CommentException(ErrorCode.RECORD_NOT_FOUND_ERROR));
+    public void createComment(CreateCommentRequest request, HttpServletRequest httpServletRequest) {
 
-    User user = userRepository.findById(request.getUserId())
-            .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_VALIDATION_ERROR));
-    */
+        Record record = recordRepository.findById(request.getRecordId())
+                .orElseThrow(() -> new EmptyResultException(ErrorCode.RECORD_NOT_FOUND_ERROR));
+
+        String userEmail = jwtService.extractEmail(httpServletRequest).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST)
+        );
+
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
         Comment parent = null;
         if (request.getParentId() != null) {
@@ -42,7 +52,7 @@ public class CommentService {
             }
         }
 
-        Comment comment = Comment.create(request.getRecordId(), request.getUserId(), request.getContent(), parent);
+        Comment comment = Comment.create(record, user, request.getContent(), parent);
         commentRepository.save(comment);
     }
 
