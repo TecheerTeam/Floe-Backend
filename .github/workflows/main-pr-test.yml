@@ -27,5 +27,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Run Floe tests
-        run: ./gradlew clean test
+      - name: Run tests
+        run: |
+          cd floe
+          ./gradlew clean test
