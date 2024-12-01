@@ -55,8 +55,7 @@ public class CommentService {
         Comment comment = Comment.create(record, user, request.getContent(), parent);
         commentRepository.save(comment);
     }
-
-    @Transactional(readOnly = true)
+    
     public Page<GetCommentResponse> getCommentsByRecordId(Long recordId, Pageable pageable) {
         Page<Comment> comments = commentRepository.findByRecordId(recordId, pageable);
         return comments.map(GetCommentResponse::from);
