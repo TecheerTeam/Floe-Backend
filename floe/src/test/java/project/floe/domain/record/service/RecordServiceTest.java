@@ -1,14 +1,10 @@
 package project.floe.domain.record.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,16 +20,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.dto.request.CreateRecordRequest;
+import project.floe.domain.record.dto.request.SearchRecordRequest;
 import project.floe.domain.record.dto.request.UpdateMediaRequest;
 import project.floe.domain.record.dto.request.UpdateRecordRequest;
 import project.floe.domain.record.dto.response.GetRecordResponse;
@@ -44,10 +38,12 @@ import project.floe.domain.record.entity.RecordType;
 import project.floe.domain.record.entity.Tag;
 import project.floe.domain.record.entity.Tags;
 import project.floe.domain.record.repository.RecordJpaRepository;
+import project.floe.domain.record.repository.RecordTagJpaRepository;
 import project.floe.domain.user.entity.User;
 import project.floe.domain.user.repository.UserRepository;
 import project.floe.global.auth.jwt.service.JwtService;
 import project.floe.global.error.ErrorCode;
+import project.floe.global.error.exception.EmptyKeywordException;
 import project.floe.global.error.exception.EmptyResultException;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,6 +67,9 @@ class RecordServiceTest {
     @Mock
     private RecordJpaRepository recordRepository;
 
+    @Mock
+    private RecordTagJpaRepository recordTagRepository;
+
     @Test
     @DisplayName("레코드 생성 테스트")
     void 레코드_생성() {
@@ -93,7 +92,6 @@ class RecordServiceTest {
                 .recordType(RecordType.FLOE)
                 .tagNames(tagNames)
                 .build();
-
 
         List<MultipartFile> mockFiles = Arrays.asList(
                 new MockMultipartFile("file1", "test1.png", "image/png", new byte[]{}),
@@ -123,7 +121,7 @@ class RecordServiceTest {
 
     @Test
     @DisplayName("레코드 삭제 테스트")
-    void 레코드_삭제(){
+    void 레코드_삭제() {
         // Given
         Long recordId = 1L;
         Record mockRecord = Record.builder()
@@ -263,4 +261,112 @@ class RecordServiceTest {
         verify(mediaService).updateMedias(any(Record.class), anyList(), anyList());
         verify(tagService).createTags(anyList());
     }
+
+    @Test
+    @DisplayName("레코드 검색 테스트 - 태그 + 제목 검색")
+    void 레코드_검색_태그_제목() {
+
+        String email = "test@naver.com";
+        User mockUser = User.builder()
+                .email(email)
+                .build();
+
+        Tags updatedTags = new Tags(List.of(
+                Tag.builder().id(1L).tagName("Spring").build(),
+                Tag.builder().id(2L).tagName("JPA").build()
+        ));
+
+        Record record = Record.builder()
+                .medias(List.of(Media.builder().id(1L).build()))
+                .user(mockUser)
+                .title("test")
+                .content("test content")
+                .recordTags(new RecordTags())
+                .recordType(RecordType.FLOE)
+                .build();
+
+        // Tag를 Record에 추가
+        record.addTag(new Tags(updatedTags.getTags()));
+
+        when(recordTagRepository.findRecordsByTagsAndTitleAndRecordType(
+                updatedTags.getTagNames(), record.getTitle(), record.getRecordType(), PageRequest.of(0, 10)))
+                .thenReturn(new PageImpl<>(List.of(record)));
+        recordRepository.save(record);
+
+        // 검색 요청 객체 생성
+        SearchRecordRequest searchRequest = SearchRecordRequest.builder()
+                .title("test")
+                .recordType(RecordType.FLOE)
+                .tagNames(List.of("Spring", "JPA"))
+                .build();
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        // When: 검색 수행
+        Page<GetRecordResponse> result = recordService.searchRecords(pageable, searchRequest);
+
+        // Then: 결과 검증
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getContent().get(0).getTitle()).isEqualTo("test");
+        assertThat(result.getContent().get(0).getTags()).containsExactlyInAnyOrder("Spring", "JPA");
+
+    }
+
+    @Test
+    @DisplayName("레코드 검색 테스트 - 태그만 검색")
+    void 레코드_검색_태그() {
+        // given
+        SearchRecordRequest dto = SearchRecordRequest.builder()
+                .title("")
+                .recordType(RecordType.FLOE)
+                .tagNames(List.of("Spring", "JPA"))
+                .build();
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Record> recordsPage = new PageImpl<>(List.of());
+        when(recordTagRepository.findRecordsByTagsAndTitleAndRecordType(dto.getTagNames(), dto.getTitle(),
+                dto.getRecordType(), pageable))
+                .thenReturn(recordsPage);
+
+        Page<GetRecordResponse> responsePage = recordService.searchRecords(pageable, dto);
+
+        assertThat(responsePage.getTotalElements()).isGreaterThanOrEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("레코드 검색 테스트 - 제목만 검색")
+    void 레코드_검색_제목() {
+
+        SearchRecordRequest dto = SearchRecordRequest.builder()
+                .title("test")
+                .recordType(RecordType.FLOE)
+                .tagNames(new ArrayList<>())
+                .build();
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Record> recordsPage = new PageImpl<>(List.of());
+        when(recordRepository.findByTitleContainingAndRecordType(dto.getTitle(), dto.getRecordType(), pageable))
+                .thenReturn(recordsPage);
+
+        Page<GetRecordResponse> responsePage = recordService.searchRecords(pageable, dto);
+
+        assertThat(responsePage.getTotalElements()).isGreaterThanOrEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("레코드 검색 테스트 - 태그 + 제목 없이 검색")
+    void 레코드_검색_제목_검색어_없음() {
+
+        SearchRecordRequest dto = SearchRecordRequest.builder()
+                .title("")
+                .recordType(RecordType.FLOE)
+                .tagNames(new ArrayList<>())
+                .build();
+        EmptyKeywordException exception = assertThrows(EmptyKeywordException.class,
+                () -> recordService.searchRecords(PageRequest.of(0, 10), dto));
+
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.RECORD_SEARCH_EMPTY_ERROR);
+    }
+
+
 }
