@@ -34,6 +34,9 @@ public enum ErrorCode {
     RECORD_NOT_FOUND_ERROR(404, "R001", "기록을 찾을 수 없음"),
     RECORD_DELETED_OR_NOT_EXIST(404, "R002", "이미 삭제되거나 존재하지 않는 기록"),
 
+    // Record Search
+    RECORD_SEARCH_EMPTY_ERROR(400, "RS003", "검색어가 비어있음"),
+
     //User
     USER_NOT_FOUND_ERROR(404, "U001", "유저를 찾을 수 없음"),
     USER_ID_DUPLICATION_ERROR(400, "U002", "중복된 아이디"),
@@ -48,7 +51,7 @@ public enum ErrorCode {
     RECORD_ALREADY_LIKED_ERROR(400, "RL01", "이미 좋아요 한 기록"),
     RECORD_LIKE_NOT_FOUNT_ERROR(404, "RL02", "해당 기록에 좋아요를 하지 않음"),
     ;
-
+    
     private final int status;
     private final String code;
     private final String message;
