@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.floe.global.error.exception.BusinessException;
 import project.floe.global.error.exception.CommentException;
+import project.floe.global.error.exception.EmptyKeywordException;
 import project.floe.global.error.exception.EmptyResultException;
 import project.floe.global.error.exception.S3Exception;
 import project.floe.global.error.exception.UserServiceException;
@@ -65,6 +66,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CommentException.class)
     public ResponseEntity<ErrorResponse> handleCommentException(CommentException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        ErrorResponse response = makeErrorResponse(errorCode);
+
+        log.warn(e.getMessage());
+
+        return ResponseEntity.status(errorCode.getStatus()).body(response);
+    }
+
+    @ExceptionHandler(EmptyKeywordException.class)
+    public ResponseEntity<ErrorResponse> handleEmptyKeywordException(EmptyKeywordException e) {
         ErrorCode errorCode = e.getErrorCode();
         ErrorResponse response = makeErrorResponse(errorCode);
 
