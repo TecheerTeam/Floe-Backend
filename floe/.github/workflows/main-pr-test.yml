@@ -3,7 +3,7 @@ name: Main PR TEST
 on:
   pull_request:
     branches:
-      - "main"
+      - "feat/#26"
 
 jobs:
   build-and-test:
