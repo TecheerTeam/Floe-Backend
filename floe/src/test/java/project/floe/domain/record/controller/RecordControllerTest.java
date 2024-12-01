@@ -5,7 +5,9 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,7 +30,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import project.floe.domain.record.dto.request.CreateRecordRequest;
 import project.floe.domain.record.dto.request.UpdateRecordRequest;
-import project.floe.domain.record.dto.response.CreateRecordResponse;
 import project.floe.domain.record.dto.response.GetRecordResponse;
 import project.floe.domain.record.dto.response.UpdateRecordResponse;
 import project.floe.domain.record.entity.Record;
@@ -71,7 +72,8 @@ class RecordControllerTest {
         MockMultipartFile file2 = new MockMultipartFile("files", "file2.jpg", "image/jpeg", "file2 content".getBytes());
 
         // Mocking the dto as a part
-        MockMultipartFile dtoFile = new MockMultipartFile("dto", "", "application/json", new ObjectMapper().writeValueAsString(dto).getBytes());
+        MockMultipartFile dtoFile = new MockMultipartFile("dto", "", "application/json",
+                new ObjectMapper().writeValueAsString(dto).getBytes());
 
         when(recordService.createRecord(any(), any(), any())).thenReturn(recordId);
 
@@ -98,11 +100,14 @@ class RecordControllerTest {
                 .build();
 
         // 파일 생성 (MockMultipartFile 사용)
-        MockMultipartFile file1 = new MockMultipartFile("updateFiles", "file1.jpg", "image/jpeg", "file1 content".getBytes());
-        MockMultipartFile file2 = new MockMultipartFile("updateFiles", "file2.jpg", "image/jpeg", "file2 content".getBytes());
+        MockMultipartFile file1 = new MockMultipartFile("updateFiles", "file1.jpg", "image/jpeg",
+                "file1 content".getBytes());
+        MockMultipartFile file2 = new MockMultipartFile("updateFiles", "file2.jpg", "image/jpeg",
+                "file2 content".getBytes());
 
         // updateDto를 JSON 형식으로 MockMultipartFile로 변환
-        MockMultipartFile dtoFile = new MockMultipartFile("updateDto", "", "application/json", new ObjectMapper().writeValueAsString(updateDto).getBytes());
+        MockMultipartFile dtoFile = new MockMultipartFile("updateDto", "", "application/json",
+                new ObjectMapper().writeValueAsString(updateDto).getBytes());
 
         // 수정된 기록의 응답 (가정한 수정된 기록)
         Record modifiedRecord = Record.builder()
@@ -121,13 +126,14 @@ class RecordControllerTest {
                 .thenReturn(modifiedRecord);
 
         // Then: PUT 요청을 통해 테스트
-        mockMvc.perform(MockMvcRequestBuilders.multipart(BASE_PATH+"/{recordId}", recordId)  // URL에 recordId 포함
+        mockMvc.perform(MockMvcRequestBuilders.multipart(BASE_PATH + "/{recordId}", recordId)  // URL에 recordId 포함
                         .file(file1)   // 첫 번째 파일
                         .file(file2)   // 두 번째 파일
                         .file(dtoFile)  // DTO JSON 파일
                         .with(request -> {
                             request.setMethod("PUT"); // multipart에서는 기본이 POST이므로 PUT으로 변경
-                            return request;})
+                            return request;
+                        })
                         .accept(MediaType.APPLICATION_JSON))  // 응답 타입 설정
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.RECORD_MODIFY_SUCCESS.getCode()))
@@ -141,7 +147,7 @@ class RecordControllerTest {
     void deleteRecord() throws Exception {
         doNothing().when(recordService).deleteRecord(1L);
 
-        mockMvc.perform(delete(BASE_PATH+"/{recordId}", 1L))
+        mockMvc.perform(delete(BASE_PATH + "/{recordId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.RECORD_DELETE_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResultCode.RECORD_DELETE_SUCCESS.getMessage()));
@@ -161,7 +167,7 @@ class RecordControllerTest {
 
         when(recordService.findRecordById(1L)).thenReturn(record);
 
-        mockMvc.perform(get(BASE_PATH+"/{recordId}", 1L))
+        mockMvc.perform(get(BASE_PATH + "/{recordId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.DETAIL_RECORD_GET_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResultCode.DETAIL_RECORD_GET_SUCCESS.getMessage()));
@@ -181,4 +187,20 @@ class RecordControllerTest {
                 .andExpect(jsonPath("$.code").value(ResultCode.RECORD_PAGING_GET_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResultCode.RECORD_PAGING_GET_SUCCESS.getMessage()));
     }
+
+    @Test
+    @DisplayName("기록 검색 테스트(페이징)")
+    void searchRecordEmpty() throws Exception {
+        Page<GetRecordResponse> responsePage = Page.empty(); // Mock an empty page for now
+        when(recordService.searchRecords(any(), any())).thenReturn(responsePage);
+
+        mockMvc.perform(get(BASE_PATH + "/search")
+                        .param("page", "0")
+                        .param("size", "5")
+                        .param("sort", "updatedAt,desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResultCode.RECORD_SEARCH_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ResultCode.RECORD_SEARCH_SUCCESS.getMessage()));
+    }
+
 }
