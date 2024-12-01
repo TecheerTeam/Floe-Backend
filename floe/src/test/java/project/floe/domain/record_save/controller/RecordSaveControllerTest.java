@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import project.floe.domain.record_save.dto.response.GetSaveCountResponseDto;
 import project.floe.domain.record_save.service.RecordSaveService;
 import project.floe.global.error.GlobalExceptionHandler;
 import project.floe.global.result.ResultCode;
@@ -44,7 +45,7 @@ public class RecordSaveControllerTest {
         String url = "/api/v1/records/{recordId}/save";
         Long pathValuable = 1L;
         ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_SAVE_POST_SUCCESS);
-        doNothing().when(recordSaveService).addRecordSave(eq(pathValuable),any(HttpServletRequest.class));
+        doNothing().when(recordSaveService).addRecordSave(eq(pathValuable), any(HttpServletRequest.class));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post(url, pathValuable)
@@ -60,7 +61,7 @@ public class RecordSaveControllerTest {
         String url = "/api/v1/records/{recordId}/save";
         Long pathValuable = 1L;
         ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_SAVE_DELETE_SUCCESS);
-        doNothing().when(recordSaveService).deleteRecordSave(eq(pathValuable),any(HttpServletRequest.class));
+        doNothing().when(recordSaveService).deleteRecordSave(eq(pathValuable), any(HttpServletRequest.class));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.delete(url, pathValuable)
@@ -68,5 +69,22 @@ public class RecordSaveControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
                 .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()));
+    }
+
+    @Test
+    void 기록저장개수조회() throws Exception {
+        String url = "/api/v1/records/{recordId}/save-count";
+        Long pathValuable = 1L;
+        ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_SAVE_COUNT_GET_SUCCESS);
+        GetSaveCountResponseDto expectedDto = new GetSaveCountResponseDto(0L);
+        doReturn(expectedDto).when(recordSaveService).getSaveCountByRecordId(pathValuable);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get(url, pathValuable)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
+                .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()))
+                .andExpect(jsonPath("$.data.count").value(expectedDto.getCount()));
     }
 }

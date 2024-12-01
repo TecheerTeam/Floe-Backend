@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
+import project.floe.domain.record_save.dto.response.GetSaveCountResponseDto;
 import project.floe.domain.record_save.entity.RecordSave;
 import project.floe.domain.record_save.repository.RecordSaveRepository;
 import project.floe.domain.user.entity.User;
@@ -34,16 +35,18 @@ public class RecordSaveService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUserIdAndRecordId(user.getId(), record.getId());
-        if(foundRecordSave.isPresent()){
-            throw new BusinessException(ErrorCode.RECORD_ALREADY_SAVED_ERROR);}
+        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUserIdAndRecordId(user.getId(),
+                record.getId());
+        if (foundRecordSave.isPresent()) {
+            throw new BusinessException(ErrorCode.RECORD_ALREADY_SAVED_ERROR);
+        }
 
         RecordSave recordSave = new RecordSave(user, record);
         recordSaveRepository.save(recordSave);
     }
 
     @Transactional
-    public void deleteRecordSave(Long recordId,HttpServletRequest request){
+    public void deleteRecordSave(Long recordId, HttpServletRequest request) {
         String email = jwtService.extractEmail(request).orElseThrow(
                 () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
 
@@ -51,11 +54,20 @@ public class RecordSaveService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUserIdAndRecordId(user.getId(), record.getId());
-        if(foundRecordSave.isEmpty()){
-            throw new BusinessException(ErrorCode.RECORD_SAVED_NOT_FOUNT_ERROR);}
+        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUserIdAndRecordId(user.getId(),
+                record.getId());
+        if (foundRecordSave.isEmpty()) {
+            throw new BusinessException(ErrorCode.RECORD_SAVED_NOT_FOUNT_ERROR);
+        }
 
         recordSaveRepository.delete(foundRecordSave.get());
+    }
+
+    @Transactional
+    public GetSaveCountResponseDto getSaveCountByRecordId(Long recordId) {
+        recordService.findRecordById(recordId);
+        Long count = recordSaveRepository.countByRecordId(recordId);
+        return new GetSaveCountResponseDto(count);
     }
 
 }

@@ -80,4 +80,18 @@ public class RecordSaveServiceTest {
 
         verify(recordSaveRepository, times(1)).delete(any(RecordSave.class));
     }
+
+    @Test
+    void 기록저장개수조회(){
+        Record record = Record.builder()
+                .id(1L)
+                .build();
+
+        doReturn(record).when(recordService).findRecordById(record.getId());
+        doReturn(0L).when(recordSaveRepository).countByRecordId(record.getId());
+
+        recordSaveService.getSaveCountByRecordId(record.getId());
+
+        verify(recordSaveRepository, times(1)).countByRecordId(any(Long.class));
+    }
 }

@@ -34,6 +34,7 @@ public enum ResultCode {
     // Record Save
     RECORD_SAVE_POST_SUCCESS("RS02","기록 저장 성공"),
     RECORD_SAVE_DELETE_SUCCESS("RS03","기록 저장 삭제 성공"),
+    RECORD_SAVE_COUNT_GET_SUCCESS("RS01","기록 저장 개수 조회 성공"),
 
     // Record Like
     RECORD_LIKE_COUNT_GET_SUCCESS("RL01","기록 좋아요 개수 조회 성공"),

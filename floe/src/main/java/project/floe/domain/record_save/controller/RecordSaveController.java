@@ -5,10 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import project.floe.domain.record_save.dto.response.GetSaveCountResponseDto;
 import project.floe.domain.record_save.service.RecordSaveService;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
@@ -37,6 +39,15 @@ public class RecordSaveController {
     ) {
         recordSaveService.deleteRecordSave(recordId, request);
         ResultResponse response = ResultResponse.of(ResultCode.RECORD_SAVE_DELETE_SUCCESS);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/records/{recordId}/save-count")
+    public ResponseEntity<ResultResponse> getSaveCountByRecordId(
+            @PathVariable("recordId") Long recordId
+    ){
+        GetSaveCountResponseDto dto = recordSaveService.getSaveCountByRecordId(recordId);
+        ResultResponse response = ResultResponse.of(ResultCode.RECORD_SAVE_COUNT_GET_SUCCESS, dto);
         return ResponseEntity.ok(response);
     }
 }
