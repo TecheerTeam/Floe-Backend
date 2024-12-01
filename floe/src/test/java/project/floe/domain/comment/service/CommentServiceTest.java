@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import project.floe.domain.comment.dto.request.CreateCommentRequest;
 import project.floe.domain.comment.dto.request.UpdateCommentRequest;
 import project.floe.domain.comment.dto.response.GetCommentResponse;
@@ -34,6 +35,7 @@ import project.floe.global.auth.jwt.service.JwtService;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.CommentException;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class CommentServiceTest {
 

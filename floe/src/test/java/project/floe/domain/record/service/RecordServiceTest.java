@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.dto.request.CreateRecordRequest;
 import project.floe.domain.record.dto.request.SearchRecordRequest;
@@ -46,6 +47,7 @@ import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.EmptyKeywordException;
 import project.floe.global.error.exception.EmptyResultException;
 
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class RecordServiceTest {
 
@@ -285,7 +287,6 @@ class RecordServiceTest {
                 .recordType(RecordType.FLOE)
                 .build();
 
-        // Tag를 Record에 추가
         record.addTag(new Tags(updatedTags.getTags()));
 
         when(recordTagRepository.findRecordsByTagsAndTitleAndRecordType(
@@ -293,7 +294,6 @@ class RecordServiceTest {
                 .thenReturn(new PageImpl<>(List.of(record)));
         recordRepository.save(record);
 
-        // 검색 요청 객체 생성
         SearchRecordRequest searchRequest = SearchRecordRequest.builder()
                 .title("test")
                 .recordType(RecordType.FLOE)
@@ -302,10 +302,8 @@ class RecordServiceTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        // When: 검색 수행
         Page<GetRecordResponse> result = recordService.searchRecords(pageable, searchRequest);
 
-        // Then: 결과 검증
         assertThat(result.getTotalElements()).isEqualTo(1);
         assertThat(result.getContent().get(0).getTitle()).isEqualTo("test");
         assertThat(result.getContent().get(0).getTags()).containsExactlyInAnyOrder("Spring", "JPA");
