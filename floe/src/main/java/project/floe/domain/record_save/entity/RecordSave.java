@@ -39,4 +39,9 @@ public class RecordSave extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "record_id", nullable = false)
     private Record record;
+
+    public RecordSave(User user,Record record){
+        this.user = user;
+        this.record = record;
+    }
 }

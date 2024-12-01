@@ -44,6 +44,10 @@ public enum ErrorCode {
     //Auth
     TOKEN_ACCESS_NOT_EXIST(401, "A001", "토큰을 찾을 수 없음"),
 
+    // Record Save
+    RECORD_ALREADY_SAVED_ERROR(400, "RS01", "이미 저장한 기록"),
+    RECORD_SAVED_NOT_FOUNT_ERROR(404, "RS02", "해당 기록을 저장 하지 않음"),
+
     // Record Like
     RECORD_ALREADY_LIKED_ERROR(400, "RL01", "이미 좋아요 한 기록"),
     RECORD_LIKE_NOT_FOUNT_ERROR(404, "RL02", "해당 기록에 좋아요를 하지 않음"),
