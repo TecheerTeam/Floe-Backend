@@ -10,16 +10,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.dto.request.CreateRecordRequest;
+import project.floe.domain.record.dto.request.SearchRecordRequest;
 import project.floe.domain.record.dto.request.UpdateRecordRequest;
 import project.floe.domain.record.dto.response.GetRecordResponse;
 import project.floe.domain.record.entity.Media;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.Tags;
 import project.floe.domain.record.repository.RecordJpaRepository;
+import project.floe.domain.record.repository.RecordTagJpaRepository;
 import project.floe.domain.user.entity.User;
 import project.floe.domain.user.repository.UserRepository;
 import project.floe.global.auth.jwt.service.JwtService;
 import project.floe.global.error.ErrorCode;
+import project.floe.global.error.exception.EmptyKeywordException;
 import project.floe.global.error.exception.EmptyResultException;
 import project.floe.global.error.exception.UserServiceException;
 
@@ -30,6 +33,7 @@ public class RecordService {
     private final MediaService mediaService;
     private final RecordJpaRepository recordRepository;
     private final UserRepository userRepository;
+    private final RecordTagJpaRepository recordTagRepository;
     private final TagService tagService;
     private final JwtService jwtService;
 
@@ -42,7 +46,7 @@ public class RecordService {
                 .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
         Record record = dto.toEntity(findUser);
 
-        if (dto.getTagNames() != null){
+        if (dto.getTagNames() != null) {
             Tags findTags = tagService.createTags(dto.getTagNames());
             record.addTag(findTags);
         }
@@ -71,10 +75,27 @@ public class RecordService {
         return GetRecordResponse.listOf(records);
     }
 
+    public Page<GetRecordResponse> searchRecords(Pageable pageable, SearchRecordRequest dto) {
+        Page<Record> records;
+
+        if (dto.getTagNames() != null && !dto.getTagNames().isEmpty()) {
+            records = recordTagRepository.findRecordsByTagsAndTitleAndRecordType(
+                    dto.getTagNames(), dto.getTitle(), dto.getRecordType(), pageable);
+        } else {
+            if (dto.getTitle() == null || dto.getTitle().isEmpty()) {
+                throw new EmptyKeywordException(ErrorCode.RECORD_SEARCH_EMPTY_ERROR);
+            }
+            records = recordRepository.findByTitleContainingAndRecordType(
+                    dto.getTitle(), dto.getRecordType(), pageable);
+        }
+
+        return GetRecordResponse.listOf(records);
+    }
+
     @Transactional
-    public Record modifyRecord(Long recordId, UpdateRecordRequest dto, List<MultipartFile> files){
+    public Record modifyRecord(Long recordId, UpdateRecordRequest dto, List<MultipartFile> files) {
         Record findRecord = findRecordById(recordId);
-        List<Media> updatedMedias = mediaService.updateMedias(findRecord, dto.getMedias() ,files);
+        List<Media> updatedMedias = mediaService.updateMedias(findRecord, dto.getMedias(), files);
         Tags updatedTags = tagService.createTags(dto.getTags());
         findRecord.updateRecord(dto.getTitle(), dto.getContent(), dto.getRecordType(), updatedTags, updatedMedias);
         return findRecord;
