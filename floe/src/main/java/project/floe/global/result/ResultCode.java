@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
-/** {행위}_{목적어}_{성공여부} message 는 동사 명사형으로 마무리 */
+/**
+ * {행위}_{목적어}_{성공여부} message 는 동사 명사형으로 마무리
+ */
 
 @Getter
 @AllArgsConstructor
@@ -22,6 +24,9 @@ public enum ResultCode {
     RECORD_PAGING_GET_SUCCESS("R004", "페이징된 전체 기록 조회 성공"),
     RECORD_MODIFY_SUCCESS("R005", "기록 수정 성공"),
 
+    // Record Search
+    RECORD_SEARCH_SUCCESS("R006", "페이징된 기록 검색 성공"),
+
     // User
     USER_CREATE_SUCCESS("U001", "유저 생성 성공"),
     USER_GET_SUCCESS("U002", "유저 조회 성공"),
@@ -32,11 +37,11 @@ public enum ResultCode {
     USER_PROFILE_IMAGE_UPDATE_SUCCESS("U007", "프로필 사진 업데이트 성공"),
 
     // Record Like
-    RECORD_LIKE_COUNT_GET_SUCCESS("RL01","기록 좋아요 개수 조회 성공"),
-    RECORD_LIKE_POST_SUCCESS("RL02","기록 좋아요 추가 성공"),
-    RECORD_LIKE_DELETE_SUCCESS("RL03","기록 좋아요 삭제 성공"),
-    RECORD_LIKE_LIST_GET_SUCCESS("RL04","기록 좋아요 유저 목록 조회 성공");
-
+    RECORD_LIKE_COUNT_GET_SUCCESS("RL01", "기록 좋아요 개수 조회 성공"),
+    RECORD_LIKE_POST_SUCCESS("RL02", "기록 좋아요 추가 성공"),
+    RECORD_LIKE_DELETE_SUCCESS("RL03", "기록 좋아요 삭제 성공"),
+    RECORD_LIKE_LIST_GET_SUCCESS("RL04", "기록 좋아요 유저 목록 조회 성공");
+    
     private final String code;
     private final String message;
 }

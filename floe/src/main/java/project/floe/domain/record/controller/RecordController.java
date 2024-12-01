@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.dto.request.CreateRecordRequest;
+import project.floe.domain.record.dto.request.SearchRecordRequest;
 import project.floe.domain.record.dto.request.UpdateRecordRequest;
 import project.floe.domain.record.dto.response.CreateRecordResponse;
 import project.floe.domain.record.dto.response.GetDetailRecordResponse;
@@ -28,8 +29,6 @@ import project.floe.domain.record.dto.response.GetRecordResponse;
 import project.floe.domain.record.dto.response.UpdateRecordResponse;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
-import project.floe.global.error.ErrorCode;
-import project.floe.global.error.exception.EmptyResultException;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
@@ -53,7 +52,8 @@ public class RecordController {
     }
 
     @GetMapping
-    public ResponseEntity<ResultResponse> getRecords(@PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ResultResponse> getRecords(
+            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
         Page<GetRecordResponse> response = recordService.findRecords(pageable);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.RECORD_PAGING_GET_SUCCESS, response));
     }
@@ -81,6 +81,14 @@ public class RecordController {
         recordService.deleteRecord(recordId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ResultResponse.of(ResultCode.RECORD_DELETE_SUCCESS));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ResultResponse> searchRecord(
+            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable,
+            SearchRecordRequest dto) {
+        Page<GetRecordResponse> response = recordService.searchRecords(pageable, dto);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.RECORD_SEARCH_SUCCESS, response));
     }
 
 }
