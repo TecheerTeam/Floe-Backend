@@ -1,13 +1,18 @@
 package project.floe.domain.record_save.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
+import project.floe.domain.record_save.dto.response.FindMediasByRecordIdsResponseDto;
 import project.floe.domain.record_save.dto.response.GetSaveCountResponseDto;
+import project.floe.domain.record_save.dto.response.GetSaveRecordsResponseDto;
 import project.floe.domain.record_save.entity.RecordSave;
 import project.floe.domain.record_save.repository.RecordSaveRepository;
 import project.floe.domain.user.entity.User;
@@ -28,6 +33,7 @@ public class RecordSaveService {
 
     @Transactional
     public void addRecordSave(Long recordId, HttpServletRequest request) {
+
         String email = jwtService.extractEmail(request).orElseThrow(
                 () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
 
@@ -47,6 +53,7 @@ public class RecordSaveService {
 
     @Transactional
     public void deleteRecordSave(Long recordId, HttpServletRequest request) {
+
         String email = jwtService.extractEmail(request).orElseThrow(
                 () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
 
@@ -68,6 +75,26 @@ public class RecordSaveService {
         recordService.findRecordById(recordId);
         Long count = recordSaveRepository.countByRecordId(recordId);
         return new GetSaveCountResponseDto(count);
+    }
+
+    @Transactional
+    public Page<GetSaveRecordsResponseDto> getSaveRecordList(Pageable pageable, HttpServletRequest request) {
+
+        String email = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
+
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
+
+        Page<Record> foundRecords = recordSaveRepository.findRecordsByUserId(user.getId(), pageable);
+
+        List<Long> foundRecordIds = foundRecords.stream()
+                .map(Record::getId)
+                .toList();
+        List<FindMediasByRecordIdsResponseDto> responseDtoList = recordSaveRepository.findMediasByRecordIds(
+                foundRecordIds);
+
+        return GetSaveRecordsResponseDto.listOf(foundRecords, responseDtoList);
     }
 
 }
