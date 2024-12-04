@@ -7,12 +7,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Builder;
+import lombok.Getter;
 import org.springframework.data.domain.Page;
 import project.floe.domain.record.dto.response.GetRecordUserResponse;
 import project.floe.domain.record.dto.response.MediaResponse;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordType;
 
+@Getter
 @Builder
 public class GetSaveRecordsResponseDto {
     private Long recordId;

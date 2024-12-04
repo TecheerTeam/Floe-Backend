@@ -50,7 +50,7 @@ public class RecordSaveController {
     @GetMapping("/records/{recordId}/save-count")
     public ResponseEntity<ResultResponse> getSaveCount(
             @PathVariable("recordId") Long recordId
-    ){
+    ) {
         GetSaveCountResponseDto dto = recordSaveService.getSaveCountByRecordId(recordId);
         ResultResponse response = ResultResponse.of(ResultCode.RECORD_SAVE_COUNT_GET_SUCCESS, dto);
         return ResponseEntity.ok(response);
@@ -60,9 +60,10 @@ public class RecordSaveController {
     public ResponseEntity<ResultResponse> getSaveRecordList(
             @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable,
             HttpServletRequest request
-    ){
+    ) {
         Page<GetSaveRecordsResponseDto> dto = recordSaveService.getSaveRecordList(pageable, request);
-        ResultResponse response = ResultResponse.of(ResultCode.RECORD_SAVE_LIST_GET_SUCCESS,dto);
+        ResultResponse response = ResultResponse.of(ResultCode.RECORD_SAVE_LIST_GET_SUCCESS, dto);
         return ResponseEntity.ok(response);
     }
+
 }
