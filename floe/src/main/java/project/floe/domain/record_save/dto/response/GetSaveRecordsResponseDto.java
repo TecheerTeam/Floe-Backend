@@ -33,15 +33,14 @@ public class GetSaveRecordsResponseDto {
 
     public static GetSaveRecordsResponseDto from(Record record, List<FindMediasByRecordIdsResponseDto> mediaList) {
 
-        List<MediaResponse> medias = Optional.ofNullable(mediaList)
-                .orElse(Collections.emptyList())
-                .stream()
+        List<MediaResponse> medias = mediaList.stream()
                 .map(getMediasByRecordIdsResponseDto ->
                         MediaResponse.builder()
                                 .mediaId(getMediasByRecordIdsResponseDto.getMediaId())
                                 .mediaUrl(getMediasByRecordIdsResponseDto.getMediaUrl())
                                 .build())
                 .toList();
+
 
         return GetSaveRecordsResponseDto.builder()
                 .recordId(record.getId())

@@ -8,23 +8,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import project.floe.domain.record_save.dto.response.GetSaveCountResponseDto;
+import project.floe.domain.record_save.dto.response.GetSaveRecordsResponseDto;
 import project.floe.domain.record_save.service.RecordSaveService;
-import project.floe.global.error.GlobalExceptionHandler;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class RecordSaveControllerTest {
+
     @InjectMocks
     private RecordSaveController recordSaveController;
 
@@ -36,7 +43,7 @@ public class RecordSaveControllerTest {
     @BeforeEach
     void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(recordSaveController)
-                .setControllerAdvice(new GlobalExceptionHandler())
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
 
@@ -57,7 +64,7 @@ public class RecordSaveControllerTest {
     }
 
     @Test
-    void 기록삭제() throws Exception {
+    void 기록저장삭제() throws Exception {
         String url = "/api/v1/records/{recordId}/save";
         Long pathValuable = 1L;
         ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_SAVE_DELETE_SUCCESS);
@@ -87,4 +94,24 @@ public class RecordSaveControllerTest {
                 .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()))
                 .andExpect(jsonPath("$.data.count").value(expectedDto.getCount()));
     }
+
+    @Test
+    void 저장한기록목록조회() throws Exception {
+        String url = "/api/v1/users/save/record-list";
+        ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_SAVE_LIST_GET_SUCCESS);
+        Page<GetSaveRecordsResponseDto> expectedDto = new PageImpl<>(Collections.emptyList(), PageRequest.of(0,5),0);
+        doReturn(expectedDto).when(recordSaveService)
+                .getSaveRecordList(any(Pageable.class), any(HttpServletRequest.class));
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get(url)
+                                .param("page", "0")
+                                .param("size", "5")
+                                .param("sort", "createdAt,desc")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
+                .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()));
+    }
+
 }

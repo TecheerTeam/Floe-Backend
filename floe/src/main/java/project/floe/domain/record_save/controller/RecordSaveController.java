@@ -58,11 +58,11 @@ public class RecordSaveController {
 
     @GetMapping("/users/save/record-list")
     public ResponseEntity<ResultResponse> getSaveRecordList(
-            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable,
+            @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable,
             HttpServletRequest request
     ){
         Page<GetSaveRecordsResponseDto> dto = recordSaveService.getSaveRecordList(pageable, request);
-        ResultResponse response = ResultResponse.of(ResultCode.RECORD_SAVE_LIST_GET_SUCCESS);
+        ResultResponse response = ResultResponse.of(ResultCode.RECORD_SAVE_LIST_GET_SUCCESS,dto);
         return ResponseEntity.ok(response);
     }
 }
