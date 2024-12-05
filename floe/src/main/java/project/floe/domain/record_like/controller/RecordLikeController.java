@@ -1,5 +1,7 @@
 package project.floe.domain.record_like.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,7 @@ import project.floe.domain.record_like.service.RecordLikeService;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
-
+@Tag(name = "RecordLikeController", description = "기록 좋아요 API")
 @RestController
 @RequestMapping("/api/v1/records")
 @RequiredArgsConstructor
@@ -23,6 +25,10 @@ public class RecordLikeController {
 
     private final RecordLikeService recordLikeService;
 
+    @Operation(
+            summary = "좋아요 수 조회",
+            description = "좋아요 수 조회"
+    )
     @GetMapping("/{recordId}/likes")
     public ResponseEntity<ResultResponse> getRecordLikeCount(
             @PathVariable("recordId") Long recordId
@@ -32,6 +38,10 @@ public class RecordLikeController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "좋아요 추가",
+            description = "좋아요 추가"
+    )
     @PostMapping("/{recordId}/likes")
     public ResponseEntity<ResultResponse> addRecordLike(
         @PathVariable("recordId") Long recordId
@@ -43,6 +53,10 @@ public class RecordLikeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(
+            summary = "좋아요 취소",
+            description = "좋아요 취소"
+    )
     @DeleteMapping("/{recordId}/likes")
     public ResponseEntity<ResultResponse> deleteRecordLike(
             @PathVariable("recordId") Long recordId
@@ -54,6 +68,10 @@ public class RecordLikeController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "좋아요한 유저 목록",
+            description = "좋아요한 유저 목록 조회"
+    )
     @GetMapping("/{recordId}/like-list")
     public ResponseEntity<ResultResponse> getRecordLikeList(
             @PathVariable("recordId") Long recordId

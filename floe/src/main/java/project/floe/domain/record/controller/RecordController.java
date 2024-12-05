@@ -1,5 +1,7 @@
 package project.floe.domain.record.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.AccessLevel;
@@ -32,6 +34,7 @@ import project.floe.domain.record.service.RecordService;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
+@Tag(name = "RecordController", description = "기록 API")
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @RequestMapping("/api/v1/records")
@@ -39,6 +42,10 @@ public class RecordController {
 
     private final RecordService recordService;
 
+    @Operation(
+            summary = "기록 생성",
+            description = "트러블 슈팅 기록 생성"
+    )
     @PostMapping
     public ResponseEntity<ResultResponse> createRecord(
             HttpServletRequest request,
@@ -51,6 +58,10 @@ public class RecordController {
                 .body(ResultResponse.of(ResultCode.RECORD_CREATE_SUCCESS, response));
     }
 
+    @Operation(
+            summary = "기록 조회",
+            description = "전체 기록 페이지네이션 조회"
+    )
     @GetMapping
     public ResponseEntity<ResultResponse> getRecords(
             @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
@@ -58,6 +69,10 @@ public class RecordController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.RECORD_PAGING_GET_SUCCESS, response));
     }
 
+    @Operation(
+            summary = "기록 개별 조회",
+            description = "기록 세부 페이지 조회"
+    )
     @GetMapping("/{recordId}")
     public ResponseEntity<ResultResponse> getDetailRecord(@PathVariable("recordId") Long recordId) {
         Record findRecord = recordService.findRecordById(recordId);
@@ -66,6 +81,10 @@ public class RecordController {
                 .body(ResultResponse.of(ResultCode.DETAIL_RECORD_GET_SUCCESS, response));
     }
 
+    @Operation(
+            summary = "기록 수정",
+            description = "트러블 슈팅 기록 수정"
+    )
     @PutMapping("/{recordId}")
     public ResponseEntity<ResultResponse> updateRecord(@PathVariable("recordId") Long recordId,
                                                        @Validated @RequestPart("updateDto") UpdateRecordRequest updateDto,
@@ -76,6 +95,10 @@ public class RecordController {
                 .body(ResultResponse.of(ResultCode.RECORD_MODIFY_SUCCESS, response));
     }
 
+    @Operation(
+            summary = "기록 삭제",
+            description = "트러블 슈팅 기록 삭제"
+    )
     @DeleteMapping("/{recordId}")
     public ResponseEntity<ResultResponse> deleteRecord(@PathVariable("recordId") Long recordId) {
         recordService.deleteRecord(recordId);

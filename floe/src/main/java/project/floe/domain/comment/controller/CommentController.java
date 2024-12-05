@@ -1,5 +1,7 @@
 package project.floe.domain.comment.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import project.floe.domain.comment.service.CommentService;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
+@Tag(name = "CommentController", description = "댓글 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/comments")
@@ -32,6 +35,10 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    @Operation(
+            summary = "댓글 작성",
+            description = "댓글 작성"
+    )
     @PostMapping
     public ResponseEntity<ResultResponse> createComment(@Valid @RequestBody CreateCommentRequest request,
                                                         HttpServletRequest httpServletRequest) {
@@ -40,6 +47,10 @@ public class CommentController {
                 .body(ResultResponse.of(ResultCode.COMMENT_CREATE_SUCCESS));
     }
 
+    @Operation(
+            summary = "댓글 조회",
+            description = "전체 댓글 조회"
+    )
     @GetMapping
     public ResponseEntity<ResultResponse> getComments(
             @RequestParam("recordId") Long recordId,
@@ -48,6 +59,10 @@ public class CommentController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.COMMENT_GET_SUCCESS, response));
     }
 
+    @Operation(
+            summary = "댓글 개별 조회",
+            description = "댓글 개별 조회"
+    )
     @PutMapping("/{commentId}")
     public ResponseEntity<ResultResponse> updateComment(@PathVariable(name = "commentId") Long commentId,
                                                         @Valid @RequestBody UpdateCommentRequest request) {
@@ -55,6 +70,10 @@ public class CommentController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.COMMENT_UPDATE_SUCCESS));
     }
 
+    @Operation(
+            summary = "댓글 삭제",
+            description = "댓글 삭제'"
+    )
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ResultResponse> deleteComment(@PathVariable(name = "commentId") Long commentId) {
         commentService.deleteComment(commentId);
