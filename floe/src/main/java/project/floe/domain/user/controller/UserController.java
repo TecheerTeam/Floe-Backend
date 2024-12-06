@@ -1,5 +1,7 @@
 package project.floe.domain.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ import project.floe.domain.user.service.UserService;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
-
+@Tag(name = "UserController", description = "유저 API")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/users")
@@ -32,7 +34,10 @@ public class UserController {
 
     private final UserService userService;
 
-    // 회원 정보 조회
+    @Operation(
+            summary = "회원 정보 조회",
+            description = "회원 정보 조회"
+    )
     @GetMapping
     ResponseEntity<ResultResponse> getUser(
             HttpServletRequest request
@@ -42,7 +47,10 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
-    // 회원 삭제
+    @Operation(
+            summary = "회원 삭제",
+            description = "회원 삭제"
+    )
     @DeleteMapping
     ResponseEntity<ResultResponse> deleteUser(HttpServletRequest request) {
         userService.deleteUser(request);
@@ -50,7 +58,10 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
-    // 회원 정보 수정
+    @Operation(
+            summary = "회원 정보 수정",
+            description = "회원 정보 수정"
+    )
     @PatchMapping("/update")
     ResponseEntity<ResultResponse> updateUser(
             HttpServletRequest request,
@@ -61,7 +72,10 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
-    // 회원 프로필 사진 수정
+    @Operation(
+            summary = "회원 프로필 사진 수정",
+            description = "회원 프로필 사진 수정"
+    )
     @PutMapping("/profile")
     public ResponseEntity<ResultResponse> updateProfile(
             HttpServletRequest request,

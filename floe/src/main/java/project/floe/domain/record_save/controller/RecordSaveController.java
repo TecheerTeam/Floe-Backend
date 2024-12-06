@@ -1,5 +1,7 @@
 package project.floe.domain.record_save.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,7 @@ import project.floe.domain.record_save.service.RecordSaveService;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
+@Tag(name = "RecordSaveController", description = "기록 저장 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -27,6 +30,10 @@ public class RecordSaveController {
 
     private final RecordSaveService recordSaveService;
 
+    @Operation(
+            summary = "게시글 저장",
+            description = "게시글 저장"
+    )
     @PostMapping("/records/{recordId}/save")
     public ResponseEntity<ResultResponse> addRecordSave(
             @PathVariable("recordId") Long recordId,
@@ -37,6 +44,10 @@ public class RecordSaveController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(
+            summary = "게시글 저장 취소",
+            description = "게시글 저장 취소"
+    )
     @DeleteMapping("/records/{recordId}/save")
     public ResponseEntity<ResultResponse> deleteRecordSave(
             @PathVariable("recordId") Long recordId,
@@ -47,6 +58,10 @@ public class RecordSaveController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "게시글 저장 횟수 조회",
+            description = "게시글 저장 횟수 조회"
+    )
     @GetMapping("/records/{recordId}/save-count")
     public ResponseEntity<ResultResponse> getSaveCount(
             @PathVariable("recordId") Long recordId
@@ -56,6 +71,10 @@ public class RecordSaveController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "저장한 기록 목록 조회",
+            description = "저장한 기록 목록 조회"
+    )
     @GetMapping("/users/save/record-list")
     public ResponseEntity<ResultResponse> getSaveRecordList(
             @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable,
