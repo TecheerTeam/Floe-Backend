@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import project.floe.domain.record_like.entity.RecordLike;
 import project.floe.domain.record_like.repository.RecordLikeRepository;
 import project.floe.domain.user.entity.User;
 import project.floe.domain.user.repository.UserRepository;
+import project.floe.global.auth.jwt.service.JwtService;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.BusinessException;
 import project.floe.global.error.exception.EmptyResultException;
@@ -40,6 +43,8 @@ public class RecordLikeServiceTest {
     private RecordService recordService;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private JwtService jwtService;
 
     @Test
     public void 좋아요수조회_존재하지않는기록() {
@@ -69,11 +74,14 @@ public class RecordLikeServiceTest {
     public void 좋아요추가() {
         User user = user();
         Record record = record();
-        doReturn(Optional.of(user)).when(userRepository).findById(user.getId());
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        doReturn(Optional.of(user.getEmail())).when(jwtService).extractEmail(request);
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(user.getEmail());
         doReturn(record).when(recordService).findRecordById(record.getId());
         doReturn(Optional.empty()).when(recordLikeRepository).findByUserIdAndRecordId(user.getId(), record.getId());
 
-        recordLikeService.addRecordLike(user.getId(), record.getId());
+        recordLikeService.addRecordLike(request, record.getId());
 
         verify(recordLikeRepository, times(1)).save(any(RecordLike.class));
     }
@@ -83,12 +91,15 @@ public class RecordLikeServiceTest {
         User user = user();
         Record record = record();
         RecordLike recordLike = new RecordLike(user, record);
-        doReturn(Optional.of(user)).when(userRepository).findById(user.getId());
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        doReturn(Optional.of(user.getEmail())).when(jwtService).extractEmail(request);
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(user.getEmail());
         doReturn(record).when(recordService).findRecordById(record.getId());
         doReturn(Optional.of(recordLike)).when(recordLikeRepository).findByUserIdAndRecordId(user.getId(), record.getId());
 
         BusinessException response = assertThrows(BusinessException.class,
-                () -> recordLikeService.addRecordLike(user.getId(), record.getId()));
+                () -> recordLikeService.addRecordLike(request, record.getId()));
 
         assertThat(response.getErrorCode()).isEqualTo(ErrorCode.RECORD_ALREADY_LIKED_ERROR);
     }
@@ -98,11 +109,14 @@ public class RecordLikeServiceTest {
         User user = user();
         Record record = record();
         RecordLike recordLike = new RecordLike(user, record);
-        doReturn(Optional.of(user)).when(userRepository).findById(user.getId());
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        doReturn(Optional.of(user.getEmail())).when(jwtService).extractEmail(request);
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(user.getEmail());
         doReturn(record).when(recordService).findRecordById(record.getId());
         doReturn(Optional.of(recordLike)).when(recordLikeRepository).findByUserIdAndRecordId(user.getId(), record.getId());
 
-        recordLikeService.deleteRecordLike(user.getId(), record.getId());
+        recordLikeService.deleteRecordLike(request, record.getId());
 
         verify(recordLikeRepository, times(1)).delete(recordLike);
     }
@@ -111,12 +125,15 @@ public class RecordLikeServiceTest {
     public void 좋아요삭제_존재하지않는좋아요() {
         User user = user();
         Record record = record();
-        doReturn(Optional.of(user)).when(userRepository).findById(user.getId());
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        doReturn(Optional.of(user.getEmail())).when(jwtService).extractEmail(request);
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(user.getEmail());
         doReturn(record).when(recordService).findRecordById(record.getId());
         doReturn(Optional.empty()).when(recordLikeRepository).findByUserIdAndRecordId(user.getId(), record.getId());
 
         BusinessException response = assertThrows(BusinessException.class,
-                () -> recordLikeService.deleteRecordLike(user.getId(), record.getId()));
+                () -> recordLikeService.deleteRecordLike(request, record.getId()));
 
         assertThat(response.getErrorCode()).isEqualTo(ErrorCode.RECORD_LIKE_NOT_FOUNT_ERROR);
     }
@@ -146,17 +163,19 @@ public class RecordLikeServiceTest {
 
         recordLikeService.getRecordLikeList(record.getId());
 
-        verify(userRepository,times(list.size())).findById(null);
+        verify(userRepository,times(list.size())).findById(1L);
     }
 
     public User user() {
-        return User.builder().email("test@example.com").password("1234").nickname("test").build();
-
+        return User.builder()
+                .id(1L)
+                .email("email@email.com")
+                .build();
     }
 
     public Record record() {
         return Record.builder()
-                .id(null)
+                .id(1L)
                 .user(user())
                 .title("테스트")
                 .content("테스트 입니다")
