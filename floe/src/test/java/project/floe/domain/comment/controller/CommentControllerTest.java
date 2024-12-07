@@ -35,7 +35,6 @@ import project.floe.global.result.ResultCode;
 @WebMvcTest(CommentController.class)
 @Import(TestSecurityConfig.class)
 class CommentControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
