@@ -18,6 +18,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Add JWT Secret Key to Properties
+        run: |
+          echo "jwt.secretKey=${{ secrets.JWT_SECRET_KEY }}" >> src/test/resources/application-test.properties
+
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
         with:
@@ -28,4 +32,5 @@ jobs:
       - name: Run tests
         run: |
           cd floe
-          ./gradlew test -i
+          ./gradlew clean
+          ./gradlew test -Dspring.profiles.active=test
