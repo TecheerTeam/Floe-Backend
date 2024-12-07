@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,8 @@ import project.floe.entity.BaseEntity;
 @Builder
 @AllArgsConstructor
 @SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE user SET is_deleted = true WHERE user_id = ?")
+@Table(name = "users")
+@SQLDelete(sql = "UPDATE users SET is_deleted = true WHERE user_id = ?")
 public class User extends BaseEntity {
 
     @Id
@@ -100,11 +102,21 @@ public class User extends BaseEntity {
     }
 
     public void update(UserUpdateRequest dto) {
-        if (dto.getPassword()!=null) this.password = dto.getPassword();
-        if (dto.getNickname()!=null) this.nickname = dto.getNickname();
-        if (dto.getExperience()!=null) this.experience = dto.getExperience();
-        if (dto.getAge()!=null) this.age = dto.getAge();
-        if (dto.getField()!=null) this.field = dto.getField();
+        if (dto.getPassword() != null) {
+            this.password = dto.getPassword();
+        }
+        if (dto.getNickname() != null) {
+            this.nickname = dto.getNickname();
+        }
+        if (dto.getExperience() != null) {
+            this.experience = dto.getExperience();
+        }
+        if (dto.getAge() != null) {
+            this.age = dto.getAge();
+        }
+        if (dto.getField() != null) {
+            this.field = dto.getField();
+        }
     }
 
     public void oAuthSignUp(UserOAuthSignUpRequest dto) {
