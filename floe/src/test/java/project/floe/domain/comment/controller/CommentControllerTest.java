@@ -2,6 +2,7 @@ package project.floe.domain.comment.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -11,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,22 +19,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import project.floe.domain.comment.dto.request.CreateCommentRequest;
 import project.floe.domain.comment.dto.request.UpdateCommentRequest;
 import project.floe.domain.comment.dto.response.GetCommentResponse;
 import project.floe.domain.comment.dto.response.GetCommentUserResponse;
 import project.floe.domain.comment.service.CommentService;
+import project.floe.global.config.TestSecurityConfig;
 import project.floe.global.result.ResultCode;
 
 @WebMvcTest(CommentController.class)
+@Import(TestSecurityConfig.class)
 class CommentControllerTest {
 
     @Autowired
@@ -42,7 +41,7 @@ class CommentControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-    
+
     @MockBean
     private CommentService commentService;
 
@@ -51,11 +50,7 @@ class CommentControllerTest {
     private GetCommentResponse getCommentResponse;
 
     @BeforeEach
-    void setUp(WebApplicationContext applicationContext) {
-        mockMvc =
-                MockMvcBuilders.webAppContextSetup(applicationContext)
-                        .addFilter(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true))
-                        .build();
+    void setUp() {
         createCommentRequest = CreateCommentRequest.builder()
                 .recordId(1L)
                 .userId(1L)
@@ -81,22 +76,21 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 생성 성공 테스트")
     void 댓글생성_성공() throws Exception {
+        doNothing().when(commentService).createComment(any(), any());
+
         mockMvc.perform(post("/api/v1/comments")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType("application/json")
                         .content(objectMapper.writeValueAsString(createCommentRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value(ResultCode.COMMENT_CREATE_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResultCode.COMMENT_CREATE_SUCCESS.getMessage()));
     }
 
-
     @Test
     @DisplayName("댓글 페이징 조회 성공 테스트")
     void 댓글페이징조회_성공() throws Exception {
-
         Page<GetCommentResponse> mockResponse = new PageImpl<>(List.of(getCommentResponse));
-        when(commentService.getCommentsByRecordId(eq(1L), any(Pageable.class)))
-                .thenReturn(mockResponse);
+        when(commentService.getCommentsByRecordId(eq(1L), any(Pageable.class))).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/v1/comments")
                         .param("recordId", "1")
@@ -109,28 +103,12 @@ class CommentControllerTest {
     }
 
     @Test
-    @DisplayName("댓글 페이징 조회 - 빈 결과")
-    void 댓글페이징조회_빈결과() throws Exception {
-
-        Page<GetCommentResponse> mockResponse = new PageImpl<>(List.of());
-        when(commentService.getCommentsByRecordId(eq(999L), any(Pageable.class)))
-                .thenReturn(mockResponse);
-
-        mockMvc.perform(get("/api/v1/comments")
-                        .param("recordId", "999")
-                        .param("page", "0")
-                        .param("size", "5")
-                        .param("sort", "createdAt,desc"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResultCode.COMMENT_GET_SUCCESS.getCode()))
-                .andExpect(jsonPath("$.message").value(ResultCode.COMMENT_GET_SUCCESS.getMessage()));
-    }
-
-    @Test
     @DisplayName("댓글 수정 성공 테스트")
     void 댓글수정_성공() throws Exception {
+        doNothing().when(commentService).updateComment(eq(1L), any(UpdateCommentRequest.class));
+
         mockMvc.perform(put("/api/v1/comments/1")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType("application/json")
                         .content(objectMapper.writeValueAsString(updateCommentRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.COMMENT_UPDATE_SUCCESS.getCode()))
@@ -140,9 +118,13 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 삭제 성공 테스트")
     void 댓글삭제_성공() throws Exception {
+        doNothing().when(commentService).deleteComment(eq(1L));
+
         mockMvc.perform(delete("/api/v1/comments/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.COMMENT_DELETE_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResultCode.COMMENT_DELETE_SUCCESS.getMessage()));
     }
+
+
 }

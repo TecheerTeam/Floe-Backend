@@ -4,9 +4,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,9 +30,11 @@ import project.floe.domain.user.dto.request.UserUpdateRequest;
 import project.floe.domain.user.dto.response.GetUserResponseDto;
 import project.floe.domain.user.dto.response.UpdateUserResponseDto;
 import project.floe.domain.user.service.UserService;
+import project.floe.global.config.TestSecurityConfig;
 import project.floe.global.result.ResultCode;
 
 @WebMvcTest(UserController.class)
+@Import(TestSecurityConfig.class)
 public class UserControllerTest {
 
     public static final String BASE_PATH = "/api/v1/users";
@@ -91,7 +96,8 @@ public class UserControllerTest {
         UpdateUserResponseDto mockResponse = UpdateUserResponseDto.builder()
                 .nickname("newNickname")
                 .build();
-        when(userService.updateUser(any(HttpServletRequest.class), any(UserUpdateRequest.class))).thenReturn(mockResponse);
+        when(userService.updateUser(any(HttpServletRequest.class), any(UserUpdateRequest.class))).thenReturn(
+                mockResponse);
 
         // when & then
         mockMvc.perform(patch(BASE_PATH + "/update")
@@ -108,7 +114,8 @@ public class UserControllerTest {
     @Test
     void 유저프로필사진성공() throws Exception {
         // given
-        MockMultipartFile profileImage = new MockMultipartFile("profileImage", "test.jpg", "image/jpeg", "testImage".getBytes());
+        MockMultipartFile profileImage = new MockMultipartFile("profileImage", "test.jpg", "image/jpeg",
+                "testImage".getBytes());
         doNothing().when(userService).updateProfileImage(any(HttpServletRequest.class), any());
 
         // when & then

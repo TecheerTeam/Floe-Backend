@@ -7,8 +7,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import project.floe.domain.record.entity.Record;
@@ -20,7 +18,6 @@ import project.floe.domain.user.entity.User;
 import project.floe.domain.user.repository.UserRepository;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
 public class RecordLikeRepositoryTest {
 
     @Autowired
