@@ -6,10 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordTag;
 import project.floe.domain.record.entity.RecordType;
 
+@Repository
 public interface RecordTagJpaRepository extends JpaRepository<RecordTag, Long> {
     /*
      *  검색 시에 태그와 제목, 레코드 타입을 이용하여 레코드를 찾는다.
