@@ -21,7 +21,7 @@ jobs:
       - name: Add JWT Secret Key to Properties
         run: |
           cd floe
-          echo "jwt.secretKey=${{ secrets.JWT_SECRET_KEY }}" >> floe/test/resources/application-test.properties
+          echo "jwt.secretKey=${{ secrets.JWT_SECRET_KEY }}" >> ./src/test/resources/application-test.properties
 
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
