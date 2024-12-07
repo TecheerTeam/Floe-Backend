@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
     env:
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
