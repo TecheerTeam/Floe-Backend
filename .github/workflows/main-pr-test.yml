@@ -28,8 +28,11 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: Debug JWT Secret Key
+        run: |
+          echo "JWT_SECRET_KEY is set: ${#JWT_SECRET_KEY}"
       - name: Run tests
         run: |
           cd floe
           ./gradlew clean
-          ./gradlew test -Dspring.profiles.active=test
+          ./gradlew test -Dspring.profiles.active=test -i
