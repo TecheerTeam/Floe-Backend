@@ -12,6 +12,8 @@ jobs:
 
     env:
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
 
     steps:
       - uses: actions/checkout@v4
