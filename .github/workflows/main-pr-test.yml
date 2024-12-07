@@ -31,6 +31,6 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Run tests
         run: |
-          cd floe
+          cd floe 
           ./gradlew clean
           ./gradlew test -Dspring.profiles.active=test
