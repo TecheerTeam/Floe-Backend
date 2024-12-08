@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateCommentRequest {
-
     @NotNull(message = "기록 ID는 필수입니다.")
     private Long recordId;
 
