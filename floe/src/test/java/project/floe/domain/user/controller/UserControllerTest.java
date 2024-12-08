@@ -21,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -35,6 +36,7 @@ import project.floe.global.result.ResultCode;
 
 @WebMvcTest(UserController.class)
 @Import(TestSecurityConfig.class)
+@ActiveProfiles("test")
 public class UserControllerTest {
 
     public static final String BASE_PATH = "/api/v1/users";

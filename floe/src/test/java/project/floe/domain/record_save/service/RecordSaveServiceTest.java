@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
 import project.floe.domain.record_save.dto.response.GetSaveRecordsResponseDto;
@@ -29,6 +30,7 @@ import project.floe.domain.user.repository.UserRepository;
 import project.floe.global.auth.jwt.service.JwtService;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class RecordSaveServiceTest {
 
     @InjectMocks
@@ -81,7 +83,8 @@ public class RecordSaveServiceTest {
         doReturn(Optional.of(email)).when(jwtService).extractEmail(any(HttpServletRequest.class));
         doReturn(record).when(recordService).findRecordById(record.getId());
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-        doReturn(Optional.of(recordSave)).when(recordSaveRepository).findByUserIdAndRecordId(user.getId(), record.getId());
+        doReturn(Optional.of(recordSave)).when(recordSaveRepository)
+                .findByUserIdAndRecordId(user.getId(), record.getId());
 
         recordSaveService.deleteRecordSave(record.getId(), mock(HttpServletRequest.class));
 
@@ -89,7 +92,7 @@ public class RecordSaveServiceTest {
     }
 
     @Test
-    void 기록저장개수조회(){
+    void 기록저장개수조회() {
         Record record = Record.builder()
                 .id(1L)
                 .build();
@@ -103,13 +106,13 @@ public class RecordSaveServiceTest {
     }
 
     @Test
-    void 저장한기록목록조회(){
+    void 저장한기록목록조회() {
         String email = "email@email.com";
         User user = User.builder()
                 .id(1L)
                 .email(email)
                 .build();
-        Pageable pageable =PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
         Page<Record> recordPage = new PageImpl<>(List.of());
         List<Long> recordIds = new ArrayList<>();
         List<GetSaveRecordsResponseDto> responseDtoPage = new ArrayList<>();
@@ -119,9 +122,9 @@ public class RecordSaveServiceTest {
         doReturn(recordPage).when(recordSaveRepository).findRecordsByUserId(user.getId(), pageable);
         doReturn(responseDtoPage).when(recordSaveRepository).findMediasByRecordIds(recordIds);
 
-        recordSaveService.getSaveRecordList(pageable,mock(HttpServletRequest.class));
+        recordSaveService.getSaveRecordList(pageable, mock(HttpServletRequest.class));
 
-        verify(recordSaveRepository,times(1)).findRecordsByUserId(user.getId(),pageable);
-        verify(recordSaveRepository,times(1)).findMediasByRecordIds(recordIds);
+        verify(recordSaveRepository, times(1)).findRecordsByUserId(user.getId(), pageable);
+        verify(recordSaveRepository, times(1)).findMediasByRecordIds(recordIds);
     }
 }
