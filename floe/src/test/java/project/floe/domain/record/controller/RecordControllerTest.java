@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -43,6 +44,7 @@ import project.floe.global.result.ResultCode;
 
 @WebMvcTest(RecordController.class)
 @Import(TestSecurityConfig.class)
+@ActiveProfiles("test")
 class RecordControllerTest {
 
     public static final String BASE_PATH = "/api/v1/records";

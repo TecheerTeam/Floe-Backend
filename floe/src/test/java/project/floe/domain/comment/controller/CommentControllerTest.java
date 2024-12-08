@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import project.floe.domain.comment.dto.request.CreateCommentRequest;
 import project.floe.domain.comment.dto.request.UpdateCommentRequest;
@@ -33,6 +34,7 @@ import project.floe.global.config.TestSecurityConfig;
 import project.floe.global.result.ResultCode;
 
 @WebMvcTest(CommentController.class)
+@ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
 class CommentControllerTest {
 

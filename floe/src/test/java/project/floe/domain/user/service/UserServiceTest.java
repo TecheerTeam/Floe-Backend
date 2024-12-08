@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.service.MediaService;
 import project.floe.domain.user.dto.request.UserOAuthSignUpRequest;
@@ -35,6 +36,7 @@ import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.UserServiceException;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class UserServiceTest {
 
     @InjectMocks
@@ -203,7 +205,6 @@ public class UserServiceTest {
         doReturn(mockUser).when(userRepository).save(mockUser);
         UpdateUserResponseDto responseDto = userService.updateUser(mockRequest, updateRequest);
 
-
         // then
         assertThat(responseDto.getNickname()).isEqualTo("Updated User");
         verify(jwtService, times(1)).extractEmail(mockRequest);
@@ -212,7 +213,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void 프로필사진추가혹은업데이트(){
+    public void 프로필사진추가혹은업데이트() {
         // given
         String email = "test@example.com";
         HttpServletRequest mockRequest = new MockHttpServletRequest();
