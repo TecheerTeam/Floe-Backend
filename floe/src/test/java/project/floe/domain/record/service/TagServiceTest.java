@@ -18,7 +18,6 @@ import project.floe.domain.record.repository.TagJpaRepository;
 @ContextConfiguration(classes = {TagService.class, TagJpaRepository.class})
 @ActiveProfiles("test")
 class TagServiceTest {
-
     @Autowired
     private TagService tagService;
     @MockBean
