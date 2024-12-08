@@ -9,13 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import project.floe.domain.record.entity.Tag;
 import project.floe.domain.record.entity.Tags;
 import project.floe.domain.record.repository.TagJpaRepository;
 
 @SpringBootTest
-@ContextConfiguration(classes = {TagService.class, TagJpaRepository.class})
 @ActiveProfiles("test")
 class TagServiceTest {
     @Autowired
