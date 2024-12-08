@@ -1,12 +1,8 @@
 package project.floe.domain.record.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,23 +16,20 @@ import project.floe.domain.record.repository.TagJpaRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 class TagServiceTest {
+
     @Autowired
     private TagService tagService;
-
     @MockBean
     private TagJpaRepository tagJpaRepository;
 
     @DisplayName("태그를 생성합니다")
     @Test
     void 태그_생성() {
-
+        // given
         String test = "test";
-        Tag mockTag = Tag.builder().tagName(test).build();
-
-        when(tagJpaRepository.save(any(Tag.class))).thenReturn(mockTag);
-
+        // when
         Tag tag = tagService.createTag(test);
-
+        // then
         assertThat(tag).isInstanceOf(Tag.class);
         assertThat(tag.getTagName()).isEqualTo(test);
     }
@@ -44,21 +37,13 @@ class TagServiceTest {
     @DisplayName("태그들을 String으로 넘겨주면 이미 존재하는지 여부를 판별해 새로 생성하거나 기존걸 가져와 리스트에 담습니다")
     @Test
     void 태그_들_생성() {
-
+        // given
         List<String> tagNames = List.of("test1", "test2", "test3");
-
-        when(tagJpaRepository.findByTagName(eq("test1"))).thenReturn(Optional.empty());
-        when(tagJpaRepository.findByTagName(eq("test2"))).thenReturn(Optional.empty());
-        when(tagJpaRepository.findByTagName(eq("test3"))).thenReturn(Optional.empty());
-
-        when(tagJpaRepository.save(any(Tag.class))).thenAnswer(invocation -> {
-            Tag tag = invocation.getArgument(0);
-            return Tag.builder().tagName(tag.getTagName()).build();
-        });
-
+        // when
         Tags tags = tagService.createTags(tagNames);
-
+        // then
         assertThat(tags).isInstanceOf(Tags.class);
         assertThat(tags.getTagNames()).containsExactlyElementsOf(tagNames);
     }
+
 }
