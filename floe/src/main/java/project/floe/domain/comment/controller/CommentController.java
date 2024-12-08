@@ -32,7 +32,6 @@ import project.floe.global.result.ResultResponse;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/comments")
 public class CommentController {
-
     private final CommentService commentService;
 
     @Operation(
