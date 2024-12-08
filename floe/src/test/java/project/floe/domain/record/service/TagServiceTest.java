@@ -2,6 +2,7 @@ package project.floe.domain.record.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -45,18 +46,18 @@ class TagServiceTest {
     void 태그_들_생성() {
 
         List<String> tagNames = List.of("test1", "test2", "test3");
-        List<Tag> mockTags = tagNames.stream()
-                .map(name -> Tag.builder().tagName(name).build())
-                .toList();
 
-        when(tagJpaRepository.findByTagName(any(String.class))).thenReturn(Optional.empty());
+        when(tagJpaRepository.findByTagName(eq("test1"))).thenReturn(Optional.empty());
+        when(tagJpaRepository.findByTagName(eq("test2"))).thenReturn(Optional.empty());
+        when(tagJpaRepository.findByTagName(eq("test3"))).thenReturn(Optional.empty());
+
         when(tagJpaRepository.save(any(Tag.class))).thenAnswer(invocation -> {
             Tag tag = invocation.getArgument(0);
             return Tag.builder().tagName(tag.getTagName()).build();
         });
 
         Tags tags = tagService.createTags(tagNames);
-        
+
         assertThat(tags).isInstanceOf(Tags.class);
         assertThat(tags.getTagNames()).containsExactlyElementsOf(tagNames);
     }
