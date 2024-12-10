@@ -13,6 +13,7 @@ import project.floe.domain.record.dto.request.CreateRecordRequest;
 import project.floe.domain.record.dto.request.SearchRecordRequest;
 import project.floe.domain.record.dto.request.UpdateRecordRequest;
 import project.floe.domain.record.dto.response.GetRecordResponse;
+import project.floe.domain.record.dto.response.UserRecordsResponse;
 import project.floe.domain.record.entity.Media;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.Tags;
@@ -101,4 +102,15 @@ public class RecordService {
         return findRecord;
     }
 
+    public Page<UserRecordsResponse> getUserRecords(HttpServletRequest request, Pageable pageable) {
+        String userEmail = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST)
+        );
+        User findUser = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
+
+        Page<Record> records = recordRepository.findByUserId(findUser.getId(),pageable);
+
+        return UserRecordsResponse.listOf(records);
+    }
 }

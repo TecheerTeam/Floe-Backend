@@ -23,6 +23,7 @@ public enum ResultCode {
     DETAIL_RECORD_GET_SUCCESS("R003", "개별 기록 조회 성공"),
     RECORD_PAGING_GET_SUCCESS("R004", "페이징된 전체 기록 조회 성공"),
     RECORD_MODIFY_SUCCESS("R005", "기록 수정 성공"),
+    GET_USER_RECORDS_SUCCESS("R009", "유저 전체 게시물 조회 성공"),
 
     // Record Search
     RECORD_SEARCH_SUCCESS("R006", "페이징된 기록 검색 성공"),
@@ -46,8 +47,12 @@ public enum ResultCode {
     RECORD_LIKE_COUNT_GET_SUCCESS("RL01", "기록 좋아요 개수 조회 성공"),
     RECORD_LIKE_POST_SUCCESS("RL02", "기록 좋아요 추가 성공"),
     RECORD_LIKE_DELETE_SUCCESS("RL03", "기록 좋아요 삭제 성공"),
-    RECORD_LIKE_LIST_GET_SUCCESS("RL04", "기록 좋아요 유저 목록 조회 성공");
-    
+    RECORD_LIKE_LIST_GET_SUCCESS("RL04", "기록 좋아요 유저 목록 조회 성공"),
+
+    // Tag
+    GET_TAG_STATISTICS_SUCCESS("T001", "전체 태그 통계 조회 성공"),
+    GET_USER_TAG_STATISTICS_SUCCESS("T002", "유저 태그 통계 조회 성공" ), ;
+
     private final String code;
     private final String message;
 }
