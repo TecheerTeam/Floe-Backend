@@ -1,5 +1,6 @@
 package project.floe.domain.record_like.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,15 +15,19 @@ import project.floe.domain.record_like.entity.RecordLike;
 import project.floe.domain.record_like.repository.RecordLikeRepository;
 import project.floe.domain.user.entity.User;
 import project.floe.domain.user.repository.UserRepository;
+import project.floe.global.auth.jwt.service.JwtService;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.BusinessException;
+import project.floe.global.error.exception.UserServiceException;
 
 @Service
 @RequiredArgsConstructor
 public class RecordLikeService {
+
     private final RecordLikeRepository recordLikeRepository;
     private final RecordService recordService;
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @Transactional
     public GetRecordLikeCountResponseDto getRecordLikeCount(Long recordId) {
@@ -36,13 +41,16 @@ public class RecordLikeService {
     }
 
     @Transactional
-    public void addRecordLike(Long userId, Long recordId) {
+    public void addRecordLike(HttpServletRequest request, Long recordId) {
         Record record = recordService.findRecordById(recordId);
 
-        User user = userRepository.findById(userId).orElseThrow(
+        String email = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
+
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new BusinessException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        if (recordLikeRepository.findByUserIdAndRecordId(userId, recordId).isPresent()) {
+        if (recordLikeRepository.findByUserIdAndRecordId(user.getId(), recordId).isPresent()) {
             throw new BusinessException(ErrorCode.RECORD_ALREADY_LIKED_ERROR);
         }
 
@@ -50,13 +58,16 @@ public class RecordLikeService {
     }
 
     @Transactional
-    public void deleteRecordLike(Long userId, Long recordId) {
+    public void deleteRecordLike(HttpServletRequest request, Long recordId) {
         recordService.findRecordById(recordId);
 
-        userRepository.findById(userId).orElseThrow(
+        String email = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
+
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new BusinessException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        Optional<RecordLike> optionalRecordLike = recordLikeRepository.findByUserIdAndRecordId(userId, recordId);
+        Optional<RecordLike> optionalRecordLike = recordLikeRepository.findByUserIdAndRecordId(user.getId(), recordId);
         if (optionalRecordLike.isEmpty()) {
             throw new BusinessException(ErrorCode.RECORD_LIKE_NOT_FOUNT_ERROR);
         }

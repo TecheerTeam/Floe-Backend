@@ -2,6 +2,7 @@ package project.floe.domain.record_like.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,11 +45,10 @@ public class RecordLikeController {
     )
     @PostMapping("/{recordId}/likes")
     public ResponseEntity<ResultResponse> addRecordLike(
-        @PathVariable("recordId") Long recordId
+        @PathVariable("recordId") Long recordId,
+        HttpServletRequest request
     ){
-        // 로그인 구현 후 유저 정보 받기
-        Long userId = 1L;
-        recordLikeService.addRecordLike(userId,recordId);
+        recordLikeService.addRecordLike(request,recordId);
         ResultResponse response = ResultResponse.of(ResultCode.RECORD_LIKE_POST_SUCCESS);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -59,11 +59,10 @@ public class RecordLikeController {
     )
     @DeleteMapping("/{recordId}/likes")
     public ResponseEntity<ResultResponse> deleteRecordLike(
-            @PathVariable("recordId") Long recordId
+            @PathVariable("recordId") Long recordId,
+            HttpServletRequest request
     ){
-        // 로그인 구현 후 유저 정보 받기
-        Long userId = 1L;
-        recordLikeService.deleteRecordLike(userId,recordId);
+        recordLikeService.deleteRecordLike(request,recordId);
         ResultResponse response = ResultResponse.of(ResultCode.RECORD_LIKE_DELETE_SUCCESS);
         return ResponseEntity.ok(response);
     }
