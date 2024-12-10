@@ -1,5 +1,5 @@
-# Backend Dockerfile
+# Backend DockerFile
 FROM openjdk:17-jdk-slim
 VOLUME /tmp
-COPY build/libs/floe-0.0.1-SNAPSHOT.jar app.jar
+COPY floe/build/libs/floe-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
