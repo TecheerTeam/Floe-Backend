@@ -29,6 +29,7 @@ import project.floe.domain.record.dto.response.CreateRecordResponse;
 import project.floe.domain.record.dto.response.GetDetailRecordResponse;
 import project.floe.domain.record.dto.response.GetRecordResponse;
 import project.floe.domain.record.dto.response.UpdateRecordResponse;
+import project.floe.domain.record.dto.response.UserRecordsResponse;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
 import project.floe.global.result.ResultCode;
@@ -114,4 +115,15 @@ public class RecordController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.RECORD_SEARCH_SUCCESS, response));
     }
 
+    @Operation(
+            summary = "회원 게시물 조회",
+            description = "회원이 작성한 게시물 조회"
+    )
+    @GetMapping("/users")
+    public ResponseEntity<ResultResponse> getUserRecords(
+            HttpServletRequest request,
+            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable){
+        Page<UserRecordsResponse> userRecords = recordService.getUserRecords(request, pageable);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.GET_USER_RECORDS_SUCCESS, userRecords));
+    }
 }
