@@ -27,4 +27,11 @@ public interface RecordTagJpaRepository extends JpaRepository<RecordTag, Long> {
             @Param("title") String title,
             @Param("recordType") RecordType recordType,
             Pageable pageable);
+
+    @Query("SELECT rt.tag.tagName, COUNT(rt) FROM RecordTag rt WHERE rt.record.id IN :recordIds GROUP BY rt.tag.id")
+    List<Object[]> findTagStatisticsByRecordIds(@Param("recordIds") List<Long> recordIds);
+
+    @Query("SELECT COUNT(rt) FROM RecordTag rt WHERE rt.record.id IN :recordIds")
+    Long findTotalTagCountByRecordIds(@Param("recordIds") List<Long> recordIds);
+
 }
