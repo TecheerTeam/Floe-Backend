@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -30,6 +31,7 @@ import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class RecordLikeControllerTest {
     @InjectMocks
     private RecordLikeController recordLikeController;
@@ -129,7 +131,7 @@ public class RecordLikeControllerTest {
     }
 
     @Test
-    public void 좋아요한유저목록조회()throws Exception{
+    public void 좋아요한유저목록조회() throws Exception {
         String url = "/api/v1/records/{recordId}/like-list";
         Long pathVariable = 1L;
         List<User> userList = new ArrayList<>();
@@ -138,8 +140,8 @@ public class RecordLikeControllerTest {
         doReturn(expectedDto).when(recordLikeService).getRecordLikeList(pathVariable);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get(url,pathVariable)
-        )
+                        MockMvcRequestBuilders.get(url, pathVariable)
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
                 .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()))

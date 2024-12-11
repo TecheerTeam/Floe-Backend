@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -30,6 +31,7 @@ import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class RecordSaveControllerTest {
 
     @InjectMocks
@@ -99,7 +101,7 @@ public class RecordSaveControllerTest {
     void 저장한기록목록조회() throws Exception {
         String url = "/api/v1/users/save/record-list";
         ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_SAVE_LIST_GET_SUCCESS);
-        Page<GetSaveRecordsResponseDto> expectedDto = new PageImpl<>(Collections.emptyList(), PageRequest.of(0,5),0);
+        Page<GetSaveRecordsResponseDto> expectedDto = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 5), 0);
         doReturn(expectedDto).when(recordSaveService)
                 .getSaveRecordList(any(Pageable.class), any(HttpServletRequest.class));
 
