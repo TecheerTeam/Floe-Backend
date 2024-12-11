@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class TagStatisticsResponse {
-    private String tag;
+    private String tagName;
     private Long count;
     private BigDecimal ratio; // 비율 (%)
 

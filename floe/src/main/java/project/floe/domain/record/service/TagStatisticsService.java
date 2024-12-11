@@ -33,7 +33,7 @@ public class TagStatisticsService {
         return tagStatistics.stream()
                 .map(result -> {
                     return TagStatisticsResponse.builder()
-                            .tag((String) result[0])
+                            .tagName((String) result[0])
                             .count  ((Long) result[1])
                             .ratio(totalTagCount > 0 ? BigDecimal.valueOf((Long) result[1])
                                     .divide(BigDecimal.valueOf(totalTagCount), 4, RoundingMode.HALF_UP)
@@ -62,7 +62,7 @@ public class TagStatisticsService {
         return tagStatistics.stream()
                 .map(result -> {
                     return TagStatisticsResponse.builder()
-                            .tag((String) result[0])
+                            .tagName((String) result[0])
                             .count((Long) result[1])
                             .ratio(totalTagCount > 0 ? BigDecimal.valueOf((Long) result[1])
                                     .divide(BigDecimal.valueOf(totalTagCount), 4, RoundingMode.HALF_UP)

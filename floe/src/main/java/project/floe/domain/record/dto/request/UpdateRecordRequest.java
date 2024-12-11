@@ -25,7 +25,7 @@ public class UpdateRecordRequest {
         @NotNull(message = "RecordType cannot be empty")
         private RecordType recordType;
 
-        private List<String> tags;
+        private List<String> tagNames;
 
         private List<UpdateMediaRequest> medias;
 }
