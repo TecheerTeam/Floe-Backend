@@ -97,7 +97,7 @@ public class RecordService {
     public Record modifyRecord(Long recordId, UpdateRecordRequest dto, List<MultipartFile> files) {
         Record findRecord = findRecordById(recordId);
         List<Media> updatedMedias = mediaService.updateMedias(findRecord, dto.getMedias(), files);
-        Tags updatedTags = tagService.createTags(dto.getTags());
+        Tags updatedTags = tagService.createTags(dto.getTagNames());
         findRecord.updateRecord(dto.getTitle(), dto.getContent(), dto.getRecordType(), updatedTags, updatedMedias);
         return findRecord;
     }
