@@ -2,3 +2,4 @@
 application-private.properties
 floe/src/main/resources/index.html
 .env
+.idea
