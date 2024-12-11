@@ -6,14 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordType;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class GetDetailRecordResponse {
+@AllArgsConstructor
+@Builder
+public class UserRecordsResponse {
 
     private Long recordId;
 
@@ -31,8 +32,8 @@ public class GetDetailRecordResponse {
 
     private LocalDateTime createdAt;
 
-    public static GetDetailRecordResponse from(Record record){
-        return GetDetailRecordResponse.builder()
+    public static UserRecordsResponse from(Record record){
+        return UserRecordsResponse.builder()
                 .recordId(record.getId())
                 .user(GetRecordUserResponse.from(record.getUser()))
                 .title(record.getTitle())
@@ -42,5 +43,9 @@ public class GetDetailRecordResponse {
                 .tagNames(record.getTagNames())
                 .createdAt(record.getCreatedAt())
                 .build();
+    }
+
+    public static Page<UserRecordsResponse> listOf(Page<Record> records) {
+        return records.map(UserRecordsResponse::from);
     }
 }

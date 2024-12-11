@@ -1,11 +1,15 @@
 package project.floe.domain.record_like.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,10 +88,10 @@ public class RecordLikeControllerTest {
     public void 좋아요추가실패_중복() throws Exception {
         String url = "/api/v1/records/{recordId}/likes";
         Long pathVariable = 1L;
-        Long userId = 1L;
         ErrorResponse expectedResponse = ErrorResponse.of(ErrorCode.RECORD_ALREADY_LIKED_ERROR);
+
         doThrow(new BusinessException(ErrorCode.RECORD_ALREADY_LIKED_ERROR))
-                .when(recordLikeService).addRecordLike(userId, pathVariable);
+                .when(recordLikeService).addRecordLike(any(HttpServletRequest.class), eq(pathVariable));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post(url, pathVariable)
@@ -101,9 +105,9 @@ public class RecordLikeControllerTest {
     public void 좋아요추가성공() throws Exception {
         String url = "/api/v1/records/{recordId}/likes";
         Long pathVariable = 1L;
-        Long userId = 1L;
         ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_LIKE_POST_SUCCESS);
-        doNothing().when(recordLikeService).addRecordLike(userId, pathVariable);
+
+        doNothing().when(recordLikeService).addRecordLike(any(HttpServletRequest.class), eq(pathVariable));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post(url, pathVariable)
@@ -117,10 +121,10 @@ public class RecordLikeControllerTest {
     public void 좋아요삭제실패_좋아요하지않았음() throws Exception {
         String url = "/api/v1/records/{recordId}/likes";
         Long pathVariable = 1L;
-        Long userId = 1L;
         ErrorResponse expectedResponse = ErrorResponse.of(ErrorCode.RECORD_LIKE_NOT_FOUNT_ERROR);
+
         doThrow(new BusinessException(ErrorCode.RECORD_LIKE_NOT_FOUNT_ERROR))
-                .when(recordLikeService).deleteRecordLike(userId, pathVariable);
+                .when(recordLikeService).deleteRecordLike(any(HttpServletRequest.class), eq(pathVariable));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.delete(url, pathVariable)

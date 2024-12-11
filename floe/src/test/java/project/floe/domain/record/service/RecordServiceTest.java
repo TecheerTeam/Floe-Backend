@@ -32,6 +32,7 @@ import project.floe.domain.record.dto.request.SearchRecordRequest;
 import project.floe.domain.record.dto.request.UpdateMediaRequest;
 import project.floe.domain.record.dto.request.UpdateRecordRequest;
 import project.floe.domain.record.dto.response.GetRecordResponse;
+import project.floe.domain.record.dto.response.UserRecordsResponse;
 import project.floe.domain.record.entity.Media;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordTags;
@@ -310,7 +311,7 @@ class RecordServiceTest {
         // Then: 결과 검증
         assertThat(result.getTotalElements()).isEqualTo(1);
         assertThat(result.getContent().get(0).getTitle()).isEqualTo("test");
-        assertThat(result.getContent().get(0).getTags()).containsExactlyInAnyOrder("Spring", "JPA");
+        assertThat(result.getContent().get(0).getTagNames()).containsExactlyInAnyOrder("Spring", "JPA");
 
     }
 
@@ -370,5 +371,49 @@ class RecordServiceTest {
         assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.RECORD_SEARCH_EMPTY_ERROR);
     }
 
+    @Test
+    @DisplayName("사용자가 작성한 게시글들의 id를 가져와 반환해줍니다")
+    void 사용자_작성_게시글_id_조회(){
+        // Given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        String email = "test@example.com";
+        Long userId = 1L;
+        Pageable pageable = PageRequest.of(0, 2);
 
+        User user = User.builder().email(email).id(userId).build();
+        Record record1 = Record.builder()
+                .medias(List.of(Media.builder().id(1L).build()))
+                .user(user)
+                .title("test1")
+                .content("test content")
+                .recordTags(new RecordTags())
+                .recordType(RecordType.FLOE)
+                .build();
+        Record record2 = Record.builder()
+                .medias(List.of(Media.builder().id(1L).build()))
+                .user(user)
+                .title("test2")
+                .content("test content2")
+                .recordTags(new RecordTags())
+                .recordType(RecordType.FLOE)
+                .build();
+
+        Page<Record> mockPage = new PageImpl<>(List.of(record1, record2), pageable, 2);
+
+        // Mocking
+        when(jwtService.extractEmail(request)).thenReturn(Optional.of(email));
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(recordRepository.findByUserId(userId, pageable)).thenReturn(mockPage);
+
+        // When
+        Page<UserRecordsResponse> result = recordService.getUserRecords(request, pageable);
+
+        // Then
+        assertThat(result.getTotalElements()).isEqualTo(2);
+        assertThat(result.getContent()).extracting("title")
+                .containsExactly("test1", "test2");
+        assertThat(result.getNumber()).isEqualTo(0);
+        assertThat(result.getSize()).isEqualTo(2);
+
+    }
 }
