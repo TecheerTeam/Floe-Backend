@@ -8,9 +8,9 @@ public class Tags {
     private List<Tag> tags;
 
     public List<String> getTagNames() {
-        return tags != null ? tags.stream()
+        return tags.stream()
                 .map(Tag::getTagName)
-                .toList() : List.of();
+                .toList();
     }
 
     public Tags(List<Tag> tags) {
