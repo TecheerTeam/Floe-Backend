@@ -34,7 +34,7 @@ class TagServiceTest {
     void 태그_생성() {
         String test = "test";
         Tag mockTag = Tag.builder().tagName(test).build();
-
+        when(tagJpaRepository.save(any(Tag.class))).thenReturn(mockTag);
         Tag tag = tagService.createTag(test);
 
         assertThat(tag).isInstanceOf(Tag.class);
@@ -47,14 +47,13 @@ class TagServiceTest {
         List<String> tagNames = List.of("test1", "test2", "test3");
 
         Tags tags = tagService.createTags(tagNames);
-        // 각 태그에 대해 findByTagName이 Optional.empty()를 반환 (존재하지 않음)
+        // Mock 설정
         when(tagJpaRepository.findByTagName(any(String.class))).thenReturn(Optional.empty());
-
-        // save 메서드는 받은 Tag 객체를 그대로 반환하도록 설정
         when(tagJpaRepository.save(any(Tag.class))).thenAnswer(invocation -> {
             Tag tag = invocation.getArgument(0);
             return Tag.builder().tagName(tag.getTagName()).build();
         });
+
         assertThat(tags).isInstanceOf(Tags.class);
         assertThat(tags.getTagNames()).containsExactlyElementsOf(tagNames);
     }
