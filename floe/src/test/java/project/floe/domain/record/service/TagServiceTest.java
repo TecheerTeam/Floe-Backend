@@ -46,15 +46,15 @@ class TagServiceTest {
     void 태그_들_생성() {
         List<String> tagNames = List.of("test1", "test2", "test3");
 
-        Tags tags = tagService.createTags(tagNames);
-        // Mock 설정
         when(tagJpaRepository.findByTagName(any(String.class))).thenReturn(Optional.empty());
         when(tagJpaRepository.save(any(Tag.class))).thenAnswer(invocation -> {
             Tag tag = invocation.getArgument(0);
             return Tag.builder().tagName(tag.getTagName()).build();
         });
 
-        assertThat(tags).isInstanceOf(Tags.class);
+        Tags tags = tagService.createTags(tagNames);
+
+        assertThat(tags).isNotNull();
         assertThat(tags.getTagNames()).containsExactlyElementsOf(tagNames);
     }
 }
