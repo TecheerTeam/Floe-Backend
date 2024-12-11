@@ -14,6 +14,6 @@ public class Tags {
     }
 
     public Tags(List<Tag> tags) {
-        this.tags = tags;
+        this.tags = tags != null ? tags : List.of(); // null 방어
     }
 }
