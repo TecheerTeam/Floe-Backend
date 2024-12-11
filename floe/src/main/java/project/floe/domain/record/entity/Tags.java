@@ -7,13 +7,13 @@ import lombok.Getter;
 public class Tags {
     private List<Tag> tags;
 
-    public List<String> getTagNames(){
-        return tags.stream()
+    public List<String> getTagNames() {
+        return tags != null ? tags.stream()
                 .map(Tag::getTagName)
-                .toList();
+                .toList() : List.of();
     }
 
-    public Tags(List<Tag> tags){
+    public Tags(List<Tag> tags) {
         this.tags = tags;
     }
 }
