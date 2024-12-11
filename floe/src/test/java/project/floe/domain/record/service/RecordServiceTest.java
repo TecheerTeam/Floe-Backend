@@ -231,7 +231,7 @@ class RecordServiceTest {
                 .title("새 제목")
                 .content("새 내용")
                 .recordType(RecordType.FLOE)
-                .tags(List.of("Spring", "JPA"))
+                .tagNames(List.of("Spring", "JPA"))
                 .medias(List.of(mediaRequest))
                 .build();
 
@@ -373,7 +373,7 @@ class RecordServiceTest {
 
     @Test
     @DisplayName("사용자가 작성한 게시글들의 id를 가져와 반환해줍니다")
-    void 사용자_작성_게시글_id_조회(){
+    void 사용자_작성_게시글_id_조회() {
         // Given
         HttpServletRequest request = mock(HttpServletRequest.class);
         String email = "test@example.com";
