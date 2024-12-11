@@ -44,7 +44,7 @@ class TagServiceTest {
         List<String> tagNames = List.of("test1", "test2", "test3");
 
         Tags tags = tagService.createTags(tagNames);
-
+        System.out.println("Tags: " + tags);
         assertThat(tags).isInstanceOf(Tags.class);
         assertThat(tags.getTagNames()).containsExactlyElementsOf(tagNames);
     }
