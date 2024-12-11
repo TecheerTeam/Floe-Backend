@@ -28,7 +28,7 @@ public class UserRecordsResponse {
 
     private List<MediaResponse> medias;
 
-    private List<String> tags;
+    private List<String> tagNames;
 
     private LocalDateTime createdAt;
 
@@ -40,7 +40,7 @@ public class UserRecordsResponse {
                 .content(record.getContent())
                 .recordType(record.getRecordType())
                 .medias(MediaResponse.from(record))
-                .tags(record.getTagNames())
+                .tagNames(record.getTagNames())
                 .createdAt(record.getCreatedAt())
                 .build();
     }

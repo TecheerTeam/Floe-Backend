@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -310,7 +309,7 @@ class RecordServiceTest {
         // Then: 결과 검증
         assertThat(result.getTotalElements()).isEqualTo(1);
         assertThat(result.getContent().get(0).getTitle()).isEqualTo("test");
-        assertThat(result.getContent().get(0).getTags()).containsExactlyInAnyOrder("Spring", "JPA");
+        assertThat(result.getContent().get(0).getTagNames()).containsExactlyInAnyOrder("Spring", "JPA");
 
     }
 

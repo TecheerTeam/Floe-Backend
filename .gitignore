@@ -2,3 +2,5 @@
 application-private.properties
 floe/src/main/resources/index.html
 .env
+/.idea
+.idea/misc.xml

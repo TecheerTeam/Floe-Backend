@@ -114,4 +114,11 @@ public class User extends BaseEntity {
         this.field = dto.getField();
         authorizeUser();
     }
+
+    public String getProfileImage(){
+        if (this.profileImage == null || this.profileImage.isEmpty()){
+            return null;
+        }
+        return this.profileImage;
+    }
 }
