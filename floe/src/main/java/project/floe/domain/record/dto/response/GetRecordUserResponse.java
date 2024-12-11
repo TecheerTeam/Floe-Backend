@@ -14,11 +14,13 @@ import project.floe.domain.user.entity.User;
 public class GetRecordUserResponse {
     private String nickname;
     private String email;
+    private String profileImage;
 
     public static GetRecordUserResponse from(User user) {
         return GetRecordUserResponse.builder()
                 .nickname(user.getNickname())
                 .email(user.getEmail())
+                .profileImage(user.getProfileImage())
                 .build();
     }
 }
