@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordTags;
 import project.floe.domain.record.entity.RecordType;
@@ -33,6 +34,7 @@ import project.floe.global.error.exception.BusinessException;
 import project.floe.global.error.exception.EmptyResultException;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class RecordLikeServiceTest {
 
     @InjectMocks
@@ -96,7 +98,8 @@ public class RecordLikeServiceTest {
         doReturn(Optional.of(user.getEmail())).when(jwtService).extractEmail(request);
         doReturn(Optional.of(user)).when(userRepository).findByEmail(user.getEmail());
         doReturn(record).when(recordService).findRecordById(record.getId());
-        doReturn(Optional.of(recordLike)).when(recordLikeRepository).findByUserIdAndRecordId(user.getId(), record.getId());
+        doReturn(Optional.of(recordLike)).when(recordLikeRepository)
+                .findByUserIdAndRecordId(user.getId(), record.getId());
 
         BusinessException response = assertThrows(BusinessException.class,
                 () -> recordLikeService.addRecordLike(request, record.getId()));
@@ -114,7 +117,8 @@ public class RecordLikeServiceTest {
         doReturn(Optional.of(user.getEmail())).when(jwtService).extractEmail(request);
         doReturn(Optional.of(user)).when(userRepository).findByEmail(user.getEmail());
         doReturn(record).when(recordService).findRecordById(record.getId());
-        doReturn(Optional.of(recordLike)).when(recordLikeRepository).findByUserIdAndRecordId(user.getId(), record.getId());
+        doReturn(Optional.of(recordLike)).when(recordLikeRepository)
+                .findByUserIdAndRecordId(user.getId(), record.getId());
 
         recordLikeService.deleteRecordLike(request, record.getId());
 
@@ -139,11 +143,11 @@ public class RecordLikeServiceTest {
     }
 
     @Test
-    public void 좋아요목록조회(){
+    public void 좋아요목록조회() {
         User user = user();
         Record record = record();
         List<RecordLike> list = new ArrayList<>();
-        list.add(new RecordLike(user,record));
+        list.add(new RecordLike(user, record));
         doReturn(list).when(recordLikeRepository).findByRecordId(record.getId());
 
         List<RecordLike> recordLikeList = recordLikeService.findByRecordId(record.getId());
@@ -152,13 +156,13 @@ public class RecordLikeServiceTest {
     }
 
     @Test
-    public void 좋아요한유저목록조회(){
+    public void 좋아요한유저목록조회() {
         User user = user();
         Record record = record();
         doReturn(Optional.of(user)).when(userRepository).findById(user.getId());
 
         List<RecordLike> list = new ArrayList<>();
-        list.add(new RecordLike(user,record));
+        list.add(new RecordLike(user, record));
         doReturn(list).when(recordLikeRepository).findByRecordId(record.getId());
 
         recordLikeService.getRecordLikeList(record.getId());

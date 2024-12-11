@@ -47,7 +47,7 @@ public class TagStatisticsServiceTest {
 
     @Test
     @DisplayName("태그 전체 통계 조회 테스트")
-    void 태그_전체_통계_조회(){
+    void 태그_전체_통계_조회() {
         // given
         List<Object[]> mockTagStatistics = List.of(
                 new Object[]{"Java", 30L},
@@ -63,7 +63,7 @@ public class TagStatisticsServiceTest {
 
         // then
         assertThat(result).hasSize(2);
-        assertThat(result).extracting("tag").containsExactly("Java", "Spring");
+        assertThat(result).extracting("tagName").containsExactly("Java", "Spring");
         assertThat(result).extracting("count").containsExactly(30L, 20L);
         assertThat(result).extracting("ratio").containsExactly(
                 BigDecimal.valueOf(60.00).setScale(4, RoundingMode.HALF_UP),
@@ -94,7 +94,7 @@ public class TagStatisticsServiceTest {
 
     @Test
     @DisplayName("유저 태그 통계 조회 테스트")
-    void 유저_태그_통계_조회(){
+    void 유저_태그_통계_조회() {
         // Given
         HttpServletRequest request = mock(HttpServletRequest.class);
         String email = "test@example.com";
@@ -118,7 +118,7 @@ public class TagStatisticsServiceTest {
 
         // Then
         assertThat(result).hasSize(2);
-        assertThat(result).extracting("tag").containsExactly("Java", "Spring");
+        assertThat(result).extracting("tagName").containsExactly("Java", "Spring");
         assertThat(result).extracting("count").containsExactly(30L, 20L);
         assertThat(result).extracting("ratio").containsExactly(
                 BigDecimal.valueOf(60.0000).setScale(4),

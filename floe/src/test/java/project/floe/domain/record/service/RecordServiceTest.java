@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 import project.floe.domain.record.dto.request.CreateRecordRequest;
 import project.floe.domain.record.dto.request.SearchRecordRequest;
@@ -48,6 +49,7 @@ import project.floe.global.error.exception.EmptyKeywordException;
 import project.floe.global.error.exception.EmptyResultException;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 class RecordServiceTest {
 
     @InjectMocks
@@ -229,7 +231,7 @@ class RecordServiceTest {
                 .title("새 제목")
                 .content("새 내용")
                 .recordType(RecordType.FLOE)
-                .tags(List.of("Spring", "JPA"))
+                .tagNames(List.of("Spring", "JPA"))
                 .medias(List.of(mediaRequest))
                 .build();
 
@@ -371,7 +373,7 @@ class RecordServiceTest {
 
     @Test
     @DisplayName("사용자가 작성한 게시글들의 id를 가져와 반환해줍니다")
-    void 사용자_작성_게시글_id_조회(){
+    void 사용자_작성_게시글_id_조회() {
         // Given
         HttpServletRequest request = mock(HttpServletRequest.class);
         String email = "test@example.com";

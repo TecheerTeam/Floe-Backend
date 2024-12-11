@@ -14,13 +14,15 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import project.floe.domain.comment.dto.request.CreateCommentRequest;
 import project.floe.domain.comment.dto.request.UpdateCommentRequest;
 import project.floe.domain.comment.dto.response.GetCommentResponse;
@@ -34,7 +36,8 @@ import project.floe.global.auth.jwt.service.JwtService;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.CommentException;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 class CommentServiceTest {
 
     @InjectMocks
