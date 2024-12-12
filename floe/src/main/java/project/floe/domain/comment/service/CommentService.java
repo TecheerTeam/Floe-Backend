@@ -55,7 +55,7 @@ public class CommentService {
         Comment comment = Comment.create(record, user, request.getContent(), parent);
         commentRepository.save(comment);
     }
-    
+
     public Page<GetCommentResponse> getCommentsByRecordId(Long recordId, Pageable pageable) {
         Page<Comment> comments = commentRepository.findByRecordId(recordId, pageable);
         return comments.map(GetCommentResponse::from);
@@ -78,6 +78,11 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_ERROR));
         commentRepository.delete(comment);
+    }
+
+    public Comment getCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_ERROR));
     }
 
 
