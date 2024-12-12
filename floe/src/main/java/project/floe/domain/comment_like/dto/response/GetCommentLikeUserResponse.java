@@ -14,4 +14,10 @@ public class GetCommentLikeUserResponse {
         this.NickName = user.getNickname();
         this.profileImage = user.getProfileImage();
     }
+    //jpa query를 위한 생성자
+    public GetCommentLikeUserResponse (Long userId, String nickname, String profileImage) {
+        this.userId = userId;
+        this.NickName = nickname;
+        this.profileImage = profileImage;
+    }
 }
