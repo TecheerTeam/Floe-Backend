@@ -128,8 +128,8 @@ class CommentLikeServiceTest {
         GetCommentLikeUserListResponse response = commentLikeService.getCommentLikeUsers(commentId);
 
         assertThat(response.commentLikeUsers()).hasSize(2);
-        assertThat(response.commentLikeUsers().get(0).getUserName()).isEqualTo("testUser");
-        assertThat(response.commentLikeUsers().get(1).getUserName()).isEqualTo("testUser2");
+        assertThat(response.commentLikeUsers().get(0).getNickName()).isEqualTo("testUser");
+        assertThat(response.commentLikeUsers().get(1).getNickName()).isEqualTo("testUser2");
     }
 
     @DisplayName("댓글 좋아요 삭제")
