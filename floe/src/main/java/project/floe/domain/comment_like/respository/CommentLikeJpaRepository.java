@@ -16,6 +16,6 @@ public interface CommentLikeJpaRepository extends JpaRepository<CommentLike, Lon
 
     @Query("SELECT new project.floe.domain.comment_like.dto.response.GetCommentLikeUserResponse(u.id, u.nickname, u.profileImage) "
             +
-            "FROM CommentLike cl JOIN cl.users u WHERE cl.comment.id = :commentId")
+            "FROM CommentLike cl JOIN cl.user u WHERE cl.comment.id = :commentId")
     List<GetCommentLikeUserResponse> findUserListByCommentId(@Param("commentId") Long commentId);
 }
