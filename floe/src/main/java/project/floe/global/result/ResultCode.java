@@ -38,10 +38,10 @@ public enum ResultCode {
     USER_PROFILE_IMAGE_UPDATE_SUCCESS("U007", "프로필 사진 업데이트 성공"),
 
     // Record Save
-    RECORD_SAVE_POST_SUCCESS("RS02","기록 저장 성공"),
-    RECORD_SAVE_DELETE_SUCCESS("RS03","기록 저장 삭제 성공"),
-    RECORD_SAVE_COUNT_GET_SUCCESS("RS01","기록 저장 개수 조회 성공"),
-    RECORD_SAVE_LIST_GET_SUCCESS("RS04","저장한 기록 목록 조회 성공"),
+    RECORD_SAVE_POST_SUCCESS("RS02", "기록 저장 성공"),
+    RECORD_SAVE_DELETE_SUCCESS("RS03", "기록 저장 삭제 성공"),
+    RECORD_SAVE_COUNT_GET_SUCCESS("RS01", "기록 저장 개수 조회 성공"),
+    RECORD_SAVE_LIST_GET_SUCCESS("RS04", "저장한 기록 목록 조회 성공"),
 
     // Record Like
     RECORD_LIKE_COUNT_GET_SUCCESS("RL01", "기록 좋아요 개수 조회 성공"),
@@ -49,9 +49,17 @@ public enum ResultCode {
     RECORD_LIKE_DELETE_SUCCESS("RL03", "기록 좋아요 삭제 성공"),
     RECORD_LIKE_LIST_GET_SUCCESS("RL04", "기록 좋아요 유저 목록 조회 성공"),
 
+    // CommentLike
+    Comment_LIKE_COUNT_GET_SUCCESS("CL01", "댓글 좋아요 개수 조회 성공"),
+    Comment_LIKE_CREATE_SUCCESS("CL02", "댓글 좋아요 추가 성공"),
+    Comment_LIKE_DELETE_SUCCESS("CL03", "댓글 좋아요 삭제 성공"),
+    Comment_LIKE_USERS_GET_SUCCESS("CL04", "댓글 좋아요 유저 목록 조회 성공"),
+
     // Tag
     GET_TAG_STATISTICS_SUCCESS("T001", "전체 태그 통계 조회 성공"),
-    GET_USER_TAG_STATISTICS_SUCCESS("T002", "유저 태그 통계 조회 성공" ), ;
+    GET_USER_TAG_STATISTICS_SUCCESS("T002", "유저 태그 통계 조회 성공"),
+    ;
+
 
     private final String code;
     private final String message;
