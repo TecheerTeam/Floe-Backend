@@ -22,7 +22,7 @@ import project.floe.domain.user.entity.User;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        columnNames = {"user_id", "record_id"}
+                        columnNames = {"user_id", "comment_id"}
                 )
         }
 )
