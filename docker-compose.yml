@@ -8,16 +8,16 @@ services:
     ports:
       - "3307:3306"
     volumes:
-     - db-data:/var/lib/mysql
+      - db-data:/var/lib/mysql
 
   backend:
     build:
-      context: ./Floe-Backend/floe
+      context: ./floe
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     env_file:
-     - .env  # 부모의 .env 파일 사용
+      - .env  # 부모의 .env 파일 사용
     depends_on:
       - "mysql"
 volumes:
