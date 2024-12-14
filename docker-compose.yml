@@ -1,0 +1,24 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: floe-db
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3307:3306"
+    volumes:
+     - db-data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./Floe-Backend/floe
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+     - .env  # 부모의 .env 파일 사용
+    depends_on:
+      - "mysql"
+volumes:
+  db-data:
