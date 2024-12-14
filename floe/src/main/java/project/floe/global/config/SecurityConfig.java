@@ -61,6 +61,7 @@ public class SecurityConfig {
                         requests
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()
+                                .requestMatchers("/api/v1/records/**").permitAll()
                                 .requestMatchers("/api/v1/auth/**").permitAll()
                                 .requestMatchers("/sign-up").permitAll() // 회원가입 접근 가능
                                 .anyRequest().authenticated() // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
