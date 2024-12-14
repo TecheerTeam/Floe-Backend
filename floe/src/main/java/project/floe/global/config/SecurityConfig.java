@@ -68,6 +68,7 @@ public class SecurityConfig {
 
 
                 )
+                .cors()
                 .oauth2Login(oauth2Login -> oauth2Login
                         .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
                                 .userService(customOAuth2UserService)
