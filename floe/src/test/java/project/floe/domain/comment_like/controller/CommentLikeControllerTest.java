@@ -2,6 +2,8 @@ package project.floe.domain.comment_like.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,12 +39,12 @@ class CommentLikeControllerTest {
     private CommentLikeService commentLikeService;
 
     @Autowired
-    private ObjectMapper objectMapper; // JSON 직렬화/역직렬화
+    private ObjectMapper objectMapper;
 
     @DisplayName("댓글 좋아요 추가")
     @Test
     void addCommentLike() throws Exception {
-        // Service 메서드 Mock 설정
+
         doNothing().when(commentLikeService).createCommentLike(any(), any());
 
         mockMvc.perform(post("/api/v1/comments/1/likes")
@@ -50,12 +52,13 @@ class CommentLikeControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value(ResultCode.Comment_LIKE_CREATE_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResultCode.Comment_LIKE_CREATE_SUCCESS.getMessage()));
+        verify(commentLikeService, times(1)).createCommentLike(any(), any());
     }
 
     @DisplayName("댓글 좋아요 삭제")
     @Test
     void deleteCommentLike() throws Exception {
-        // Service 메서드 Mock 설정
+
         doNothing().when(commentLikeService).deleteCommentLike(any(), any());
 
         mockMvc.perform(delete("/api/v1/comments/1/likes")
@@ -63,31 +66,37 @@ class CommentLikeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.Comment_LIKE_DELETE_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResultCode.Comment_LIKE_DELETE_SUCCESS.getMessage()));
+        verify(commentLikeService, times(1)).deleteCommentLike(any(), any());
     }
 
     @DisplayName("댓글 좋아요 개수 조회")
     @Test
     void getCommentLikeCount() throws Exception {
-        // Given
+
         GetCommentLikeCountResponse mockResponse = new GetCommentLikeCountResponse(1L);
         when(commentLikeService.getCommentLikeCount(any())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/v1/comments/1/likes/count"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.Comment_LIKE_COUNT_GET_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ResultCode.Comment_LIKE_COUNT_GET_SUCCESS.getMessage()))
                 .andExpect(jsonPath("$.data.count").value(1));
+
+        verify(commentLikeService, times(1)).getCommentLikeCount(any());
     }
 
     @DisplayName("댓글 좋아요 유저 목록 조회")
     @Test
     void getCommentLikeUsers() throws Exception {
-        // Given
+
         GetCommentLikeUserListResponse mockResponse = new GetCommentLikeUserListResponse(List.of());
         when(commentLikeService.getCommentLikeUsers(any())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/v1/comments/1/likes/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.Comment_LIKE_USERS_GET_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ResultCode.Comment_LIKE_USERS_GET_SUCCESS.getMessage()))
                 .andExpect(jsonPath("$.data.commentLikeUsers").isArray());
+        verify(commentLikeService, times(1)).getCommentLikeUsers(any());
     }
 }
