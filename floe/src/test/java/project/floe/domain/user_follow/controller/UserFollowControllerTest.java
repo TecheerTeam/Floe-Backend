@@ -106,8 +106,8 @@ class UserFollowControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.USER_FOLLOW_COUNT_GET_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResultCode.USER_FOLLOW_COUNT_GET_SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data.followerCount").value(10))
-                .andExpect(jsonPath("$.data.followingCount").value(5));
+                .andExpect(jsonPath("$.data.followerCount").value(5))
+                .andExpect(jsonPath("$.data.followingCount").value(10));
 
         verify(userFollowService, times(1)).getUserFollowCount(any());
     }
@@ -117,14 +117,12 @@ class UserFollowControllerTest {
     void getUserFollowerList_Success() throws Exception {
         Long userId = 1L;
 
-        // Mock Response Data
         List<GetUserFollowUserResponse> followerList = List.of(
                 new GetUserFollowUserResponse(2L, "test1", "image1.jpg", true),
                 new GetUserFollowUserResponse(3L, "test2", "image2.jpg", false)
         );
         GetUserFollowerListResponse response = new GetUserFollowerListResponse(followerList);
 
-        // Mock Service 호출
         when(userFollowService.getUserFollowerList(eq(userId), any())).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/users/1/follow/follower")
