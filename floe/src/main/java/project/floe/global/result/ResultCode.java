@@ -37,6 +37,14 @@ public enum ResultCode {
     USER_LOGIN_FAIL("U006", "로그인 실패"),
     USER_PROFILE_IMAGE_UPDATE_SUCCESS("U007", "프로필 사진 업데이트 성공"),
 
+    // User Follow
+    USER_FOLLOW_CREATE_SUCCESS("UF01", "유저 팔로우 생성 성공"),
+    USER_FOLLOW_DELETE_SUCCESS("UF02", "유저 팔로우 삭제 성공"),
+    USER_FOLLOW_GET_SUCCESS("UF03", "유저 팔로우 조회 성공"),
+    USER_FOLLOW_COUNT_GET_SUCCESS("UF04", "유저 팔로우 수 조회 성공"),
+    USER_FOLLOW_STATUS_GET_SUCCESS("UF05", "유저 팔로우 상태 조회 성공"),
+
+
     // Record Save
     RECORD_SAVE_POST_SUCCESS("RS02", "기록 저장 성공"),
     RECORD_SAVE_DELETE_SUCCESS("RS03", "기록 저장 삭제 성공"),
