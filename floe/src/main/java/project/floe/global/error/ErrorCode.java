@@ -48,6 +48,12 @@ public enum ErrorCode {
     USER_NICKNAME_DUPLICATION_ERROR(400, "U004", "중복된 닉네임"),
     EMAIL_NOT_FOUND_ERROR(400, "U005", "해당 이메일이 존재하지 않음"),
 
+    //User Follow
+    USER_FOLLOW_NOT_FOUND_ERROR(404, "UF001", "팔로우를 찾을 수 없음"),
+    USER_FOLLOW_ALREADY_EXIST_ERROR(400, "UF002", "이미 팔로우한 유저"),
+    USER_FOLLOW_SELF_ERROR(400, "UF004", "자신을 팔로우 할 수 없음"),
+
+
     //Auth
     TOKEN_ACCESS_NOT_EXIST(401, "A001", "토큰을 찾을 수 없음"),
 
