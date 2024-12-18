@@ -17,7 +17,6 @@ public class GetCommentResponse {
     private Long commentId;
     private GetCommentUserResponse user;
     private String content;
-    private Long parentId;
     private LocalDateTime createdAt;
 
     public static GetCommentResponse from(Comment comment) {
@@ -25,7 +24,6 @@ public class GetCommentResponse {
                 .commentId(comment.getId())
                 .user(GetCommentUserResponse.from(comment.getUser()))
                 .content(comment.getContent())
-                .parentId(comment.getParent() == null ? null : comment.getParent().getId())
                 .createdAt(comment.getCreatedAt())
                 .build();
     }
