@@ -15,11 +15,13 @@ public class GetCommentUserResponse {
 
     private String nickname;
     private String email;
+    private String profileImage;
 
     public static GetCommentUserResponse from(User user) {
         return GetCommentUserResponse.builder()
                 .nickname(user.getNickname())
                 .email(user.getEmail())
+                .profileImage(user.getProfileImage())
                 .build();
     }
 
