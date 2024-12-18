@@ -13,9 +13,15 @@ jobs:
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      REDIS_PORT: ${{secrets.REDIS_PORT}}
       SSE_EMITTER_TIMEOUT: ${{secrets.SSE_EMITTER_TIMEOUT}}
-      REDIS_HOST: ${{secrets.REDIS_HOST}}
+
+    services:
+      redis:
+        image: redis:7.4
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-server --test-memory 2" --health-interval=10s --health-timeout=5s --health-retries=3
+
 
     steps:
       - uses: actions/checkout@v4
