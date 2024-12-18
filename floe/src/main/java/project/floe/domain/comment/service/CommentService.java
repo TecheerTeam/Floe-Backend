@@ -57,14 +57,18 @@ public class CommentService {
     }
 
     public Page<GetCommentResponse> getCommentsByRecordId(Long recordId, Pageable pageable) {
-        Page<Comment> comments = commentRepository.findByRecordId(recordId, pageable);
+        Page<Comment> comments = commentRepository.findByRecordIdAndParentIsNull(recordId, pageable);
         return comments.map(GetCommentResponse::from);
+    }
+
+    public Page<GetCommentResponse> getParentComment(Long parentId, Pageable pageable) {
+        Page<Comment> replies = commentRepository.findByParentId(parentId, pageable);
+        return replies.map(GetCommentResponse::from);
     }
 
     @Transactional
     public void updateComment(Long commentId, UpdateCommentRequest request) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_ERROR));
+        Comment comment = getCommentById(commentId);
 
         if (comment.isDeleted()) {
             throw new CommentException(ErrorCode.COMMENT_DELETED_ERROR);
@@ -75,9 +79,14 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_ERROR));
+        Comment comment = getCommentById(commentId);
+
+        if (comment.getParent() == null) {
+            commentRepository.deleteAllByParentId(commentId);
+        }
+
         commentRepository.delete(comment);
+
     }
 
     public Comment getCommentById(Long commentId) {
