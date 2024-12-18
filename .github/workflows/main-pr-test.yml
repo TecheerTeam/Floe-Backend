@@ -15,6 +15,7 @@ jobs:
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       REDIS_PORT: ${{secrets.REDIS_PORT}}
       SSE_EMITTER_TIMEOUT: ${{secrets.SSE_EMITTER_TIMEOUT}}
+      REDIS_HOST: ${{secrets.REDIS_HOST}}
 
     steps:
       - uses: actions/checkout@v4
