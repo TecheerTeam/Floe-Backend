@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import project.floe.domain.comment.dto.request.CreateCommentRequest;
 import project.floe.domain.comment.dto.request.UpdateCommentRequest;
@@ -51,17 +50,30 @@ public class CommentController {
             summary = "댓글 조회",
             description = "전체 댓글 조회"
     )
-    @GetMapping
+    @GetMapping("/{recordId}")
     public ResponseEntity<ResultResponse> getComments(
-            @RequestParam("recordId") Long recordId,
-            @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PathVariable("recordId") Long recordId,
+            @PageableDefault(page = 0, size = 5, sort = "updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<GetCommentResponse> response = commentService.getCommentsByRecordId(recordId, pageable);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.COMMENT_GET_SUCCESS, response));
     }
 
     @Operation(
-            summary = "댓글 개별 조회",
-            description = "댓글 개별 조회"
+            summary = "대댓글  조회 ",
+            description = "대댓글 전체 조회'"
+    )
+    @GetMapping("/{commentId}/replies")
+    public ResponseEntity<ResultResponse> getParentComment(
+            @PathVariable(name = "commentId") Long commentId,
+            @PageableDefault(page = 0, size = 5, sort = "updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<GetCommentResponse> response = commentService.getParentComment(commentId, pageable);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.COMMENT_GET_SUCCESS, response));
+    }
+
+
+    @Operation(
+            summary = "댓글 수정 ",
+            description = "댓글 수정 "
     )
     @PutMapping("/{commentId}")
     public ResponseEntity<ResultResponse> updateComment(@PathVariable(name = "commentId") Long commentId,
