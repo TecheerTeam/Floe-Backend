@@ -69,9 +69,9 @@ class CommentControllerTest {
                 .user(GetCommentUserResponse.builder()
                         .nickname("testUser")
                         .email("test@example.com")
+                        .profileImage("test.jpg")
                         .build())
                 .content("테스트 댓글")
-                .parentId(null)
                 .build();
     }
 
@@ -94,11 +94,25 @@ class CommentControllerTest {
         Page<GetCommentResponse> mockResponse = new PageImpl<>(List.of(getCommentResponse));
         when(commentService.getCommentsByRecordId(eq(1L), any(Pageable.class))).thenReturn(mockResponse);
 
-        mockMvc.perform(get("/api/v1/comments")
-                        .param("recordId", "1")
+        mockMvc.perform(get("/api/v1/comments/1")
                         .param("page", "0")
                         .param("size", "5")
-                        .param("sort", "createdAt,desc"))
+                        .param("sort", "updatedAt,desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResultCode.COMMENT_GET_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ResultCode.COMMENT_GET_SUCCESS.getMessage()));
+    }
+
+    @Test
+    @DisplayName("대댓글 페이징 조회 성공 테스트")
+    void 대댓글페이징조회_성공() throws Exception {
+        Page<GetCommentResponse> mockResponse = new PageImpl<>(List.of(getCommentResponse));
+        when(commentService.getParentComment(eq(1L), any(Pageable.class))).thenReturn(mockResponse);
+
+        mockMvc.perform(get("/api/v1/comments/1/replies")
+                        .param("page", "0")
+                        .param("size", "5")
+                        .param("sort", "updatedAt,desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResultCode.COMMENT_GET_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResultCode.COMMENT_GET_SUCCESS.getMessage()));
