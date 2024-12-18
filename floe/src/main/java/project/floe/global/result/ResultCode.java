@@ -66,6 +66,15 @@ public enum ResultCode {
     // Tag
     GET_TAG_STATISTICS_SUCCESS("T001", "전체 태그 통계 조회 성공"),
     GET_USER_TAG_STATISTICS_SUCCESS("T002", "유저 태그 통계 조회 성공"),
+
+    // notification
+    NOTIFICATION_CONNECT_SUCCESS("N001", "알림 연결 성공"),
+    NOTIFICATION_LIST_GET_SUCCESS("N002", "전체 알림 조회 성공"),
+    NOTIFICATION_READ_SUCCESS("N003", "해당 알림 읽음 처리 성공"),
+    NOTIFICATION_ALL_READ_SUCCESS("N004", "읽지 않은 모든 알림 읽음 처리 성공"),
+    NOTIFICATION_DELETE_SUCCESS("N005", "해당 알림 삭제 성공"),
+    NOTIFICATION_ALL_DELETE_SUCCESS("N006", "읽은 모든 알림 삭제 성공"),
+    NOTIFICATION_UNREAD_COUNT_GET_SUCCESS("N007", "읽지 않은 알림 개수 조회 성공"),
     ;
 
 

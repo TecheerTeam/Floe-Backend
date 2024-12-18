@@ -64,6 +64,13 @@ public enum ErrorCode {
     // Record Like
     RECORD_ALREADY_LIKED_ERROR(400, "RL01", "이미 좋아요 한 기록"),
     RECORD_LIKE_NOT_FOUNT_ERROR(404, "RL02", "해당 기록에 좋아요를 하지 않음"),
+
+    // notification
+    NOTIFICATION_NOT_OWNED_BY_USER(403, "N005", "해당 알림은 유저의 알림이 아님"),
+    NOTIFICATION_ALREADY_READ_ERROR(400, "N004", "해당 알림은 이미 읽음"),
+    NOTIFICATION_NOT_FOUND_ERROR(404, "N003", "해당 알림을 찾을 수 없음"),
+    SSE_EMITTER_SEND_FAILED(500, "N002", "sse 메세지 전송 실패"),
+    REDIS_MESSAGE_DESERIALIZATION_FAILED(500, "N001", "redis 메세지 역직렬화 실패"),
     ;
 
 
