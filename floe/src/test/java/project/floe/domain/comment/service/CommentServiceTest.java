@@ -256,7 +256,7 @@ class CommentServiceTest {
 
         Pageable pageable = PageRequest.of(0, 5);
 
-        when(commentJpaRepository.findByRecordId(1L, pageable)).thenReturn(commentPage);
+        when(commentJpaRepository.findByRecordIdAndParentIsNull(1L, pageable)).thenReturn(commentPage);
 
         Page<GetCommentResponse> response = commentService.getCommentsByRecordId(1L, pageable);
 
@@ -274,9 +274,66 @@ class CommentServiceTest {
         Page<Comment> mockPage = new PageImpl<>(List.of());
         Pageable pageable = PageRequest.of(0, 5);
 
-        when(commentJpaRepository.findByRecordId(999L, pageable)).thenReturn(mockPage);
+        when(commentJpaRepository.findByRecordIdAndParentIsNull(999L, pageable)).thenReturn(mockPage);
 
         Page<GetCommentResponse> result = commentService.getCommentsByRecordId(999L, pageable);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getTotalElements()).isEqualTo(0);
+        assertThat(result.getContent()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("대댓글 페이징 조회 성공 테스트")
+    void 대댓글페이징조회_성공() {
+        Comment comment1 = Comment.builder()
+                .id(1L)
+                .record(record)
+                .user(user)
+                .content("댓글 내용 1")
+                .build();
+
+        Comment parentComment1 = Comment.builder()
+                .id(1L)
+                .record(record)
+                .user(user)
+                .content("부모 댓글 1")
+                .parent(comment1)
+                .build();
+        
+        Comment parentComment2 = Comment.builder()
+                .id(2L)
+                .record(record)
+                .user(user)
+                .content("부모 댓글 2")
+                .parent(comment1)
+                .build();
+
+        List<Comment> ParentComments = List.of(parentComment1, parentComment2);
+        Page<Comment> commentPage = new PageImpl<>(ParentComments);
+
+        Pageable pageable = PageRequest.of(0, 5);
+
+        when(commentJpaRepository.findByParentId(1L, pageable)).thenReturn(commentPage);
+
+        Page<GetCommentResponse> response = commentService.getParentComment(1L, pageable);
+
+        assertThat(response.getContent().size()).isEqualTo(2);
+        assertThat(response.getContent().get(0).getContent()).isEqualTo("부모 댓글 1");
+        assertThat(response.getContent().get(0).getUser().getNickname()).isEqualTo("testUser");
+        assertThat(response.getContent().get(1).getContent()).isEqualTo("부모 댓글 2");
+        assertThat(response.getContent().get(1).getUser().getEmail()).isEqualTo("test@example.com");
+    }
+
+    @Test
+    @DisplayName("대댓글 페이징 조회 - 빈 결과")
+    void 대댓글페이징조회_빈결과() {
+        Page<Comment> mockPage = new PageImpl<>(List.of());
+        Pageable pageable = PageRequest.of(0, 5);
+
+        when(commentJpaRepository.findByParentId(1L, pageable)).thenReturn(mockPage);
+
+        Page<GetCommentResponse> result = commentService.getParentComment(1L, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getTotalElements()).isEqualTo(0);
