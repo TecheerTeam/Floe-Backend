@@ -48,6 +48,19 @@ public class UserController {
     }
 
     @Operation(
+            summary = "타회원 정보 조회",
+            description = "타회원의 정보를 조회합니다"
+    )
+    @GetMapping("/{userId}")
+    ResponseEntity<ResultResponse> getOtherUser(
+            @PathVariable("userId") Long userId
+    ) {
+        GetUserResponseDto data = userService.getOtherUser(userId);
+        ResultResponse response = ResultResponse.of(ResultCode.USER_GET_SUCCESS, data);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(
             summary = "회원 삭제",
             description = "회원 삭제"
     )
