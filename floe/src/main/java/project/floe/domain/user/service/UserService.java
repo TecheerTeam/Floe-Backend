@@ -59,6 +59,12 @@ public class UserService {
         return GetUserResponseDto.from(findUser);
     }
 
+    public GetUserResponseDto getOtherUser(Long userId) {
+        User otherUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
+        return GetUserResponseDto.from(otherUser);
+    }
+
     @Transactional
     public void oAuthSignUp(HttpServletRequest request, UserOAuthSignUpRequest dto) {
         String userEmail = jwtService.extractEmail(request).orElseThrow(
@@ -113,4 +119,6 @@ public class UserService {
         userRepository.save(findUser);
         return UpdateUserResponseDto.from(findUser);
     }
+
+
 }

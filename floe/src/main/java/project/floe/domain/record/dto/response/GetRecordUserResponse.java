@@ -12,12 +12,14 @@ import project.floe.domain.user.entity.User;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 public class GetRecordUserResponse {
+    private Long userId;
     private String nickname;
     private String email;
     private String profileImage;
 
     public static GetRecordUserResponse from(User user) {
         return GetRecordUserResponse.builder()
+                .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .profileImage(user.getProfileImage())
