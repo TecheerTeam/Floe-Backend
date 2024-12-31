@@ -55,7 +55,6 @@ class CommentControllerTest {
     void setUp() {
         createCommentRequest = CreateCommentRequest.builder()
                 .recordId(1L)
-                .userId(1L)
                 .content("테스트 댓글")
                 .parentId(null)
                 .build();

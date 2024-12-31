@@ -79,7 +79,6 @@ class CommentServiceTest {
 
         createCommentRequest = CreateCommentRequest.builder()
                 .recordId(1L)
-                .userId(1L)
                 .content("테스트 댓글")
                 .parentId(null)
                 .build();
@@ -126,7 +125,6 @@ class CommentServiceTest {
 
         createCommentRequest = CreateCommentRequest.builder()
                 .recordId(record.getId())
-                .userId(user.getId())
                 .content("테스트 댓글")
                 .parentId(parentComment.getId())
                 .build();
@@ -148,7 +146,6 @@ class CommentServiceTest {
     void 댓글생성_존재하지않는부모댓글() {
         createCommentRequest = CreateCommentRequest.builder()
                 .recordId(1L)
-                .userId(1L)
                 .content("테스트 댓글")
                 .parentId(999L)
                 .build();
@@ -300,7 +297,7 @@ class CommentServiceTest {
                 .content("부모 댓글 1")
                 .parent(comment1)
                 .build();
-        
+
         Comment parentComment2 = Comment.builder()
                 .id(2L)
                 .record(record)
