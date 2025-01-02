@@ -53,7 +53,7 @@ public class CommentController {
     @GetMapping("/{recordId}")
     public ResponseEntity<ResultResponse> getComments(
             @PathVariable("recordId") Long recordId,
-            @PageableDefault(page = 0, size = 5, sort = "updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<GetCommentResponse> response = commentService.getCommentsByRecordId(recordId, pageable);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.COMMENT_GET_SUCCESS, response));
     }
@@ -65,7 +65,7 @@ public class CommentController {
     @GetMapping("/{commentId}/replies")
     public ResponseEntity<ResultResponse> getParentComment(
             @PathVariable(name = "commentId") Long commentId,
-            @PageableDefault(page = 0, size = 5, sort = "updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<GetCommentResponse> response = commentService.getParentComment(commentId, pageable);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.COMMENT_GET_SUCCESS, response));
     }
