@@ -201,8 +201,8 @@ class RecordControllerTest {
 
         mockMvc.perform(get(BASE_PATH + "/search")
                         .param("title", "testTitle")
-                        .param("recordType", "TYPE_A")
-                        .param("tagNames", "tag1", "tag2")
+                        .param("recordType", "FLOE")
+                        .param("tagNames", "python", "java")
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "updatedAt,desc"))
