@@ -200,6 +200,9 @@ class RecordControllerTest {
         when(recordService.searchRecords(any(), any())).thenReturn(responsePage);
 
         mockMvc.perform(get(BASE_PATH + "/search")
+                        .param("title", "testTitle")
+                        .param("recordType", "TYPE_A")
+                        .param("tagNames", "tag1", "tag2")
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "updatedAt,desc"))
@@ -207,5 +210,6 @@ class RecordControllerTest {
                 .andExpect(jsonPath("$.code").value(ResultCode.RECORD_SEARCH_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResultCode.RECORD_SEARCH_SUCCESS.getMessage()));
     }
+
 
 }
