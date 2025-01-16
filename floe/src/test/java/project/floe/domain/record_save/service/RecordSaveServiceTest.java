@@ -1,5 +1,6 @@
 package project.floe.domain.record_save.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
+import project.floe.domain.record_save.dto.response.GetCheckSavedRecordResponseDto;
 import project.floe.domain.record_save.dto.response.GetSaveRecordsResponseDto;
 import project.floe.domain.record_save.entity.RecordSave;
 import project.floe.domain.record_save.repository.RecordSaveRepository;
@@ -126,5 +128,29 @@ public class RecordSaveServiceTest {
 
         verify(recordSaveRepository, times(1)).findRecordsByUserId(user.getId(), pageable);
         verify(recordSaveRepository, times(1)).findMediasByRecordIds(recordIds);
+    }
+
+    @Test
+    void 기록저장여부확인() {
+        String email = "email@email.com";
+        User user = User.builder()
+                .id(1L)
+                .email(email)
+                .build();
+
+        Record record = Record.builder()
+                .id(1L)
+                .build();
+
+        doReturn(Optional.of(email)).when(jwtService).extractEmail(any(HttpServletRequest.class));
+        doReturn(record).when(recordService).findRecordById(record.getId());
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
+        doReturn(Optional.of(record)).when(recordSaveRepository)
+                .findByUserIdAndRecordId(user.getId(), record.getId());
+
+        GetCheckSavedRecordResponseDto response = recordSaveService.checkSavedRecord(record.getId(),
+                mock(HttpServletRequest.class));
+
+        assertThat(response.isSaved()).isEqualTo(true);
     }
 }

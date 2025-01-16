@@ -18,6 +18,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.entity.RecordTags;
@@ -168,6 +172,22 @@ public class RecordLikeServiceTest {
         recordLikeService.getRecordLikeList(record.getId());
 
         verify(userRepository,times(list.size())).findById(1L);
+    }
+
+    @Test
+    public void 좋아요한기록목록조회() {
+        User user = user();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<RecordLike> recordLikePage = new PageImpl<>(List.of());
+
+        doReturn(Optional.of(user.getEmail())).when(jwtService).extractEmail(request);
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(user.getEmail());
+        doReturn(recordLikePage).when(recordLikeRepository).findByUserId(user.getId(),pageable);
+
+        recordLikeService.getLikedRecordList(pageable,request);
+
+        verify(recordLikeRepository,times(1)).findByUserId(user.getId(),pageable);
     }
 
     public User user() {
