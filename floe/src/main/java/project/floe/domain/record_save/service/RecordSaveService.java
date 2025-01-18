@@ -42,7 +42,7 @@ public class RecordSaveService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUserIdAndRecordId(user.getId(),
+        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUser_IdAndRecord_Id(user.getId(),
                 record.getId());
         if (foundRecordSave.isPresent()) {
             throw new BusinessException(ErrorCode.RECORD_ALREADY_SAVED_ERROR);
@@ -62,7 +62,7 @@ public class RecordSaveService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUserIdAndRecordId(user.getId(),
+        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUser_IdAndRecord_Id(user.getId(),
                 record.getId());
         if (foundRecordSave.isEmpty()) {
             throw new BusinessException(ErrorCode.RECORD_SAVED_NOT_FOUNT_ERROR);
@@ -74,7 +74,7 @@ public class RecordSaveService {
     @Transactional
     public GetSaveCountResponseDto getSaveCountByRecordId(Long recordId) {
         recordService.findRecordById(recordId);
-        Long count = recordSaveRepository.countByRecordId(recordId);
+        Long count = recordSaveRepository.countByRecord_Id(recordId);
         return new GetSaveCountResponseDto(count);
     }
 
@@ -108,7 +108,7 @@ public class RecordSaveService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        Optional<RecordSave> optional = recordSaveRepository.findByUserIdAndRecordId(user.getId(),
+        Optional<RecordSave> optional = recordSaveRepository.findByUser_IdAndRecord_Id(user.getId(),
                 record.getId());
 
         return new GetCheckSavedRecordResponseDto(optional.isPresent());

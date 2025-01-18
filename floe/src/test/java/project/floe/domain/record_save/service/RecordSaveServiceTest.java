@@ -62,7 +62,7 @@ public class RecordSaveServiceTest {
         doReturn(Optional.of(email)).when(jwtService).extractEmail(any(HttpServletRequest.class));
         doReturn(record).when(recordService).findRecordById(record.getId());
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-        doReturn(Optional.empty()).when(recordSaveRepository).findByUserIdAndRecordId(user.getId(), record.getId());
+        doReturn(Optional.empty()).when(recordSaveRepository).findByUser_IdAndRecord_Id(user.getId(), record.getId());
 
         recordSaveService.addRecordSave(record.getId(), mock(HttpServletRequest.class));
 
@@ -86,7 +86,7 @@ public class RecordSaveServiceTest {
         doReturn(record).when(recordService).findRecordById(record.getId());
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(recordSave)).when(recordSaveRepository)
-                .findByUserIdAndRecordId(user.getId(), record.getId());
+                .findByUser_IdAndRecord_Id(user.getId(), record.getId());
 
         recordSaveService.deleteRecordSave(record.getId(), mock(HttpServletRequest.class));
 
@@ -100,11 +100,11 @@ public class RecordSaveServiceTest {
                 .build();
 
         doReturn(record).when(recordService).findRecordById(record.getId());
-        doReturn(0L).when(recordSaveRepository).countByRecordId(record.getId());
+        doReturn(0L).when(recordSaveRepository).countByRecord_Id(record.getId());
 
         recordSaveService.getSaveCountByRecordId(record.getId());
 
-        verify(recordSaveRepository, times(1)).countByRecordId(record.getId());
+        verify(recordSaveRepository, times(1)).countByRecord_Id(record.getId());
     }
 
     @Test
@@ -146,7 +146,7 @@ public class RecordSaveServiceTest {
         doReturn(record).when(recordService).findRecordById(record.getId());
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(record)).when(recordSaveRepository)
-                .findByUserIdAndRecordId(user.getId(), record.getId());
+                .findByUser_IdAndRecord_Id(user.getId(), record.getId());
 
         GetCheckSavedRecordResponseDto response = recordSaveService.checkSavedRecord(record.getId(),
                 mock(HttpServletRequest.class));
