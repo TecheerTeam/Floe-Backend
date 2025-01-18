@@ -17,9 +17,9 @@ import project.floe.domain.record_save.entity.RecordSave;
 @Repository
 public interface RecordSaveRepository extends JpaRepository<RecordSave, Long> {
 
-    Optional<RecordSave> findByUserIdAndRecordId(Long userId, Long RecordId);
+    Optional<RecordSave> findByUser_IdAndRecord_Id(Long userId, Long RecordId);
 
-    Long countByRecordId(Long recordId);
+    Long countByRecord_Id(Long recordId);
 
     @EntityGraph(attributePaths = {"record", "record.user"})
     @Query("SELECT rs.record FROM RecordSave rs WHERE rs.user.id = :userId AND rs.record.isDeleted = false")
