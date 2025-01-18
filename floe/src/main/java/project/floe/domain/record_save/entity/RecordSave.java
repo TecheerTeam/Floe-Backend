@@ -25,8 +25,6 @@ import project.floe.entity.BaseEntity;
 @Table(uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "record_id"})
 })
-@SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE record_save SET is_deleted = true WHERE id = ?")
 public class RecordSave extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
