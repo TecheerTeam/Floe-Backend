@@ -24,6 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import project.floe.domain.record_save.dto.response.GetCheckSavedRecordResponseDto;
 import project.floe.domain.record_save.dto.response.GetSaveCountResponseDto;
 import project.floe.domain.record_save.dto.response.GetSaveRecordsResponseDto;
 import project.floe.domain.record_save.service.RecordSaveService;
@@ -114,6 +115,24 @@ public class RecordSaveControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
                 .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()));
+    }
+
+    @Test
+    void 기록저장여부확인() throws Exception {
+        String url = "/api/v1/records/{recordId}/save";
+        Long pathValuable = 1L;
+        GetCheckSavedRecordResponseDto expectedDto = new GetCheckSavedRecordResponseDto(true);
+        ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_SAVE_CHECK_SUCCESS);
+
+        doReturn(expectedDto).when(recordSaveService).checkSavedRecord(any(Long.class),any(HttpServletRequest.class));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get(url,pathValuable)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
+                .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()))
+                .andExpect(jsonPath("$.data.saved").value(expectedDto.isSaved()));
     }
 
 }

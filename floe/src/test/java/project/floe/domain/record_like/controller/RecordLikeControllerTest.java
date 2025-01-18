@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,10 +19,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import project.floe.domain.record_like.dto.response.GetLikedRecordListDto;
 import project.floe.domain.record_like.dto.response.GetRecordLikeCountResponseDto;
 import project.floe.domain.record_like.dto.response.GetRecordLikeListResponseDto;
 import project.floe.domain.record_like.service.RecordLikeService;
@@ -48,6 +55,7 @@ public class RecordLikeControllerTest {
     public void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(recordLikeController)
                 .setControllerAdvice(new GlobalExceptionHandler())
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
 
@@ -150,5 +158,23 @@ public class RecordLikeControllerTest {
                 .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
                 .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()))
                 .andExpect(jsonPath("$.data.likeList").value(expectedDto.getLikeList()));
+    }
+
+    @Test
+    public void 좋아요한기록목록조회() throws Exception {
+        String url = "/api/v1/records/liked-list";
+        ResultResponse expectedResponse = ResultResponse.of(ResultCode.RECORD_LIKED_LIST_GET_SUCCESS);
+        Page<GetLikedRecordListDto> expectedDto = new PageImpl<>(Collections.emptyList(), PageRequest.of(0,5),0);
+
+        doReturn(expectedDto).when(recordLikeService).getLikedRecordList(any(Pageable.class),any(HttpServletRequest.class));
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get(url)
+                                .param("page", "0")
+                                .param("size", "5")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(expectedResponse.getCode()))
+                .andExpect(jsonPath("$.message").value(expectedResponse.getMessage()));
     }
 }

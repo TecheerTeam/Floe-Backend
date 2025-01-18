@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
 import project.floe.domain.record_save.dto.response.FindMediasByRecordIdsResponseDto;
+import project.floe.domain.record_save.dto.response.GetCheckSavedRecordResponseDto;
 import project.floe.domain.record_save.dto.response.GetSaveCountResponseDto;
 import project.floe.domain.record_save.dto.response.GetSaveRecordsResponseDto;
 import project.floe.domain.record_save.entity.RecordSave;
@@ -95,6 +96,22 @@ public class RecordSaveService {
                 foundRecordIds);
 
         return GetSaveRecordsResponseDto.listOf(foundRecords, responseDtoList);
+    }
+
+    public GetCheckSavedRecordResponseDto checkSavedRecord(Long recordId, HttpServletRequest request) {
+
+        Record record = recordService.findRecordById(recordId);
+
+        String email = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
+
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
+
+        Optional<RecordSave> optional = recordSaveRepository.findByUserIdAndRecordId(user.getId(),
+                record.getId());
+
+        return new GetCheckSavedRecordResponseDto(optional.isPresent());
     }
 
 }
