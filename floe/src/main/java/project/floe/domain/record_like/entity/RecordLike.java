@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.user.entity.User;
+import project.floe.entity.BaseEntity;
 
 @Getter
 @Entity
@@ -26,7 +27,7 @@ import project.floe.domain.user.entity.User;
                 )
         }
 )
-public class RecordLike {
+public class RecordLike extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
