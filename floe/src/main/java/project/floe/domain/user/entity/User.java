@@ -101,9 +101,9 @@ public class User extends BaseEntity {
         this.profileImage = updatedUrl;
     }
 
-    public void update(UserUpdateRequest dto) {
+    public void update(UserUpdateRequest dto,BCryptPasswordEncoder passwordEncoder) {
         if (dto.getPassword() != null) {
-            this.password = dto.getPassword();
+            this.password = passwordEncoder.encode(dto.getPassword());
         }
         if (dto.getNickname() != null) {
             this.nickname = dto.getNickname();

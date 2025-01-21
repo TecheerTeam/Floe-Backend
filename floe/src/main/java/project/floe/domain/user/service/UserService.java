@@ -115,7 +115,7 @@ public class UserService {
         User findUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        findUser.update(dto);
+        findUser.update(dto ,passwordEncoder);
         userRepository.save(findUser);
         return UpdateUserResponseDto.from(findUser);
     }
