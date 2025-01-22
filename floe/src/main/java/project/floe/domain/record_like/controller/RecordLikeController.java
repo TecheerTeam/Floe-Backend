@@ -4,6 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import project.floe.domain.record_like.dto.response.GetLikedRecordListDto;
 import project.floe.domain.record_like.dto.response.GetRecordLikeCountResponseDto;
 import project.floe.domain.record_like.dto.response.GetRecordLikeListResponseDto;
 import project.floe.domain.record_like.service.RecordLikeService;
@@ -77,6 +82,20 @@ public class RecordLikeController {
     ){
         GetRecordLikeListResponseDto dto = recordLikeService.getRecordLikeList(recordId);
         ResultResponse response = ResultResponse.of(ResultCode.RECORD_LIKE_LIST_GET_SUCCESS, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "좋아요한 기록 목록",
+            description = "사용자가 좋아요한 기록 목록 조회"
+    )
+    @GetMapping("/liked-list")
+    public ResponseEntity<ResultResponse> getLikedRecordList(
+            @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Direction.DESC) Pageable pageable,
+            HttpServletRequest request
+    ){
+        Page<GetLikedRecordListDto> dto = recordLikeService.getLikedRecordList(pageable, request);
+        ResultResponse response = ResultResponse.of(ResultCode.RECORD_LIKED_LIST_GET_SUCCESS,dto);
         return ResponseEntity.ok(response);
     }
 }

@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
+import project.floe.domain.record_like.dto.response.GetLikedRecordListDto;
 import project.floe.domain.record_like.dto.response.GetRecordLikeCountResponseDto;
 import project.floe.domain.record_like.dto.response.GetRecordLikeListResponseDto;
 import project.floe.domain.record_like.entity.RecordLike;
@@ -87,6 +90,19 @@ public class RecordLikeService {
                 .collect(Collectors.toList());
 
         return new GetRecordLikeListResponseDto(userList);
+    }
+
+    @Transactional
+    public Page<GetLikedRecordListDto> getLikedRecordList(Pageable pageable, HttpServletRequest request) {
+
+        String email = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
+
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new BusinessException(ErrorCode.USER_NOT_FOUND_ERROR));
+
+        Page<Record> recordList = recordLikeRepository.findByUserId(user.getId(), pageable);
+        return GetLikedRecordListDto.listOf(recordList);
     }
 
     public List<RecordLike> findByRecordId(Long recordId) {

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import project.floe.domain.record.entity.Record;
 import project.floe.domain.record.service.RecordService;
 import project.floe.domain.record_save.dto.response.FindMediasByRecordIdsResponseDto;
+import project.floe.domain.record_save.dto.response.GetCheckSavedRecordResponseDto;
 import project.floe.domain.record_save.dto.response.GetSaveCountResponseDto;
 import project.floe.domain.record_save.dto.response.GetSaveRecordsResponseDto;
 import project.floe.domain.record_save.entity.RecordSave;
@@ -41,7 +42,7 @@ public class RecordSaveService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUserIdAndRecordId(user.getId(),
+        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUser_IdAndRecord_Id(user.getId(),
                 record.getId());
         if (foundRecordSave.isPresent()) {
             throw new BusinessException(ErrorCode.RECORD_ALREADY_SAVED_ERROR);
@@ -61,7 +62,7 @@ public class RecordSaveService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUserIdAndRecordId(user.getId(),
+        Optional<RecordSave> foundRecordSave = recordSaveRepository.findByUser_IdAndRecord_Id(user.getId(),
                 record.getId());
         if (foundRecordSave.isEmpty()) {
             throw new BusinessException(ErrorCode.RECORD_SAVED_NOT_FOUNT_ERROR);
@@ -73,7 +74,7 @@ public class RecordSaveService {
     @Transactional
     public GetSaveCountResponseDto getSaveCountByRecordId(Long recordId) {
         recordService.findRecordById(recordId);
-        Long count = recordSaveRepository.countByRecordId(recordId);
+        Long count = recordSaveRepository.countByRecord_Id(recordId);
         return new GetSaveCountResponseDto(count);
     }
 
@@ -95,6 +96,22 @@ public class RecordSaveService {
                 foundRecordIds);
 
         return GetSaveRecordsResponseDto.listOf(foundRecords, responseDtoList);
+    }
+
+    public GetCheckSavedRecordResponseDto checkSavedRecord(Long recordId, HttpServletRequest request) {
+
+        Record record = recordService.findRecordById(recordId);
+
+        String email = jwtService.extractEmail(request).orElseThrow(
+                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
+
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
+
+        Optional<RecordSave> optional = recordSaveRepository.findByUser_IdAndRecord_Id(user.getId(),
+                record.getId());
+
+        return new GetCheckSavedRecordResponseDto(optional.isPresent());
     }
 
 }

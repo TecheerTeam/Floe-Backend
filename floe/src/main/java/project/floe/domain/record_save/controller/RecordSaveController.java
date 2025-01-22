@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import project.floe.domain.record_save.dto.response.GetCheckSavedRecordResponseDto;
 import project.floe.domain.record_save.dto.response.GetSaveCountResponseDto;
 import project.floe.domain.record_save.dto.response.GetSaveRecordsResponseDto;
 import project.floe.domain.record_save.service.RecordSaveService;
@@ -82,6 +83,20 @@ public class RecordSaveController {
     ) {
         Page<GetSaveRecordsResponseDto> dto = recordSaveService.getSaveRecordList(pageable, request);
         ResultResponse response = ResultResponse.of(ResultCode.RECORD_SAVE_LIST_GET_SUCCESS, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "저장 여부 확인",
+            description = "사용자가 해당 기록을 저장했는지 확인"
+    )
+    @GetMapping("/records/{recordId}/save")
+    public ResponseEntity<ResultResponse> isUserSavedRecord(
+            @PathVariable("recordId") Long recordId,
+            HttpServletRequest request
+    ){
+        GetCheckSavedRecordResponseDto dto = recordSaveService.checkSavedRecord(recordId, request);
+        ResultResponse response = ResultResponse.of(ResultCode.RECORD_SAVE_CHECK_SUCCESS,dto);
         return ResponseEntity.ok(response);
     }
 
