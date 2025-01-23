@@ -126,4 +126,16 @@ public class RecordController {
         Page<UserRecordsResponse> userRecords = recordService.getUserRecords(request, pageable);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.GET_USER_RECORDS_SUCCESS, userRecords));
     }
+
+    @Operation(
+            summary = "해당 유저 기록 조회",
+            description = "해당 유저 기록 페이지네이션 조회"
+    )
+    @GetMapping("/{userId}")
+    public ResponseEntity<ResultResponse> getOtherUserRecords(
+            @PathVariable("userId") Long userId,
+            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
+        Page<GetRecordResponse> response = recordService.findOtherUserRecords(userId,pageable);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.RECORD_PAGING_GET_SUCCESS, response));
+    }
 }
