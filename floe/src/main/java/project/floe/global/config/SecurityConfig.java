@@ -22,7 +22,6 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import project.floe.domain.user.repository.UserRepository;
 import project.floe.global.auth.jwt.filter.JwtAuthenticationProcessingFilter;
 import project.floe.global.auth.jwt.service.JwtService;
@@ -35,9 +34,8 @@ import project.floe.global.auth.oauth2.handler.OAuth2LoginSuccessHandler;
 import project.floe.global.auth.oauth2.service.CustomOAuth2UserService;
 
 /**
- * 인증은 CustomJsonUsernamePasswordAuthenticationFilter에서 authenticate()로 인증된 사용자로
- * 처리
- * JwtAuthenticationProcessingFilter는 AccessToken, RefreshToken 재발급
+ * 인증은 CustomJsonUsernamePasswordAuthenticationFilter에서 authenticate()로 인증된 사용자로 처리 JwtAuthenticationProcessingFilter는
+ * AccessToken, RefreshToken 재발급
  */
 @Configuration
 @EnableWebSecurity
@@ -68,7 +66,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/v1/records/**").permitAll()
+                        .requestMatchers("/api/v1/records/**", "/api/v1/comments/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/sign-up").permitAll() // 회원가입 접근 가능
                         .anyRequest().authenticated() // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능

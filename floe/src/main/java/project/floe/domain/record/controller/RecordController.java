@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,7 @@ import project.floe.domain.record.dto.response.GetRecordResponse;
 import project.floe.domain.record.dto.response.UpdateRecordResponse;
 import project.floe.domain.record.dto.response.UserRecordsResponse;
 import project.floe.domain.record.entity.Record;
+import project.floe.domain.record.entity.RecordType;
 import project.floe.domain.record.service.RecordService;
 import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
@@ -110,7 +112,18 @@ public class RecordController {
     @GetMapping("/search")
     public ResponseEntity<ResultResponse> searchRecord(
             @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable,
-            SearchRecordRequest dto) {
+            @RequestParam(required = false) String title, // 제목
+            @RequestParam(required = false) RecordType recordType, // Enum 값
+            @RequestParam(required = false) List<String> tagNames // 태그 리스트
+    ) {
+        // SearchRecordRequest DTO 생성
+        SearchRecordRequest dto = SearchRecordRequest.builder()
+                .title(title)
+                .recordType(recordType)
+                .tagNames(tagNames)
+                .build();
+
+        // 서비스 호출
         Page<GetRecordResponse> response = recordService.searchRecords(pageable, dto);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.RECORD_SEARCH_SUCCESS, response));
     }
@@ -122,8 +135,20 @@ public class RecordController {
     @GetMapping("/users")
     public ResponseEntity<ResultResponse> getUserRecords(
             HttpServletRequest request,
-            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable){
+            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
         Page<UserRecordsResponse> userRecords = recordService.getUserRecords(request, pageable);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.GET_USER_RECORDS_SUCCESS, userRecords));
+    }
+
+    @Operation(
+            summary = "해당 유저 기록 조회",
+            description = "해당 유저 기록 페이지네이션 조회"
+    )
+    @GetMapping("users/{userId}")
+    public ResponseEntity<ResultResponse> getOtherUserRecords(
+            @PathVariable("userId") Long userId,
+            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
+        Page<GetRecordResponse> response = recordService.findOtherUserRecords(userId,pageable);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.RECORD_PAGING_GET_SUCCESS, response));
     }
 }
