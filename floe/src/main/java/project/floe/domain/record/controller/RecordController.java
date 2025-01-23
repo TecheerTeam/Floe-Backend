@@ -131,7 +131,7 @@ public class RecordController {
             summary = "해당 유저 기록 조회",
             description = "해당 유저 기록 페이지네이션 조회"
     )
-    @GetMapping("/{userId}")
+    @GetMapping("users/{userId}")
     public ResponseEntity<ResultResponse> getOtherUserRecords(
             @PathVariable("userId") Long userId,
             @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
