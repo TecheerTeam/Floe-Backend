@@ -24,6 +24,7 @@ public enum ResultCode {
     RECORD_PAGING_GET_SUCCESS("R004", "페이징된 전체 기록 조회 성공"),
     RECORD_MODIFY_SUCCESS("R005", "기록 수정 성공"),
     GET_USER_RECORDS_SUCCESS("R009", "유저 전체 게시물 조회 성공"),
+    GET_OTHER_USER_RECORDS_SUCCESS("R010", "특정 유저 게시물 조회 성공"),
 
     // Record Search
     RECORD_SEARCH_SUCCESS("R006", "페이징된 기록 검색 성공"),

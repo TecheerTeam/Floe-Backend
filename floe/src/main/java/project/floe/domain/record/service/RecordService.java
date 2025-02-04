@@ -46,13 +46,14 @@ public class RecordService {
         User findUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
         Record record = dto.toEntity(findUser);
-
         if (dto.getTagNames() != null) {
             Tags findTags = tagService.createTags(dto.getTagNames());
             record.addTag(findTags);
         }
         Record savedRecord = recordRepository.save(record);
-        mediaService.uploadFiles(savedRecord, files);
+        if (files != null) {
+            mediaService.uploadFiles(savedRecord, files);
+        }
         return savedRecord.getId();
     }
 
@@ -111,6 +112,11 @@ public class RecordService {
 
         Page<Record> records = recordRepository.findByUserId(findUser.getId(),pageable);
 
+        return UserRecordsResponse.listOf(records);
+    }
+
+    public Page<UserRecordsResponse> getOtherUserRecords(Long userId, Pageable pageable) {
+        Page<Record> records = recordRepository.findByUserId(userId, pageable);
         return UserRecordsResponse.listOf(records);
     }
 }
