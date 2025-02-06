@@ -12,6 +12,7 @@ import project.floe.domain.user.entity.User;
 @NoArgsConstructor
 public class GetUserResponseDto {
 
+    private Long id;
     private String email;
     private String nickname;
     private int experience;
@@ -22,6 +23,7 @@ public class GetUserResponseDto {
 
     public static GetUserResponseDto from(User user) {
         return GetUserResponseDto.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .experience(user.getExperience())
