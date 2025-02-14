@@ -102,6 +102,14 @@ public class UserService {
         User findUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
+        // 해당 유저의 게시글, 댓글, 게시글 좋아요, 게시글 저장, 댓글 좋아요, 팔로워 삭제 처리
+        userRepository.softDeleteRecordsByUserId(findUser.getId());
+        userRepository.softDeleteCommentsByUserId(findUser.getId());
+        userRepository.deleteRecordLikesByUserId(findUser.getId());
+        userRepository.deleteRecordSavesByUserId(findUser.getId());
+        userRepository.deleteCommentLikesByUserId(findUser.getId());
+        userRepository.deleteUserFollowsByUserId(findUser.getId());
+
         log.info("delete User: {}", userEmail);
         userRepository.delete(findUser);
     }
