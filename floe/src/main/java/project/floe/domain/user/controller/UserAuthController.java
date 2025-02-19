@@ -3,6 +3,7 @@ package project.floe.domain.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +36,10 @@ public class UserAuthController {
     )
     @PostMapping("/oauth/sign-up")
     public ResponseEntity<ResultResponse> oauthSignUp(
-            HttpServletRequest request,
-            @Valid @RequestBody UserOAuthSignUpRequest dto) {
-        userService.oAuthSignUp(request, dto);
+            String email,
+            @Valid @RequestBody UserOAuthSignUpRequest dto,
+            HttpServletResponse response) {
+        userService.oAuthSignUp(email, dto, response);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.USER_OAUTH_SIGNUP_SUCCESS));
     }
 

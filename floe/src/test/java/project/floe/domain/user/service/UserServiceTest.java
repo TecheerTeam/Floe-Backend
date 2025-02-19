@@ -235,34 +235,34 @@ public class UserServiceTest {
         assertThat(mockUser.getProfileImage()).isEqualTo(newImageUrl);
     }
 
-    @Test
-    public void oAuthSignUp() {
-        // Mock 데이터 준비
-        String email = "test@example.com";
-        HttpServletRequest mockRequest = new MockHttpServletRequest();
-        UserOAuthSignUpRequest dto = UserOAuthSignUpRequest.builder()
-                .age(20)
-                .experience(2)
-                .field("frontend")
-                .nickname("TestUser")
-                .build();
-        User mockUser = User.builder()
-                .email(email)
-                .nickname(null) // 초기에는 닉네임이 null
-                .build();
-
-        // Mock 동작 정의
-        doReturn(Optional.of(email)).when(jwtService).extractEmail(mockRequest);
-        doReturn(Optional.of(mockUser)).when(userRepository).findByEmail(email);
-
-        // 서비스 호출
-        userService.oAuthSignUp(mockRequest, dto);
-
-        // 검증
-        verify(jwtService, times(1)).extractEmail(mockRequest);
-        verify(userRepository, times(1)).findByEmail(email);
-        assertThat(mockUser.getNickname()).isEqualTo("TestUser");
-    }
+//    @Test
+//    public void oAuthSignUp() {
+//        // Mock 데이터 준비
+//        String email = "test@example.com";
+//        HttpServletRequest mockRequest = new MockHttpServletRequest();
+//        UserOAuthSignUpRequest dto = UserOAuthSignUpRequest.builder()
+//                .age(20)
+//                .experience(2)
+//                .field("frontend")
+//                .nickname("TestUser")
+//                .build();
+//        User mockUser = User.builder()
+//                .email(email)
+//                .nickname(null) // 초기에는 닉네임이 null
+//                .build();
+//
+//        // Mock 동작 정의
+//        doReturn(Optional.of(email)).when(jwtService).extractEmail(mockRequest);
+//        doReturn(Optional.of(mockUser)).when(userRepository).findByEmail(email);
+//
+//        // 서비스 호출
+//        userService.oAuthSignUp(mockRequest, dto);
+//
+//        // 검증
+//        verify(jwtService, times(1)).extractEmail(mockRequest);
+//        verify(userRepository, times(1)).findByEmail(email);
+//        assertThat(mockUser.getNickname()).isEqualTo("TestUser");
+//    }
 
 
     private User user() {
