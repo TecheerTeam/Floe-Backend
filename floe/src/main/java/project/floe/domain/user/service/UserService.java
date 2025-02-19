@@ -67,10 +67,11 @@ public class UserService {
     }
 
     @Transactional
-    public void oAuthSignUp(String email, UserOAuthSignUpRequest dto, HttpServletResponse response) {
+    public void oAuthSignUp(UserOAuthSignUpRequest dto, HttpServletResponse response) {
         // 이메일을 통해 사용자 정보 조회
-        log.info("social email={}", email);
-        User user = userRepository.findByEmail(email)
+        String userEmail = dto.getEmail();
+        log.info("social email={}", userEmail);
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserServiceException(ErrorCode.EMAIL_NOT_FOUND_ERROR));
 
         // OAuth 회원가입 로직 수행
@@ -85,7 +86,7 @@ public class UserService {
         response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
 
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
-        jwtService.updateRefreshToken(email, refreshToken);
+        jwtService.updateRefreshToken(userEmail, refreshToken);
     }
 
     @Transactional

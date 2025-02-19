@@ -36,10 +36,9 @@ public class UserAuthController {
     )
     @PostMapping("/oauth/sign-up")
     public ResponseEntity<ResultResponse> oauthSignUp(
-            String email,
             @Valid @RequestBody UserOAuthSignUpRequest dto,
             HttpServletResponse response) {
-        userService.oAuthSignUp(email, dto, response);
+        userService.oAuthSignUp(dto, response);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.USER_OAUTH_SIGNUP_SUCCESS));
     }
 
