@@ -69,6 +69,7 @@ public class UserService {
     @Transactional
     public void oAuthSignUp(String email, UserOAuthSignUpRequest dto, HttpServletResponse response) {
         // 이메일을 통해 사용자 정보 조회
+        log.info("social email={}", email);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserServiceException(ErrorCode.EMAIL_NOT_FOUND_ERROR));
 
