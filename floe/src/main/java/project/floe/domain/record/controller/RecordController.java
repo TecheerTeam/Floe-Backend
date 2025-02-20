@@ -147,9 +147,10 @@ public class RecordController {
     @GetMapping("/{userId}/others")
     public ResponseEntity<ResultResponse> getOthersRecords(
             @PathVariable("userId") Long userId,
-            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable){
+            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable) {
         Page<UserRecordsResponse> otherUserRecords = recordService.getOtherUserRecords(userId, pageable);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.GET_OTHER_USER_RECORDS_SUCCESS, otherUserRecords));
+    }
 
     @Operation(
             summary = "해당 유저 기록 조회",

@@ -120,6 +120,7 @@ public class RecordService {
     public Page<UserRecordsResponse> getOtherUserRecords(Long userId, Pageable pageable) {
         Page<Record> records = recordRepository.findByUserId(userId, pageable);
         return UserRecordsResponse.listOf(records);
+    }
 
     public Page<GetRecordResponse> findOtherUserRecords(Long userId, Pageable pageable) {
         userRepository.findById(userId).orElseThrow(
