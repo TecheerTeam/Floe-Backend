@@ -29,12 +29,13 @@ public class NotificationService {
     private final RedisMessageService redisMessageService;
     private final JwtService jwtService;
 
-    public SseEmitter subscribe(HttpServletRequest request){
+    public SseEmitter subscribe(HttpServletRequest request) {
         String email = jwtService.extractEmail(request).orElseThrow(
                 () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
 
         SseEmitter sseEmitter = sseEmitterService.createEmitter(email);
-        sseEmitterService.send(new ConnectSuccessResponseDto(ResultCode.NOTIFICATION_CONNECT_SUCCESS),email,sseEmitter);
+        sseEmitterService.send(new ConnectSuccessResponseDto(ResultCode.NOTIFICATION_CONNECT_SUCCESS), email,
+                sseEmitter);
 
         redisMessageService.subscribe(email);
 
@@ -48,12 +49,12 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendNotification(NotificationDto notificationDto, User sender){
-        Notification notification = notificationRepository.save(new Notification(notificationDto,sender));
-        redisMessageService.publish(notification.getReceiverEmail(),new NotificationDto(notification));
+    public void sendNotification(NotificationDto notificationDto, User sender) {
+        Notification notification = notificationRepository.save(new Notification(notificationDto, sender));
+        redisMessageService.publish(notification.getReceiverEmail(), new NotificationDto(notification));
     }
 
-    public GetNotificationListResponseDto getNotificationList(HttpServletRequest request){
+    public GetNotificationListResponseDto getNotificationList(HttpServletRequest request) {
         String email = jwtService.extractEmail(request).orElseThrow(
                 () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
 
@@ -64,22 +65,26 @@ public class NotificationService {
     }
 
     @Transactional
-    public void readNotification(HttpServletRequest request, Long notificationId){
+    public void readNotification(HttpServletRequest request, Long notificationId) {
         String email = jwtService.extractEmail(request).orElseThrow(
                 () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
 
         Notification notification = findById(notificationId);
 
-        if(!notification.getReceiverEmail().equals(email)) throw new BusinessException(ErrorCode.NOTIFICATION_NOT_OWNED_BY_USER);
+        if (!notification.getReceiverEmail().equals(email)) {
+            throw new BusinessException(ErrorCode.NOTIFICATION_NOT_OWNED_BY_USER);
+        }
 
-        if(notification.getIsRead()) throw new BusinessException(ErrorCode.NOTIFICATION_ALREADY_READ_ERROR);
+        if (notification.getIsRead()) {
+            throw new BusinessException(ErrorCode.NOTIFICATION_ALREADY_READ_ERROR);
+        }
 
         notification.setIsRead(true);
         notificationRepository.save(notification);
     }
 
     @Transactional
-    public void readAllUnreadNotification(HttpServletRequest request){
+    public void readAllUnreadNotification(HttpServletRequest request) {
         String email = jwtService.extractEmail(request).orElseThrow(
                 () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
 
@@ -91,19 +96,21 @@ public class NotificationService {
     }
 
     @Transactional
-    public void deleteNotification(HttpServletRequest request, Long notificationId){
+    public void deleteNotification(HttpServletRequest request, Long notificationId) {
         String email = jwtService.extractEmail(request).orElseThrow(
                 () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
 
         Notification notification = findById(notificationId);
 
-        if(!notification.getReceiverEmail().equals(email)) throw new BusinessException(ErrorCode.NOTIFICATION_NOT_OWNED_BY_USER);
+        if (!notification.getReceiverEmail().equals(email)) {
+            throw new BusinessException(ErrorCode.NOTIFICATION_NOT_OWNED_BY_USER);
+        }
 
         notificationRepository.delete(notification);
     }
 
     @Transactional
-    public void deleteAllReadNotification(HttpServletRequest request){
+    public void deleteAllReadNotification(HttpServletRequest request) {
         String email = jwtService.extractEmail(request).orElseThrow(
                 () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
 
@@ -112,7 +119,7 @@ public class NotificationService {
         notificationRepository.deleteAll(notificationList);
     }
 
-    public GetUnreadCountResponseDto getUnreadNotificationCount(HttpServletRequest request){
+    public GetUnreadCountResponseDto getUnreadNotificationCount(HttpServletRequest request) {
         String email = jwtService.extractEmail(request).orElseThrow(
                 () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST));
 
@@ -121,7 +128,7 @@ public class NotificationService {
         return new GetUnreadCountResponseDto(count);
     }
 
-    public Notification findById(Long notificationId){
+    public Notification findById(Long notificationId) {
         return notificationRepository.findById(notificationId).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND_ERROR));
     }

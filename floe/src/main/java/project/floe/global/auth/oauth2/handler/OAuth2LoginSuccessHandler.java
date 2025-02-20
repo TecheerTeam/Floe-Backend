@@ -32,10 +32,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // User의 Role이 GUEST인 경우 처음 요청한 회원이므로 회원가입 페이지로 리다이렉트
         if (oAuth2User.getRole() == UserRole.GUEST){
-            String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-            response.addHeader(jwtService.getAccessHeader(), "Bearer "+accessToken);
-            response.sendRedirect("oauth2/sign-up?access_token=" + accessToken);
-            jwtService.sendAccessAndRefreshToken(response, accessToken, null);
+            String email = oAuth2User.getEmail();
+            response.sendRedirect("http://localhost:3000/auth/oauth/sign-up?email=" + email);
         } else{
             loginSuccess(response, oAuth2User);
         }
@@ -49,5 +47,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
+        response.sendRedirect("http://localhost:3000/auth/callback/google?state=success&email="+oAuth2User.getEmail());
     }
 }

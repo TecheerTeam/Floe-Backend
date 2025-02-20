@@ -3,6 +3,7 @@ package project.floe.domain.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +36,23 @@ public class UserAuthController {
     )
     @PostMapping("/oauth/sign-up")
     public ResponseEntity<ResultResponse> oauthSignUp(
-            HttpServletRequest request,
-            @Valid @RequestBody UserOAuthSignUpRequest dto) {
-        userService.oAuthSignUp(request, dto);
+            @Valid @RequestBody UserOAuthSignUpRequest dto,
+            HttpServletResponse response) {
+        userService.oAuthSignUp(dto, response);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.USER_OAUTH_SIGNUP_SUCCESS));
+    }
+
+    @Operation(
+            summary = "소셜 로그인 JWT 토큰 발급",
+            description = "소셜 로그인 이후 프론트의 콜백 url에서 호출하는 JWT 발급 API"
+    )
+    @GetMapping("/oauth/token")
+    public ResponseEntity<ResultResponse> oauthGetToken(
+            @RequestParam("email") String email,
+            HttpServletResponse response
+    ){
+        userService.oauthGetToken(email, response);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.USER_GET_TOKEN_SUCCESS));
     }
 
     @Operation(
