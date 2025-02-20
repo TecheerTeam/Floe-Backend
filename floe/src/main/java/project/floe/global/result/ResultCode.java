@@ -36,6 +36,7 @@ public enum ResultCode {
     USER_OAUTH_SIGNUP_SUCCESS("U005", "소셜 로그인 유저 회원가입 성공"),
     USER_LOGIN_FAIL("U006", "로그인 실패"),
     USER_PROFILE_IMAGE_UPDATE_SUCCESS("U007", "프로필 사진 업데이트 성공"),
+    USER_GET_TOKEN_SUCCESS("U007", "소셜 로그인 jwt 토큰 발급 성공"),
 
     // User Follow
     USER_FOLLOW_CREATE_SUCCESS("UF01", "유저 팔로우 생성 성공"),

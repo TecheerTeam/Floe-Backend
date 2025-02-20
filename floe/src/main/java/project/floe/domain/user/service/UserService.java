@@ -132,5 +132,21 @@ public class UserService {
         return UpdateUserResponseDto.from(findUser);
     }
 
+    public void oauthGetToken(String email, HttpServletResponse response) {
+        // 이메일을 통해 사용자 정보 조회
+        log.info("get token social email={}", email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserServiceException(ErrorCode.EMAIL_NOT_FOUND_ERROR));
 
+        // JWT 토큰 생성 (access token, refresh token)
+        String accessToken = jwtService.createAccessToken(user.getEmail());
+        String refreshToken = jwtService.createRefreshToken();
+
+        // 응답 헤더에 JWT 토큰 추가
+        response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
+        response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
+
+        jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+        jwtService.updateRefreshToken(email, refreshToken);
+    }
 }

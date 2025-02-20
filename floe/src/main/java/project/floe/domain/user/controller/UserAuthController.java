@@ -43,6 +43,19 @@ public class UserAuthController {
     }
 
     @Operation(
+            summary = "소셜 로그인 JWT 토큰 발급",
+            description = "소셜 로그인 이후 프론트의 콜백 url에서 호출하는 JWT 발급 API"
+    )
+    @GetMapping("/oauth/token")
+    public ResponseEntity<ResultResponse> oauthGetToken(
+            @RequestParam("email") String email,
+            HttpServletResponse response
+    ){
+        userService.oauthGetToken(email, response);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.USER_GET_TOKEN_SUCCESS));
+    }
+
+    @Operation(
             summary = "자체 서비스 회원가입",
             description = "자체 서비스 회원가입"
     )
