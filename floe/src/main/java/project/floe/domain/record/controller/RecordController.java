@@ -53,7 +53,7 @@ public class RecordController {
     public ResponseEntity<ResultResponse> createRecord(
             HttpServletRequest request,
             @Validated @RequestPart(value = "dto") CreateRecordRequest dto,
-            @RequestPart(value = "files") List<MultipartFile> files) {
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
 
         CreateRecordResponse response = CreateRecordResponse.from(recordService.createRecord(request, dto, files));
 
@@ -139,6 +139,17 @@ public class RecordController {
         Page<UserRecordsResponse> userRecords = recordService.getUserRecords(request, pageable);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.GET_USER_RECORDS_SUCCESS, userRecords));
     }
+
+    @Operation(
+            summary = "타 회원 게시물 조회",
+            description = "타 회원이 작성한 게시물 조회"
+    )
+    @GetMapping("/{userId}/others")
+    public ResponseEntity<ResultResponse> getOthersRecords(
+            @PathVariable("userId") Long userId,
+            @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable){
+        Page<UserRecordsResponse> otherUserRecords = recordService.getOtherUserRecords(userId, pageable);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.GET_OTHER_USER_RECORDS_SUCCESS, otherUserRecords));
 
     @Operation(
             summary = "해당 유저 기록 조회",
