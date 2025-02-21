@@ -147,6 +147,7 @@ public class UserServiceTest {
         doNothing().when(userRepository).deleteRecordSavesByUserId(mockUser.getId());
         doNothing().when(userRepository).deleteCommentLikesByUserId(mockUser.getId());
         doNothing().when(userRepository).deleteUserFollowsByUserId(mockUser.getId());
+        doNothing().when(userRepository).deleteRecordTagByUserId(mockUser.getId());
         doNothing().when(userRepository).delete(mockUser);
         userService.deleteUser(mockRequest);
 
