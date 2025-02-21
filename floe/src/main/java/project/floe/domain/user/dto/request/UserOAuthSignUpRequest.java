@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserOAuthSignUpRequest {
 
+    @NotBlank(message = "email cannot be blank")
+    private String email;
+
     @NotBlank(message = "nickname cannot be blank")
     private String nickname;
 
