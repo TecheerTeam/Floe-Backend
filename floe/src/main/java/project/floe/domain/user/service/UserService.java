@@ -2,11 +2,9 @@ package project.floe.domain.user.service;
 
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,10 +39,9 @@ public class UserService {
                 () -> new UserServiceException(ErrorCode.EMAIL_NOT_FOUND_ERROR)
         );
 
-        if (profileImage == null){ // 프로필 이미지 비우길 원한다면 비워줌
+        if (profileImage == null) { // 프로필 이미지 비우길 원한다면 비워줌
             user.updateProfileImage(null);
-        }
-        else {
+        } else {
             String updatedUrl = mediaService.uploadToS3(profileImage);
             user.updateProfileImage(updatedUrl);
         }
@@ -102,13 +99,14 @@ public class UserService {
         User findUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        // 해당 유저의 게시글, 댓글, 게시글 좋아요, 게시글 저장, 댓글 좋아요, 팔로워 삭제 처리
+        // 해당 유저의 게시글, 댓글, 게시글 좋아요, 게시글 저장, 댓글 좋아요, 팔로워, 태그 삭제 처리
         userRepository.softDeleteRecordsByUserId(findUser.getId());
         userRepository.softDeleteCommentsByUserId(findUser.getId());
         userRepository.deleteRecordLikesByUserId(findUser.getId());
         userRepository.deleteRecordSavesByUserId(findUser.getId());
         userRepository.deleteCommentLikesByUserId(findUser.getId());
         userRepository.deleteUserFollowsByUserId(findUser.getId());
+        userRepository.deleteRecordTagByUserId(findUser.getId());
 
         log.info("delete User: {}", userEmail);
         userRepository.delete(findUser);
@@ -123,7 +121,7 @@ public class UserService {
         User findUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        findUser.update(dto ,passwordEncoder);
+        findUser.update(dto, passwordEncoder);
         userRepository.save(findUser);
         return UpdateUserResponseDto.from(findUser);
     }

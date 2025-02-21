@@ -48,4 +48,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("DELETE UserFollow uf WHERE uf.fromUser.id = :userId OR uf.toUser.id = :userId")
     void deleteUserFollowsByUserId(@Param("userId")Long userId);
+
+    @Modifying
+    @Query("DELETE RecordTag  rt WHERE rt.record.user.id = :userId")
+    void deleteRecordTagByUserId(@Param("userId")Long userId);
 }
