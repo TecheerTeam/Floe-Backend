@@ -2,12 +2,15 @@ package project.floe.domain.user.service;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import project.floe.domain.record.entity.Record;
+import project.floe.domain.record.repository.RecordJpaRepository;
 import project.floe.domain.record.service.MediaService;
 import project.floe.domain.user.dto.request.UserOAuthSignUpRequest;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
@@ -29,6 +32,7 @@ public class UserService {
     private final JwtService jwtService;
     private final MediaService mediaService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RecordJpaRepository recordJpaRepository;
 
     @Transactional
     public void updateProfileImage(HttpServletRequest request, MultipartFile profileImage) {
@@ -100,13 +104,13 @@ public class UserService {
                 .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
         // 해당 유저의 게시글, 댓글, 게시글 좋아요, 게시글 저장, 댓글 좋아요, 팔로워, 태그 삭제 처리
-        userRepository.softDeleteRecordsByUserId(findUser.getId());
+        List<Record> recordList = recordJpaRepository.findRecordsByUserId(findUser.getId());
+        recordJpaRepository.deleteAll(recordList);
         userRepository.softDeleteCommentsByUserId(findUser.getId());
         userRepository.deleteRecordLikesByUserId(findUser.getId());
         userRepository.deleteRecordSavesByUserId(findUser.getId());
         userRepository.deleteCommentLikesByUserId(findUser.getId());
         userRepository.deleteUserFollowsByUserId(findUser.getId());
-        userRepository.deleteRecordTagByUserId(findUser.getId());
 
         log.info("delete User: {}", userEmail);
         userRepository.delete(findUser);

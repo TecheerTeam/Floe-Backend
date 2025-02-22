@@ -26,10 +26,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 
     @Modifying
-    @Query("UPDATE Record r SET r.isDeleted = true WHERE r.user.id = :userId")
-    void softDeleteRecordsByUserId(@Param("userId")Long userId);
-
-    @Modifying
     @Query("UPDATE Comment c SET c.isDeleted = true WHERE c.user.id = :userId")
     void softDeleteCommentsByUserId(@Param("userId")Long userId);
 
@@ -49,7 +45,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("DELETE UserFollow uf WHERE uf.fromUser.id = :userId OR uf.toUser.id = :userId")
     void deleteUserFollowsByUserId(@Param("userId")Long userId);
 
-    @Modifying
-    @Query("DELETE RecordTag  rt WHERE rt.record.user.id = :userId")
-    void deleteRecordTagByUserId(@Param("userId")Long userId);
 }

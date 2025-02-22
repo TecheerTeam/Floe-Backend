@@ -22,4 +22,6 @@ public interface RecordJpaRepository extends JpaRepository<Record, Long> {
 
     @Query("SELECT r.id FROM Record r WHERE r.user.id = :userId")
     List<Long> findRecordIdsByUserId(@Param("userId") Long userId);
+
+    List<Record> findRecordsByUserId(Long userId);
 }
