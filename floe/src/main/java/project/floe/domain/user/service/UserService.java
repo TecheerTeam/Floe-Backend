@@ -2,6 +2,8 @@ package project.floe.domain.user.service;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,15 +69,26 @@ public class UserService {
     }
 
     @Transactional
-    public void oAuthSignUp(HttpServletRequest request, UserOAuthSignUpRequest dto) {
-        String userEmail = jwtService.extractEmail(request).orElseThrow(
-                () -> new UserServiceException(ErrorCode.TOKEN_ACCESS_NOT_EXIST)
-        );
-        User user = userRepository.findByEmail(userEmail).orElseThrow(
-                () -> new UserServiceException(ErrorCode.EMAIL_NOT_FOUND_ERROR)
-        );
+    public void oAuthSignUp(UserOAuthSignUpRequest dto, HttpServletResponse response) {
+        // 이메일을 통해 사용자 정보 조회
+        String userEmail = dto.getEmail();
+        log.info("social email={}", userEmail);
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserServiceException(ErrorCode.EMAIL_NOT_FOUND_ERROR));
 
+        // OAuth 회원가입 로직 수행
         user.oAuthSignUp(dto);
+
+        // JWT 토큰 생성 (access token, refresh token)
+        String accessToken = jwtService.createAccessToken(user.getEmail());
+        String refreshToken = jwtService.createRefreshToken();
+
+        // 응답 헤더에 JWT 토큰 추가
+        response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
+        response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
+
+        jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+        jwtService.updateRefreshToken(userEmail, refreshToken);
     }
 
     @Transactional
@@ -130,5 +143,21 @@ public class UserService {
         return UpdateUserResponseDto.from(findUser);
     }
 
+    public void oauthGetToken(String email, HttpServletResponse response) {
+        // 이메일을 통해 사용자 정보 조회
+        log.info("get token social email={}", email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserServiceException(ErrorCode.EMAIL_NOT_FOUND_ERROR));
 
+        // JWT 토큰 생성 (access token, refresh token)
+        String accessToken = jwtService.createAccessToken(user.getEmail());
+        String refreshToken = jwtService.createRefreshToken();
+
+        // 응답 헤더에 JWT 토큰 추가
+        response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
+        response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
+
+        jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+        jwtService.updateRefreshToken(email, refreshToken);
+    }
 }
