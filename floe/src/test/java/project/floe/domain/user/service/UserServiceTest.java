@@ -141,13 +141,11 @@ public class UserServiceTest {
         // when
         doReturn(Optional.of(email)).when(jwtService).extractEmail(mockRequest);
         doReturn(Optional.of(mockUser)).when(userRepository).findByEmail(email);
-        doNothing().when(userRepository).softDeleteRecordsByUserId(mockUser.getId());
         doNothing().when(userRepository).softDeleteCommentsByUserId(mockUser.getId());
         doNothing().when(userRepository).deleteRecordLikesByUserId(mockUser.getId());
         doNothing().when(userRepository).deleteRecordSavesByUserId(mockUser.getId());
         doNothing().when(userRepository).deleteCommentLikesByUserId(mockUser.getId());
         doNothing().when(userRepository).deleteUserFollowsByUserId(mockUser.getId());
-        doNothing().when(userRepository).deleteRecordTagByUserId(mockUser.getId());
         doNothing().when(userRepository).delete(mockUser);
         userService.deleteUser(mockRequest);
 
