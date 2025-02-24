@@ -64,7 +64,10 @@ public class MediaService {
         Iterator<MultipartFile> newFilesIterator = getIterator(newFiles);
         for (UpdateMediaRequest media : existingFiles) {
             if (media==null) {
-                addNewMedia(record, newFilesIterator, updatedMedias);
+                // 새 파일이 존재하는 경우에만 추가
+                if (newFilesIterator.hasNext()) {
+                    addNewMedia(record, newFilesIterator, updatedMedias);
+                }
                 continue;
             }
             updatedMedias.add(findMediaById(media.getMediaId()));
