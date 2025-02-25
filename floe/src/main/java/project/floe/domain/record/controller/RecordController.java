@@ -93,7 +93,7 @@ public class RecordController {
     @PutMapping("/{recordId}")
     public ResponseEntity<ResultResponse> updateRecord(@PathVariable("recordId") Long recordId,
                                                        @Validated @RequestPart("updateDto") UpdateRecordRequest updateDto,
-                                                       @RequestPart("updateFiles") List<MultipartFile> updateFiles) {
+                                                       @RequestPart(value = "updateFiles", required = false) List<MultipartFile> updateFiles) {
         log.info("updateFiles 유무 체크(비었으면 true): {}", updateFiles.isEmpty());
         if (!updateFiles.isEmpty()) {
             updateFiles.forEach(file -> log.info("파일 정보 - 이름: {}, 크기: {} bytes, 타입: {}",
