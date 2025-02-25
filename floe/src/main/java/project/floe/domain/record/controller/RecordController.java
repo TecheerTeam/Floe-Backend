@@ -95,6 +95,7 @@ public class RecordController {
                                                        @Validated @RequestPart("updateDto") UpdateRecordRequest updateDto,
                                                        @RequestPart("updateFiles") List<MultipartFile> updateFiles) {
         log.info("updateFiles 유무 체크(비었으면 true): {}", updateFiles.isEmpty());
+        log.info("updateFiles 뭐가 든거지: {}", updateFiles);
         Record modifiedRecord = recordService.modifyRecord(recordId, updateDto, updateFiles);
         UpdateRecordResponse response = UpdateRecordResponse.from(modifiedRecord);
         return ResponseEntity.status(HttpStatus.OK)
