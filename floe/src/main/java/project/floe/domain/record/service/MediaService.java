@@ -61,6 +61,7 @@ public class MediaService {
     @Transactional
     public List<Media> updateMedias(Record record, List<UpdateMediaRequest> existingFiles, List<MultipartFile> newFiles) {
         List<Media> updatedMedias = new ArrayList<>();
+        log.info("updatedMedias List: {}", updatedMedias);
         Iterator<MultipartFile> newFilesIterator = getIterator(newFiles);
         for (UpdateMediaRequest media : existingFiles) {
             if (media==null) {
