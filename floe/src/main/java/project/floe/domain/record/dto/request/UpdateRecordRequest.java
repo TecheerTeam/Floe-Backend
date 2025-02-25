@@ -27,4 +27,13 @@ public class UpdateRecordRequest {
     private List<String> tagNames;
 
     private List<UpdateMediaRequest> medias;
+
+    @Override
+    public String toString(){
+        return "title: "+title
+                +"\ncontent: "+content
+                +"\nrecordType: "+recordType
+                +"\ntagNames"+tagNames
+                +"\nmedias"+medias;
+    }
 }
