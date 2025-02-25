@@ -95,7 +95,14 @@ public class RecordController {
                                                        @Validated @RequestPart("updateDto") UpdateRecordRequest updateDto,
                                                        @RequestPart("updateFiles") List<MultipartFile> updateFiles) {
         log.info("updateFiles 유무 체크(비었으면 true): {}", updateFiles.isEmpty());
-        log.info("updateFiles 뭐가 든거지: {}", updateFiles);
+        if (!updateFiles.isEmpty()) {
+            updateFiles.forEach(file -> log.info("파일 정보 - 이름: {}, 크기: {} bytes, 타입: {}",
+                    file.getOriginalFilename(),
+                    file.getSize(),
+                    file.getContentType()));
+        } else {
+            log.info("업로드된 파일이 없습니다.");
+        }
         Record modifiedRecord = recordService.modifyRecord(recordId, updateDto, updateFiles);
         UpdateRecordResponse response = UpdateRecordResponse.from(modifiedRecord);
         return ResponseEntity.status(HttpStatus.OK)
