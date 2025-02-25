@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -38,6 +39,7 @@ import project.floe.global.result.ResultCode;
 import project.floe.global.result.ResultResponse;
 
 @Tag(name = "RecordController", description = "기록 API")
+@Slf4j
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @RequestMapping("/api/v1/records")
@@ -92,6 +94,7 @@ public class RecordController {
     public ResponseEntity<ResultResponse> updateRecord(@PathVariable("recordId") Long recordId,
                                                        @Validated @RequestPart("updateDto") UpdateRecordRequest updateDto,
                                                        @RequestPart("updateFiles") List<MultipartFile> updateFiles) {
+        log.info("updateFiles 유무 체크(비었으면 true): {}", updateFiles.isEmpty());
         Record modifiedRecord = recordService.modifyRecord(recordId, updateDto, updateFiles);
         UpdateRecordResponse response = UpdateRecordResponse.from(modifiedRecord);
         return ResponseEntity.status(HttpStatus.OK)
