@@ -114,9 +114,9 @@ public class RecordController {
     @GetMapping("/search")
     public ResponseEntity<ResultResponse> searchRecord(
             @PageableDefault(page = 0, size = 5, sort = "updatedAt", direction = Direction.DESC) Pageable pageable,
-            @RequestParam(required = false) String title, // 제목
-            @RequestParam(required = false) RecordType recordType, // Enum 값
-            @RequestParam(required = false) List<String> tagNames // 태그 리스트
+            @RequestParam(name = "title", required = false) String title, // 제목
+            @RequestParam(name = "recordType", required = false) RecordType recordType, // Enum 값
+            @RequestParam(name = "tagNames", required = false) List<String> tagNames // 태그 리스트
     ) {
         // SearchRecordRequest DTO 생성
         SearchRecordRequest dto = SearchRecordRequest.builder()
