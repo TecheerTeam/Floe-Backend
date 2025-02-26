@@ -11,6 +11,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +24,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
+import project.floe.domain.record.repository.RecordJpaRepository;
 import project.floe.domain.record.service.MediaService;
 import project.floe.domain.user.dto.request.UserOAuthSignUpRequest;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
@@ -49,6 +52,8 @@ public class UserServiceTest {
     private MediaService mediaService;
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
+    @Mock
+    private RecordJpaRepository recordJpaRepository;
 
     @Test
     public void 유저조회실패_존재하지않는유저() {
@@ -135,19 +140,20 @@ public class UserServiceTest {
         // given
         String email = "test@example.com";
         HttpServletRequest mockRequest = new MockHttpServletRequest();
+        List<Record> recordList = new ArrayList<>();
 
         User mockUser = user();
 
         // when
         doReturn(Optional.of(email)).when(jwtService).extractEmail(mockRequest);
         doReturn(Optional.of(mockUser)).when(userRepository).findByEmail(email);
-        doNothing().when(userRepository).softDeleteRecordsByUserId(mockUser.getId());
+        doReturn(recordList).when(recordJpaRepository).findRecordsByUserId(mockUser.getId());
+        doNothing().when(recordJpaRepository).deleteAll(any());
         doNothing().when(userRepository).softDeleteCommentsByUserId(mockUser.getId());
         doNothing().when(userRepository).deleteRecordLikesByUserId(mockUser.getId());
         doNothing().when(userRepository).deleteRecordSavesByUserId(mockUser.getId());
         doNothing().when(userRepository).deleteCommentLikesByUserId(mockUser.getId());
         doNothing().when(userRepository).deleteUserFollowsByUserId(mockUser.getId());
-        doNothing().when(userRepository).deleteRecordTagByUserId(mockUser.getId());
         doNothing().when(userRepository).delete(mockUser);
         userService.deleteUser(mockRequest);
 
