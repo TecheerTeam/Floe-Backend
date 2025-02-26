@@ -3,6 +3,7 @@ package project.floe.domain.record.service;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import project.floe.global.error.exception.EmptyKeywordException;
 import project.floe.global.error.exception.EmptyResultException;
 import project.floe.global.error.exception.UserServiceException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecordService {
@@ -99,6 +101,7 @@ public class RecordService {
     @Transactional
     public Record modifyRecord(Long recordId, UpdateRecordRequest dto, List<MultipartFile> files) {
         Record findRecord = findRecordById(recordId);
+        log.info("UpdatedRecordRequest dto = {}", dto.toString());
         List<Media> updatedMedias = mediaService.updateMedias(findRecord, dto.getMedias(), files);
         Tags updatedTags = tagService.createTags(dto.getTagNames());
         findRecord.updateRecord(dto.getTitle(), dto.getContent(), dto.getRecordType(), updatedTags, updatedMedias);
