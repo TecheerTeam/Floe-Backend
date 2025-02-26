@@ -24,6 +24,7 @@ public enum ResultCode {
     RECORD_PAGING_GET_SUCCESS("R004", "페이징된 전체 기록 조회 성공"),
     RECORD_MODIFY_SUCCESS("R005", "기록 수정 성공"),
     GET_USER_RECORDS_SUCCESS("R009", "유저 전체 게시물 조회 성공"),
+    GET_OTHER_USER_RECORDS_SUCCESS("R010", "특정 유저 게시물 조회 성공"),
 
     // Record Search
     RECORD_SEARCH_SUCCESS("R006", "페이징된 기록 검색 성공"),
@@ -36,6 +37,7 @@ public enum ResultCode {
     USER_OAUTH_SIGNUP_SUCCESS("U005", "소셜 로그인 유저 회원가입 성공"),
     USER_LOGIN_FAIL("U006", "로그인 실패"),
     USER_PROFILE_IMAGE_UPDATE_SUCCESS("U007", "프로필 사진 업데이트 성공"),
+    USER_GET_TOKEN_SUCCESS("U007", "소셜 로그인 jwt 토큰 발급 성공"),
 
     // User Follow
     USER_FOLLOW_CREATE_SUCCESS("UF01", "유저 팔로우 생성 성공"),

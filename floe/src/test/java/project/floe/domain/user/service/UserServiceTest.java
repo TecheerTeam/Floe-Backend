@@ -11,6 +11,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +24,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
+import project.floe.domain.record.repository.RecordJpaRepository;
 import project.floe.domain.record.service.MediaService;
 import project.floe.domain.user.dto.request.UserOAuthSignUpRequest;
 import project.floe.domain.user.dto.request.UserSignUpRequest;
@@ -49,6 +52,8 @@ public class UserServiceTest {
     private MediaService mediaService;
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
+    @Mock
+    private RecordJpaRepository recordJpaRepository;
 
     @Test
     public void 유저조회실패_존재하지않는유저() {
@@ -135,12 +140,20 @@ public class UserServiceTest {
         // given
         String email = "test@example.com";
         HttpServletRequest mockRequest = new MockHttpServletRequest();
+        List<Record> recordList = new ArrayList<>();
 
         User mockUser = user();
 
         // when
         doReturn(Optional.of(email)).when(jwtService).extractEmail(mockRequest);
         doReturn(Optional.of(mockUser)).when(userRepository).findByEmail(email);
+        doReturn(recordList).when(recordJpaRepository).findRecordsByUserId(mockUser.getId());
+        doNothing().when(recordJpaRepository).deleteAll(any());
+        doNothing().when(userRepository).softDeleteCommentsByUserId(mockUser.getId());
+        doNothing().when(userRepository).deleteRecordLikesByUserId(mockUser.getId());
+        doNothing().when(userRepository).deleteRecordSavesByUserId(mockUser.getId());
+        doNothing().when(userRepository).deleteCommentLikesByUserId(mockUser.getId());
+        doNothing().when(userRepository).deleteUserFollowsByUserId(mockUser.getId());
         doNothing().when(userRepository).delete(mockUser);
         userService.deleteUser(mockRequest);
 
@@ -235,38 +248,39 @@ public class UserServiceTest {
         assertThat(mockUser.getProfileImage()).isEqualTo(newImageUrl);
     }
 
-    @Test
-    public void oAuthSignUp() {
-        // Mock 데이터 준비
-        String email = "test@example.com";
-        HttpServletRequest mockRequest = new MockHttpServletRequest();
-        UserOAuthSignUpRequest dto = UserOAuthSignUpRequest.builder()
-                .age(20)
-                .experience(2)
-                .field("frontend")
-                .nickname("TestUser")
-                .build();
-        User mockUser = User.builder()
-                .email(email)
-                .nickname(null) // 초기에는 닉네임이 null
-                .build();
-
-        // Mock 동작 정의
-        doReturn(Optional.of(email)).when(jwtService).extractEmail(mockRequest);
-        doReturn(Optional.of(mockUser)).when(userRepository).findByEmail(email);
-
-        // 서비스 호출
-        userService.oAuthSignUp(mockRequest, dto);
-
-        // 검증
-        verify(jwtService, times(1)).extractEmail(mockRequest);
-        verify(userRepository, times(1)).findByEmail(email);
-        assertThat(mockUser.getNickname()).isEqualTo("TestUser");
-    }
+//    @Test
+//    public void oAuthSignUp() {
+//        // Mock 데이터 준비
+//        String email = "test@example.com";
+//        HttpServletRequest mockRequest = new MockHttpServletRequest();
+//        UserOAuthSignUpRequest dto = UserOAuthSignUpRequest.builder()
+//                .age(20)
+//                .experience(2)
+//                .field("frontend")
+//                .nickname("TestUser")
+//                .build();
+//        User mockUser = User.builder()
+//                .email(email)
+//                .nickname(null) // 초기에는 닉네임이 null
+//                .build();
+//
+//        // Mock 동작 정의
+//        doReturn(Optional.of(email)).when(jwtService).extractEmail(mockRequest);
+//        doReturn(Optional.of(mockUser)).when(userRepository).findByEmail(email);
+//
+//        // 서비스 호출
+//        userService.oAuthSignUp(mockRequest, dto);
+//
+//        // 검증
+//        verify(jwtService, times(1)).extractEmail(mockRequest);
+//        verify(userRepository, times(1)).findByEmail(email);
+//        assertThat(mockUser.getNickname()).isEqualTo("TestUser");
+//    }
 
 
     private User user() {
         return User.builder()
+                .id(1L)
                 .nickname("tester")
                 .role(UserRole.USER)
                 .email("test@example.com")

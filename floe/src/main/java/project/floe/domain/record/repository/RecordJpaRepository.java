@@ -1,6 +1,5 @@
 package project.floe.domain.record.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +22,6 @@ public interface RecordJpaRepository extends JpaRepository<Record, Long> {
 
     @Query("SELECT r.id FROM Record r WHERE r.user.id = :userId")
     List<Long> findRecordIdsByUserId(@Param("userId") Long userId);
+
+    List<Record> findRecordsByUserId(Long userId);
 }

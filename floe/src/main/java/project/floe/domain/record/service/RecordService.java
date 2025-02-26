@@ -3,6 +3,7 @@ package project.floe.domain.record.service;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +22,14 @@ import project.floe.domain.record.repository.RecordJpaRepository;
 import project.floe.domain.record.repository.RecordTagJpaRepository;
 import project.floe.domain.user.entity.User;
 import project.floe.domain.user.repository.UserRepository;
+import project.floe.domain.user.service.UserService;
 import project.floe.global.auth.jwt.service.JwtService;
 import project.floe.global.error.ErrorCode;
 import project.floe.global.error.exception.EmptyKeywordException;
 import project.floe.global.error.exception.EmptyResultException;
 import project.floe.global.error.exception.UserServiceException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecordService {
@@ -37,6 +40,7 @@ public class RecordService {
     private final RecordTagJpaRepository recordTagRepository;
     private final TagService tagService;
     private final JwtService jwtService;
+    private final UserService userService;
 
     @Transactional
     public Long createRecord(HttpServletRequest request, CreateRecordRequest dto, List<MultipartFile> files) {
@@ -46,13 +50,14 @@ public class RecordService {
         User findUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
         Record record = dto.toEntity(findUser);
-
         if (dto.getTagNames() != null) {
             Tags findTags = tagService.createTags(dto.getTagNames());
             record.addTag(findTags);
         }
         Record savedRecord = recordRepository.save(record);
-        mediaService.uploadFiles(savedRecord, files);
+        if (files != null) {
+            mediaService.uploadFiles(savedRecord, files);
+        }
         return savedRecord.getId();
     }
 
@@ -96,6 +101,7 @@ public class RecordService {
     @Transactional
     public Record modifyRecord(Long recordId, UpdateRecordRequest dto, List<MultipartFile> files) {
         Record findRecord = findRecordById(recordId);
+        log.info("UpdatedRecordRequest dto = {}", dto.toString());
         List<Media> updatedMedias = mediaService.updateMedias(findRecord, dto.getMedias(), files);
         Tags updatedTags = tagService.createTags(dto.getTagNames());
         findRecord.updateRecord(dto.getTitle(), dto.getContent(), dto.getRecordType(), updatedTags, updatedMedias);
@@ -109,8 +115,21 @@ public class RecordService {
         User findUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
 
-        Page<Record> records = recordRepository.findByUserId(findUser.getId(),pageable);
+        Page<Record> records = recordRepository.findByUserId(findUser.getId(), pageable);
 
         return UserRecordsResponse.listOf(records);
+    }
+
+    public Page<UserRecordsResponse> getOtherUserRecords(Long userId, Pageable pageable) {
+        Page<Record> records = recordRepository.findByUserId(userId, pageable);
+        return UserRecordsResponse.listOf(records);
+    }
+
+    public Page<GetRecordResponse> findOtherUserRecords(Long userId, Pageable pageable) {
+        userRepository.findById(userId).orElseThrow(
+                () -> new UserServiceException(ErrorCode.USER_NOT_FOUND_ERROR));
+
+        Page<Record> records = recordRepository.findByUserId(userId, pageable);
+        return GetRecordResponse.listOf(records);
     }
 }

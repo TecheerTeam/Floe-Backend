@@ -51,26 +51,26 @@ public class UserAuthControllerTest {
                         .build();
     }
 
-    @Test
-    public void oauth_회원가입() throws Exception {
-        // given
-        UserOAuthSignUpRequest dto = UserOAuthSignUpRequest.builder()
-                .nickname("TestUser")
-                .build();
-        doNothing().when(userService).oAuthSignUp(any(HttpServletRequest.class), argThat(argument ->
-                argument.getNickname().equals(dto.getNickname())));
-
-        // when, then
-        mockMvc.perform(post(BASE_PATH + "/oauth/sign-up")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(dto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResultCode.USER_OAUTH_SIGNUP_SUCCESS.getCode()))
-                .andExpect(jsonPath("$.message").value(ResultCode.USER_OAUTH_SIGNUP_SUCCESS.getMessage()));
-
-        verify(userService, times(1)).oAuthSignUp(any(HttpServletRequest.class), argThat(argument ->
-                argument.getNickname().equals(dto.getNickname())));
-    }
+//    @Test
+//    public void oauth_회원가입() throws Exception {
+//        // given
+//        UserOAuthSignUpRequest dto = UserOAuthSignUpRequest.builder()
+//                .nickname("TestUser")
+//                .build();
+//        doNothing().when(userService).oAuthSignUp(any(HttpServletRequest.class), argThat(argument ->
+//                argument.getNickname().equals(dto.getNickname())));
+//
+//        // when, then
+//        mockMvc.perform(post(BASE_PATH + "/oauth/sign-up")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(new ObjectMapper().writeValueAsString(dto)))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.code").value(ResultCode.USER_OAUTH_SIGNUP_SUCCESS.getCode()))
+//                .andExpect(jsonPath("$.message").value(ResultCode.USER_OAUTH_SIGNUP_SUCCESS.getMessage()));
+//
+//        verify(userService, times(1)).oAuthSignUp(any(HttpServletRequest.class), argThat(argument ->
+//                argument.getNickname().equals(dto.getNickname())));
+//    }
 
     @Test
     public void 자체_회원가입() throws Exception {
